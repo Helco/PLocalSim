@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_layout_file>
+	<ActiveTarget name="Release" />
+	<File name="../../../SDL_gfx/SDL_gfxPrimitives.c" open="0" top="0" tabpos="0">
+		<Cursor position="59397" topLine="2576" />
+	</File>
+	<File name="../../../local/bitmap.c" open="0" top="0" tabpos="0">
+		<Cursor position="1403" topLine="26" />
+	</File>
+	<File name="../../../local/globals.h" open="0" top="0" tabpos="0">
+		<Cursor position="193" topLine="0" />
+	</File>
+	<File name="../../../local/pebble_os.c" open="0" top="0" tabpos="0">
+		<Cursor position="2314" topLine="70" />
+	</File>
+</CodeBlocks_layout_file>

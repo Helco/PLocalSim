@@ -1,0 +1,97 @@
+# depslib dependency file v1.0
+1336974204 source:/home/helco/github/PebbleLocalSim/SDL_gfx/SDL_gfxBlitFunc.c
+	"SDL_gfxBlitFunc.h"
+
+1379767708 /home/helco/github/PebbleLocalSim/SDL_gfx/SDL_gfxBlitFunc.h
+	<stdio.h>
+	<stdlib.h>
+	<SDL/SDL.h>
+	<SDL/SDL_video.h>
+
+1336974204 source:/home/helco/github/PebbleLocalSim/SDL_gfx/SDL_gfxPrimitives.c
+	<stdio.h>
+	<stdlib.h>
+	<math.h>
+	<string.h>
+	"SDL_gfxPrimitives.h"
+	"SDL_rotozoom.h"
+	"SDL_gfxPrimitives_font.h"
+	"SDL_gfxBlitFunc.h"
+	<emmintrin.h>
+	<armintr.h>
+
+1379767716 /home/helco/github/PebbleLocalSim/SDL_gfx/SDL_gfxPrimitives.h
+	<math.h>
+	<SDL/SDL.h>
+
+1379767722 /home/helco/github/PebbleLocalSim/SDL_gfx/SDL_rotozoom.h
+	<math.h>
+	<SDL/SDL.h>
+
+1329456100 /home/helco/github/PebbleLocalSim/SDL_gfx/SDL_gfxPrimitives_font.h
+
+1336974204 source:/home/helco/github/PebbleLocalSim/SDL_gfx/SDL_rotozoom.c
+	<windows.h>
+	<stdlib.h>
+	<string.h>
+	"SDL_rotozoom.h"
+
+1380643890 source:/home/helco/github/PebbleLocalSim/local/actionbar.c
+	"globals.h"
+
+1381138463 /home/helco/github/PebbleLocalSim/local/globals.h
+	"pebble_os.h"
+	"pebble_fonts.h"
+	"SDL_gfxPrimitives.h"
+	"SDL_gfxBlitFunc.h"
+	<windows.h>
+	<math.h>
+	<time.h>
+	<unistd.h>
+	<stdio.h>
+	<SDL/SDL.h>
+	<SDL/SDL_ttf.h>
+	<SDL/SDL_image.h>
+
+1380441886 source:/home/helco/github/PebbleLocalSim/local/animation.c
+	"globals.h"
+
+1380875002 source:/home/helco/github/PebbleLocalSim/local/bitmap.c
+	"globals.h"
+
+1380894058 source:/home/helco/github/PebbleLocalSim/local/buttons.c
+	"globals.h"
+
+1381140048 source:/home/helco/github/PebbleLocalSim/local/draw.c
+	"globals.h"
+
+1380869236 source:/home/helco/github/PebbleLocalSim/local/font.c
+	"globals.h"
+
+1380123570 source:/home/helco/github/PebbleLocalSim/local/hardwareOutput.c
+	"globals.h"
+
+1379602620 source:/home/helco/github/PebbleLocalSim/local/jsmn.c
+	<stdlib.h>
+	"jsmn.h"
+
+1379602590 /home/helco/github/PebbleLocalSim/local/jsmn.h
+
+1380893574 source:/home/helco/github/PebbleLocalSim/local/layer.c
+	"globals.h"
+
+1380868924 source:/home/helco/github/PebbleLocalSim/local/main.c
+	"globals.h"
+
+1380967696 source:/home/helco/github/PebbleLocalSim/local/math.c
+	"globals.h"
+
+1380893256 source:/home/helco/github/PebbleLocalSim/local/render.c
+	"globals.h"
+
+1380892664 source:/home/helco/github/PebbleLocalSim/local/window.c
+	"globals.h"
+
+1381138497 source:/home/helco/github/PebbleLocalSim/local/pebble_os.c
+	"globals.h"
+

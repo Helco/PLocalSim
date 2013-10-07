@@ -1,0 +1,3 @@
+build/windows/MinGW/
+build/linux/codeblocks/obj/
+build/linux/codeblocks/bin/
