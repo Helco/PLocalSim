@@ -62,7 +62,7 @@
 1380894058 source:/home/helco/github/PebbleLocalSim/local/buttons.c
 	"globals.h"
 
-1381140048 source:/home/helco/github/PebbleLocalSim/local/draw.c
+1381215399 source:/home/helco/github/PebbleLocalSim/local/draw.c
 	"globals.h"
 
 1380869236 source:/home/helco/github/PebbleLocalSim/local/font.c
@@ -94,4 +94,13 @@
 
 1381138497 source:/home/helco/github/PebbleLocalSim/local/pebble_os.c
 	"globals.h"
+
+1381214107 source:/home/helco/github/PebbleLocalSim/test/src/floating-dials.c
+	"pebble_os.h"
+	"pebble_app.h"
+	"pebble_fonts.h"
+	"config.h"
+	"rockshot.h"
+
+1381214356 /home/helco/github/PebbleLocalSim/test/src/config.h
 

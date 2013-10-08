@@ -7,7 +7,8 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="bin/Debug/PebbleLocalSim" prefix_auto="1" extension_auto="1" />
+				<Option output="../../../test/build/local/test" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="../../../test/build/local/" />
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -18,6 +19,9 @@
 					<Add option="-I../../../local/" />
 					<Add option="-I../../../SDL_gfx/" />
 					<Add option="-I../../../include/" />
+					<Add option="-I../../../test/src/" />
+					<Add option="-I../../../test/build/tempLocal/" />
+					<Add option="-I../../../test/build/tempLocal/src" />
 				</Compiler>
 				<Linker>
 					<Add option="-lSDL" />
@@ -58,11 +62,13 @@
 		<Unit filename="../../../SDL_gfx/SDL_gfxBlitFunc.h" />
 		<Unit filename="../../../SDL_gfx/SDL_gfxPrimitives.c">
 			<Option compilerVar="CC" />
+			<Option compiler="gcc" use="1" buildCommand="$compiler $options $includes -c $file -o $object -w" />
 		</Unit>
 		<Unit filename="../../../SDL_gfx/SDL_gfxPrimitives.h" />
 		<Unit filename="../../../SDL_gfx/SDL_gfxPrimitives_font.h" />
 		<Unit filename="../../../SDL_gfx/SDL_rotozoom.c">
 			<Option compilerVar="CC" />
+			<Option compiler="gcc" use="1" buildCommand="$compiler $options $includes -c $file -o $object -w" />
 		</Unit>
 		<Unit filename="../../../SDL_gfx/SDL_rotozoom.h" />
 		<Unit filename="../../../include/pebble_app.h" />
@@ -112,6 +118,10 @@
 		</Unit>
 		<Unit filename="../../../local/window.c">
 			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../test/src/floating-dials.c">
+			<Option compilerVar="CC" />
+			<Option target="Debug" />
 		</Unit>
 		<Extensions>
 			<code_completion />
