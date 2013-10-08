@@ -1,6 +1,11 @@
 #include "globals.h"
 
-static GContext current_graphics_context;
+static GContext current_graphics_context={
+    .fill_color=GColorBlack,
+    .stroke_color=GColorBlack,
+    .text_color=GColorWhite,
+    .compositing_mode=GCompOpAssign
+};
 
 GContext *app_get_current_graphics_context(void) {
     return &current_graphics_context;
@@ -116,7 +121,7 @@ void gpath_draw_outline(GContext *ctx, GPath *path) {
 void gpath_draw_filled(GContext *ctx, GPath *path) {
     Sint16* pointsX,* pointsY;
     _gpath_to_sdl (path,&pointsX,&pointsY);
-    filledPolygonColor(getTopScreen(), pointsX, pointsY, path->num_points, getRawColor(ctx->stroke_color));
+    filledPolygonColor(getTopScreen(), pointsX, pointsY, path->num_points, getRawColor(ctx->fill_color));
     free(pointsX);
     free(pointsY);
 }
