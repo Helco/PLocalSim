@@ -7,6 +7,15 @@ applications on your computer.
 
 [Installation and Use]
 For OS specific manuals see linux.txt/windows.txt/mac.txt
+The simulator has several key commands you can use:
+	[Arrow up]	Pebble button: Up
+	[Arrow down]	Pebble button: Down
+	[Enter]		Pebble button: Select
+	[Backspace]	Pebble button: Back
+	[F1]		Changes the color of the drawn pebble
+	[F2]		Toggles the lens effect 
+	[F3]		Switches between 24H and 12H mode
+	[F12]		Saves a screenshot in <simulator>\simdata\screenshots\
 
 [Non-implemented features]
 I tried to put as much from the original SDK into the first release, but there are some things

@@ -1,14 +1,16 @@
 [THE WINDOWS SDK IS NOT READY YET]
 
 [Installation]
+You can use the the directory .\build\windows\ as a windows sdk but if you like to have it
+somewhere else (probably easier to access) you can follow these instructions:
+1. Switch to your chosen directory and type <original_sdk>/build/windows/install.bat
+2. This projects requires MinGW. You have to set the bin path of it in the 
+   <sdk>/envvars.bat file or you can leave it at default and extract the archives
+   listed below into the folder <sdk>\MinGW\
+Note: If you do these changes before you use install.bat your installed sdk will have your
+changes too.
 
-1. Copy the content of ./build/windows/build/ into a directory of your choice (or leave it there)
-2. Copy the Pebble SDK directory PebbleSDK1.2/Pebble/sdk/include into the previous directory.
-3. This projects requires MinGW. You have to set the bin path of it in the 
-./build/windows/envvars.bat file or you can leave it at default and extract the archives
-listed below into the folder ./build/windows/MinGW/
-
-Archives:
+MinGW Archives:
 http://prdownloads.sf.net/mingw/gcc-core-3.4.5-20060117-1.tar.gz 
 http://prdownloads.sf.net/mingw/gcc-g++-3.4.5-20060117-1.tar.gz 
 http://prdownloads.sf.net/mingw/mingw-runtime-3.9.tar.gz 
@@ -18,5 +20,20 @@ http://prdownloads.sf.net/mingw/binutils-2.17.50-20060824-1.tar.gz
 http://prdownloads.sf.net/mingw/mingw32-make-3.81-1.tar.gz
 
 [Use]
+Unlike on other operating systems, the pebble team has no sdk for windows yet, that is why
+you have to create a project with a tool provided by this sdk. To create a project switch 
+to the directory you want your projects folder in and run the command:
+	create.project.bat <project_name>
+This will create a sample project for you to start coding. To build your project run:
+	.\tools\build.local.bat
+from your projects main folder. To run it you can switch to the directory <project>\build\
+local\ or you can run:
+	.\tools\run.local.bat
+also from your projects main folder.
 
 [Build the project on your own]
+To build an installation of this pebble simulator sdk switch to the directory .\build\windows.
+There you have two commands:
+	build.library.bat to build the library used to create the simulator
+	build.resCompiler.bat to build the resource compiler
+Note that you need MinGW (see [Installation]) to build this project

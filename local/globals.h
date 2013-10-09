@@ -4,8 +4,13 @@
 #include "pebble_fonts.h"
 #include "SDL_gfxPrimitives.h"
 #include "SDL_gfxBlitFunc.h"
+
 #ifdef WIN32
 #include <windows.h>
+#else
+#define min(A, B) (((A) < (B) ? (A) : (B)))
+#define max(A, B) (((A) > (B) ? (A) : (B)))
+#define clamp(A, X, B)  min(max(A, X), B)
 #endif
 
 #define PI 3.14159265
@@ -23,10 +28,6 @@
 
 #define LOCK(X) if(SDL_MUSTLOCK(X)) SDL_LockSurface(X)
 #define UNLOCK(X) if(SDL_MUSTLOCK(X)) SDL_UnlockSurface(X)
-
-#define min(A, B) (((A) < (B) ? (A) : (B)))
-#define max(A, B) (((A) > (B) ? (A) : (B)))
-#define clamp(A, X, B)  min(max(A, X), B)
 
 //#helco
 struct GContext

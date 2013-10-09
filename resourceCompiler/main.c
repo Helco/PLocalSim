@@ -30,8 +30,8 @@ int compileResourceMap ();
 int generateResourceHeader ();
 
 int main(int argc,char* argv[]) {
-    if (SDL_Init(SDL_INIT_VIDEO)<0||IMG_Init(IMG_INIT_PNG)<0) RET_ERROR ("Couldn't initate SDL and SDL_image!",1)
-        int i;
+    if (SDL_Init(SDL_INIT_VIDEO)<0||IMG_Init(IMG_INIT_PNG)<0) RET_ERROR ("Couldn't initate SDL and SDL_image!",-1)
+    int i;
     FILE* f=fopen ("pebble_app.ld","rb");
     if (!f) RET_ERROR("Please execute the local simulator resource compiler in the project main folder!\n",-1)
         fclose(f);
@@ -40,8 +40,10 @@ int main(int argc,char* argv[]) {
     for (i=0; i<RESOURCES_MAX_COUNT; i++)
         memset (resourceNames[i],0,RESOURCE_NAME_MAXLEN+1);
 #ifdef WIN32
-    system("mkdir .\\build\\local\\resources\\");
-    system("mkdir .\\build\\tempLocal\\src\\");
+	//This will only work on a valid sample project... 
+    CreateDirectoryA(".\\build\\local\\resources\\",0);
+    CreateDirectoryA(".\\build\\tempLocal\\",0);
+	CreateDirectoryA(".\\build\\tempLocal\\src\\",0);
 #else
     system("mkdir -p ./build/local/resources/");
     system("mkdir -p ./build/tempLocal/src/");
@@ -450,7 +452,7 @@ int generateResourceHeader() {
         "static const uint32_t resource_crc_table[] = {\n";
     static const char* sectionCrcElementStart="  0";
     static const char* sectionCrcElementEnd=",\n";
-    static const char* sectionEnd="\n};";
+    static const char* sectionEnd="\n};\n";
 
     FILE* f=fopen (fileName,"w");
     int i;

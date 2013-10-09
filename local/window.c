@@ -8,7 +8,7 @@ void window_init(Window *window, const char *debug_name) {
     window->is_loaded=false;
     window->on_screen=false;
     window->is_render_scheduled=false;
-    window->background_color=GColorWhite;
+    window->background_color=GColorBlack;
     window->user_data=0;
     window->click_config_context=0;
     window->status_bar_icon=0;
