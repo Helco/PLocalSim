@@ -17,7 +17,7 @@ cp -r ./tools/local/simdata/* ./build/local/simdata/
 #Build
 export LIBRARY_PATH=$LIBRARY_PATH':./tools/local/'
 SDL_LIBS='-lSDL -lSDLmain -lSDL_ttf -lSDL_image'
-RT_LIB='-lpebbleLocalSim'
+RT_LIB='-lPebbleLocalSim'
 INCLUDES='-I ./include/ -I ./build/tempLocal/ -I ./build/tempLocal/src/'
 RT_SRC='./include/local/*.c'
 APP_SRC='./src/*.c'
@@ -29,5 +29,5 @@ OUTPUT='./build/local/'$APP
 ./tools/local/resCompiler
 if [ $? -eq 0 ]
 then
-	gcc -x c -std=c99 -Wall -o $OUTPUT  $INCLUDES $APP_SRC $RT_LIB $SDL_LIBS
+	gcc -x c -std=c99 -Wall -o $OUTPUT  $INCLUDES $APP_SRC -lm $RT_LIB $SDL_LIBS
 fi
