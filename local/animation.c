@@ -3,6 +3,8 @@
 static Animation* firstScheduledAnimation=0;
 
 void animation_init(struct Animation *animation) {
+    if (animation_is_scheduled (animation))
+        animation_unschedule (animation);
     animation->list_node.next=0;
     animation->list_node.prev=0;
     animation->abs_start_time_ms=0;
@@ -61,10 +63,6 @@ void animation_schedule(struct Animation *animation) {
 void animation_unschedule(struct Animation *animation) {
     if (animation->implementation==0)
         return;
-    if (animation->handlers.stopped!=0)
-        animation->handlers.stopped(animation,animation->is_completed,animation->context);
-    if (animation->implementation->teardown!=0)
-        animation->implementation->teardown(animation);
     animation->is_completed=true;
     animation->abs_start_time_ms=0;
     if (animation==firstScheduledAnimation) {
@@ -79,6 +77,10 @@ void animation_unschedule(struct Animation *animation) {
     }
     animation->list_node.next=0;
     animation->list_node.prev=0;
+    if (animation->handlers.stopped!=0)
+        animation->handlers.stopped(animation,animation->is_completed,animation->context);
+    if (animation->implementation->teardown!=0)
+        animation->implementation->teardown(animation);
 }
 
 void animation_unschedule_all(void) {

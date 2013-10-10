@@ -10,19 +10,34 @@
 	<File name="../../../include/pebble_app.h" open="0" top="0" tabpos="0">
 		<Cursor position="65" topLine="0" />
 	</File>
+	<File name="../../../include/pebble_os.h" open="0" top="0" tabpos="1">
+		<Cursor position="21168" topLine="656" />
+	</File>
+	<File name="../../../local/animation.c" open="0" top="0" tabpos="0">
+		<Cursor position="709" topLine="0" />
+	</File>
 	<File name="../../../local/bitmap.c" open="0" top="0" tabpos="0">
 		<Cursor position="1403" topLine="26" />
 	</File>
-	<File name="../../../local/draw.c" open="1" top="1" tabpos="0">
+	<File name="../../../local/draw.c" open="0" top="0" tabpos="0">
 		<Cursor position="49" topLine="0" />
 	</File>
 	<File name="../../../local/font.c" open="0" top="0" tabpos="0">
 		<Cursor position="3030" topLine="48" />
 	</File>
 	<File name="../../../local/globals.h" open="0" top="0" tabpos="0">
-		<Cursor position="701" topLine="8" />
+		<Cursor position="1585" topLine="87" />
+	</File>
+	<File name="../../../local/main.c" open="0" top="0" tabpos="0">
+		<Cursor position="1186" topLine="42" />
 	</File>
 	<File name="../../../local/pebble_os.c" open="0" top="0" tabpos="0">
-		<Cursor position="2314" topLine="70" />
+		<Cursor position="633" topLine="3" />
+	</File>
+	<File name="../../../test/src/num2words.c" open="0" top="0" tabpos="0">
+		<Cursor position="0" topLine="113" />
+	</File>
+	<File name="../../../test/src/words_date_day.c" open="0" top="0" tabpos="0">
+		<Cursor position="2097" topLine="51" />
 	</File>
 </CodeBlocks_layout_file>

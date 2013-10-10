@@ -11,6 +11,25 @@ void inverter_layer_init(InverterLayer *inverter, GRect frame) {
     layer_set_update_proc ((Layer*)inverter,inverter_layer_update);
 }
 
+void app_log(uint8_t log_level, const char *src_filename, int src_line_number, const char *fmt, ...) {
+    static const char* logLevels []={"ERROR","WARNING","INFO","DEBUG","DBG-VERBOSE"};
+    va_list args;
+    log_level=log_level/50-(log_level>100?1:0); //To map log_level to the element in the array ^
+    printf ("[LOG][%s][%s:%d] ",logLevels[log_level],src_filename,src_line_number);
+    if (logFile!=0)
+        fprintf (logFile,"[%s][%s:%d] ",logLevels[log_level],src_filename,src_line_number);
+    va_start(args,fmt);
+    vfprintf (stdout,fmt,args);
+    printf ("\n");
+    va_end (args);
+    if (logFile!=0) {
+        va_start(args,fmt);
+        vfprintf (logFile,fmt,args);
+        fprintf (logFile,"\n");
+        va_end (args);
+    }
+}
+
 void resource_init_current_app(ResVersionHandle version) {
     printf("[DEBUG] [NOOP] Successfully loaded resource map!\n");
 }

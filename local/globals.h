@@ -19,6 +19,7 @@
 #include <time.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <stdarg.h>
 #include <SDL/SDL.h>
 #include <SDL/SDL_ttf.h>
 #include <SDL/SDL_image.h>
@@ -64,6 +65,8 @@ extern SDL_Color s_clear;
 
 extern SDL_Color getColor(uint8_t color);
 extern void sdlrect_clip (SDL_Rect* const rect_to_clip,const SDL_Rect* const clipper);
+
+extern FILE* logFile;
 
 //BUTTONS BUTTONS BUTTONS BUTTONS BUTTONS BUTTONS BUTTONS BUTTONS BUTTONS BUTTONS
 void onButtonDown (ButtonId id);

@@ -17,6 +17,8 @@
 #define KEY_BUTTON_DOWN SDLK_DOWN
 #define BUTTON_PRESSED_OFFSET 3 //*-1 for UP, SELECT and DOWN
 
+#define LOG_FILE "log.txt"
+
 const SDL_Rect buttonRects [NUM_BUTTONS]={
     {0,114,6,76},
     {225,79,6,77},
@@ -36,6 +38,8 @@ static bool buttonState [NUM_BUTTONS]={0,0,0,0};
 static bool bodyRender=true;
 static bool lastVibeState=false;
 static bool lastLightState=false;
+
+FILE* logFile=0;
 
 PebbleAppHandlers* getAppHandlers() {
     return &_PebbleAppHandlers;
@@ -95,6 +99,8 @@ int main(int argc,char* argv[]) {
       return -8;
   }
 
+  logFile=fopen (LOG_FILE,"a");
+
   if (!initRender(pebbleScreen))
     return -9;
   initHardwareOutput ();
@@ -102,6 +108,9 @@ int main(int argc,char* argv[]) {
   pbl_main(NULL);
   unloadSystemFonts ();
   quitRender();
+
+  if (logFile!=0)
+    fclose(logFile);
 
   SDL_FreeSurface(lightImg);
   SDL_FreeSurface(vibeImg);

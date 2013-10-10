@@ -119,7 +119,14 @@
 		<Unit filename="../../../local/window.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../../test/src/floating-dials.c">
+		<Unit filename="../../../test/src/num2words.c">
+			<Option compilerVar="CC" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="../../../test/src/num2words.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="../../../test/src/words_date_day.c">
 			<Option compilerVar="CC" />
 			<Option target="Debug" />
 		</Unit>
