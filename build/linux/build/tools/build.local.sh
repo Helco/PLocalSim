@@ -14,9 +14,10 @@ done
 mkdir -p ./build/local/simdata
 cp -r ./tools/local/simdata/* ./build/local/simdata/
 
+
 #Build
 export LIBRARY_PATH=$LIBRARY_PATH':./tools/local/'
-SDL_LIBS='-lSDL -lSDLmain -lSDL_ttf -lSDL_image'
+SDL_LIBS='-lSDL -lSDLmain -lSDL_ttf -lSDL_image -lm'
 RT_LIB='-lPebbleLocalSim'
 INCLUDES='-I ./include/ -I ./build/tempLocal/ -I ./build/tempLocal/src/'
 RT_SRC='./include/local/*.c'
