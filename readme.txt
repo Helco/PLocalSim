@@ -1,5 +1,5 @@
 [PebbleLocalSimulator]
-Version: 0.1 BETA
+Version: 0.2 BETA
 
 [Overview]
 This project is an extension to the PebbleSDK1.2 which allows you to build and run your pebble
