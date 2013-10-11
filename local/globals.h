@@ -4,6 +4,7 @@
 #include "pebble_fonts.h"
 #include "SDL_gfxPrimitives.h"
 #include "SDL_gfxBlitFunc.h"
+#include "SDL_rotozoom.h"
 
 #ifdef WIN32
 #include <windows.h>
@@ -14,6 +15,7 @@
 #endif
 
 #define PI 3.14159265
+#define DEGtoRAD(deg) ((PI/180.0)*(deg))
 
 #include <math.h>
 #include <time.h>
@@ -24,13 +26,26 @@
 #include <SDL/SDL_ttf.h>
 #include <SDL/SDL_image.h>
 
+//SYSTEM SYSTEM SYSTEM SYSTEM SYSTEM SYSTEM SYSTEM SYSTEM SYSTEM SYSTEM SYSTEM SYSTEM
+
+extern void pbl_main(void *params);
+
+void unloadSystemFonts ();
+void defaultRender (AppContextRef app_ctx, PebbleRenderEvent *event);
+PebbleAppHandlers* getAppHandlers ();
+void toggle_24h_style ();
+
+GPoint getPivotRotationOffset (GSize rectOrig,GSize rectRotated,GPoint pivot,double angle);
+
+extern FILE* logFile;
+
+//DRAW DRAW DRAW DRAW DRAW DRAW DRAW DRAW DRAW DRAW DRAW DRAW DRAW DRAW DRAW DRAW DRAW
 #define PBL_SCREEN_WIDTH 144
 #define PBL_SCREEN_HEIGHT 168
 
 #define LOCK(X) if(SDL_MUSTLOCK(X)) SDL_LockSurface(X)
 #define UNLOCK(X) if(SDL_MUSTLOCK(X)) SDL_UnlockSurface(X)
 
-//#helco
 struct GContext
 {
 	GColor fill_color;
@@ -41,18 +56,9 @@ struct GContext
 
 typedef struct SDL_Point
 {
-    int x,y;
+    int32_t x,y;
 } SDL_Point;
 
-extern void pbl_main(void *params);
-
-//extern SDL_Surface* getSystemScreen ();
-extern void unloadSystemFonts ();
-extern void defaultRender (AppContextRef app_ctx, PebbleRenderEvent *event);
-extern PebbleAppHandlers* getAppHandlers ();
-extern void toggle_24h_style ();
-
-                         //AABBGGRR
 static const uint32_t r_white = 0xffffffff;
 static const uint32_t r_black = 0x000000ff;
 static const uint32_t r_clear = 0x00000000;
@@ -63,10 +69,12 @@ extern SDL_Color s_white;
 extern SDL_Color s_black;
 extern SDL_Color s_clear;
 
-extern SDL_Color getColor(uint8_t color);
-extern void sdlrect_clip (SDL_Rect* const rect_to_clip,const SDL_Rect* const clipper);
+SDL_Color getColor(uint8_t color);
+void sdlrect_clip (SDL_Rect* const rect_to_clip,const SDL_Rect* const clipper);
 
-extern FILE* logFile;
+void graphics_draw_bitmap_in_rect_to(GContext* ctx,const GBitmap* bitmap,GRect,SDL_Surface* to);
+void graphics_draw_surface_in_rect (GContext* ctx,SDL_Surface* sur,GRect rect);
+void graphics_draw_surface_in_rect_to (GContext* ctx,SDL_Surface* sur,GRect rect,SDL_Surface* to);
 
 //BUTTONS BUTTONS BUTTONS BUTTONS BUTTONS BUTTONS BUTTONS BUTTONS BUTTONS BUTTONS
 void onButtonDown (ButtonId id);
@@ -94,6 +102,9 @@ void updateHardwareOutput ();
 #define MIN_SCREEN_POOL 4
 #define MAX_RENDER_LIST 12
 
+#define createSurface(w,h) (SDL_CreateRGBSurface (SDL_SWSURFACE|SDL_SRCALPHA,w,h,32,0xff000000,0x00ff0000,0x0000ff00,0x000000ff))
+#define createScreen createSurface(PBL_SCREEN_WIDTH,PBL_SCREEN_HEIGHT)
+
 bool initRender (SDL_Surface* screen);
 void quitRender ();
 
@@ -104,13 +115,20 @@ int getWindowStackSize ();
 SDL_Surface* pushScreen ();
 void popScreen ();
 SDL_Surface* getTopScreen ();
+void meltScreens ();
 
 void pushLayer (Layer* l);
 void popLayer ();
 void markDirty (bool toggle);
 GPoint getTopOffset ();
+void setTopOffset (GPoint set);
 
 bool render ();
+
+//ADDITIONAL PEBBLE OS ADDITIONAL PEBBLE OS ADDITIONAL PEBBLE OS
+//functions, the original pebble API might have but doesn't
+void rotbmp_layer_init (RotBitmapLayer* layer,GRect frame);
+void rotbmp_pair_layer_init (RotBmpPairLayer* layer,GRect frame);
 
 //ANIMATION ANIMATION ANIMATION ANIMATION ANIMATION ANIMATION ANIMATION
 void updateAnimations ();

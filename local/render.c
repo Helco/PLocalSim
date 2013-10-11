@@ -24,8 +24,6 @@ static char statusTimeBuffer[STATUS_TIME_BUFFER_SIZE]={0};
 static GFont statusTimeFont;
 static bool statusBarVisible=true;
 
-#define createScreen (SDL_CreateRGBSurface (SDL_SWSURFACE|SDL_SRCALPHA,144,168,32,0xff000000,0x00ff0000,0x0000ff00,0x000000ff))//0x000000ff,0x0000ff00,0x00ff0000,0xff000000))
-
 bool initRender (SDL_Surface* screen)
 {
     for (screenPoolSize=0;screenPoolSize<MIN_SCREEN_POOL;screenPoolSize++) {
@@ -164,6 +162,10 @@ GPoint getTopOffset () {
     return topOffset;
 }
 
+void setTopOffset (GPoint set) {
+    topOffset=set;
+}
+
 void renderLayer (Layer* l,GContext* ctx) {
     if (l->hidden==true)
         return;
@@ -262,22 +264,8 @@ Window *window_stack_remove(Window *window, bool animated) {
     return window; //no documentation about return?
 }
 
-void inverter_layer_update (Layer* me,GContext* ctx) {
+void meltScreens () {
     SDL_Surface* myScreen=getTopScreen ();
-    SDL_Rect rect;
-    uint32_t* pixel;
-    int x,y,i;
-    for (i=0;i<renderListSize-1;i++)
+    for (int i=0;i<renderListSize-1;i++)
         SDL_gfxBlitRGBA(renderList[i].clipScreen,0,myScreen,0);
-    SDL_GetClipRect(myScreen,&rect);
-    LOCK(myScreen);
-    if (rect.w>0&&rect.h>0) {
-        for (y=rect.y;y<rect.y+rect.h;y++) {
-            for (x=rect.x;x<rect.x+rect.w;x++) {
-                pixel=(uint32_t*)(((uint8_t*)myScreen->pixels)+y*myScreen->pitch+4*x);
-                *pixel=~(*pixel) | 0x000000ff;
-            }
-        }
-    }
-    UNLOCK(myScreen);
 }

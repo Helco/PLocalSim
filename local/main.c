@@ -66,7 +66,7 @@ int main(int argc,char* argv[]) {
     return -2;
   }
   SDL_WM_SetCaption ("Pebble Local Simulator - 24H Style",0);
-  pebbleScreen = SDL_CreateRGBSurface (SDL_SWSURFACE|SDL_SRCALPHA,144,168,32,0xff000000,0x00ff0000,0x0000ff00,0x000000ff);//0x000000ff,0x0000ff00,0x00ff0000,0xff000000);
+  pebbleScreen = createScreen;
 
   if(TTF_Init()==-1) {
     printf("TTF_Init: %s\n", TTF_GetError());
@@ -156,7 +156,7 @@ void tick(void* dummy) {
     get_time(&time);
     event.tick_time=&time;
     event.units_changed=_PebbleAppHandlers.tick_info.tick_units;
-  (_PebbleAppHandlers.tick_info.tick_handler)(NULL, &event);
+  (_PebbleAppHandlers.tick_info.tick_handler)(app_get_current_graphics_context(), &event);
 }
 
 void app_event_loop(AppTaskContextRef app_task_ctx, PebbleAppHandlers *handlers) {
@@ -169,7 +169,7 @@ void app_event_loop(AppTaskContextRef app_task_ctx, PebbleAppHandlers *handlers)
     printf("[DEBUG] Got app_event_loop\n");
     _PebbleAppHandlers = *handlers;
     if (_PebbleAppHandlers.init_handler!=NULL)
-        (_PebbleAppHandlers.init_handler)(NULL);
+        (_PebbleAppHandlers.init_handler)(app_get_current_graphics_context());
     _then = (time_t)~0;
     while (isRunning) {
         lastTick=SDL_GetTicks ();
@@ -245,7 +245,7 @@ void app_event_loop(AppTaskContextRef app_task_ctx, PebbleAppHandlers *handlers)
             SDL_Delay(delay);
     }
     if (_PebbleAppHandlers.deinit_handler!=NULL)
-        (_PebbleAppHandlers.deinit_handler)(NULL);
+        (_PebbleAppHandlers.deinit_handler)(app_get_current_graphics_context());
 }
 
 void simulatorRender() {

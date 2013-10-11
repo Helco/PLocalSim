@@ -134,3 +134,15 @@ void sdlrect_clip(SDL_Rect * const rect_to_clip, const SDL_Rect * const rect_cli
         rect_to_clip->h=rect_clipper->h-rect_to_clip->y;
     }
 }
+
+GPoint getPivotRotationOffset(GSize rectOrig,GSize rectRotated,GPoint pivot,double angle) {
+    GPoint offset;
+    pivot.x-=rectOrig.w/2;
+    pivot.y-=rectOrig.h/2;
+    angle*=PI/180.0;
+    double s=sin(angle);
+    double c=cos(angle);
+    offset.x=pivot.x*c - pivot.y*s + rectRotated.w/2;
+    offset.y=pivot.x*s + pivot.y*c + rectRotated.h/2;
+    return offset;
+}

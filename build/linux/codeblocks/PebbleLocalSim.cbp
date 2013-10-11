@@ -28,6 +28,7 @@
 					<Add option="-lSDLmain" />
 					<Add option="-lSDL_ttf" />
 					<Add option="-lSDL_image" />
+					<Add option="-lm" />
 				</Linker>
 			</Target>
 			<Target title="Release">
@@ -119,15 +120,11 @@
 		<Unit filename="../../../local/window.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../../test/src/num2words.c">
+		<Unit filename="../../../test/src/Timely.c">
 			<Option compilerVar="CC" />
 			<Option target="Debug" />
 		</Unit>
-		<Unit filename="../../../test/src/num2words.h">
-			<Option target="Debug" />
-		</Unit>
-		<Unit filename="../../../test/src/words_date_day.c">
-			<Option compilerVar="CC" />
+		<Unit filename="../../../test/src/config.h">
 			<Option target="Debug" />
 		</Unit>
 		<Extensions>

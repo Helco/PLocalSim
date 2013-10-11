@@ -55,7 +55,7 @@ void onButtonDown (ButtonId id)
     if (appHandlers->input_handlers.buttons.down!=0) {
         PebbleButtonEvent event;
         event.button_id=id;
-        appHandlers->input_handlers.buttons.down(0,&event);
+        appHandlers->input_handlers.buttons.down(app_get_current_graphics_context(),&event);
     }
     rec=clickRecognizer+id;
     conf=clickConfig+id;
@@ -85,7 +85,7 @@ void onButtonUp (ButtonId id)
     if (appHandlers->input_handlers.buttons.up!=0) {
         PebbleButtonEvent event;
         event.button_id=id;
-        appHandlers->input_handlers.buttons.up(0,&event);
+        appHandlers->input_handlers.buttons.up(app_get_current_graphics_context(),&event);
     }
     rec=clickRecognizer+id;
     conf=clickConfig+id;

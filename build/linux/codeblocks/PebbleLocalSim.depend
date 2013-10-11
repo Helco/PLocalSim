@@ -39,11 +39,12 @@
 1380643890 source:/home/helco/github/PebbleLocalSim/local/actionbar.c
 	"globals.h"
 
-1381331698 /home/helco/github/PebbleLocalSim/local/globals.h
+1381410989 /home/helco/github/PebbleLocalSim/local/globals.h
 	"pebble_os.h"
 	"pebble_fonts.h"
 	"SDL_gfxPrimitives.h"
 	"SDL_gfxBlitFunc.h"
+	"SDL_rotozoom.h"
 	<windows.h>
 	<math.h>
 	<time.h>
@@ -57,13 +58,13 @@
 1381388230 source:/home/helco/github/PebbleLocalSim/local/animation.c
 	"globals.h"
 
-1380875002 source:/home/helco/github/PebbleLocalSim/local/bitmap.c
+1381473218 source:/home/helco/github/PebbleLocalSim/local/bitmap.c
 	"globals.h"
 
-1380894058 source:/home/helco/github/PebbleLocalSim/local/buttons.c
+1381474245 source:/home/helco/github/PebbleLocalSim/local/buttons.c
 	"globals.h"
 
-1381215399 source:/home/helco/github/PebbleLocalSim/local/draw.c
+1381473158 source:/home/helco/github/PebbleLocalSim/local/draw.c
 	"globals.h"
 
 1380869236 source:/home/helco/github/PebbleLocalSim/local/font.c
@@ -81,19 +82,19 @@
 1380893574 source:/home/helco/github/PebbleLocalSim/local/layer.c
 	"globals.h"
 
-1381331718 source:/home/helco/github/PebbleLocalSim/local/main.c
+1381474093 source:/home/helco/github/PebbleLocalSim/local/main.c
 	"globals.h"
 
-1380967696 source:/home/helco/github/PebbleLocalSim/local/math.c
+1381434553 source:/home/helco/github/PebbleLocalSim/local/math.c
 	"globals.h"
 
-1380893256 source:/home/helco/github/PebbleLocalSim/local/render.c
+1381409785 source:/home/helco/github/PebbleLocalSim/local/render.c
 	"globals.h"
 
 1381313728 source:/home/helco/github/PebbleLocalSim/local/window.c
 	"globals.h"
 
-1381332178 source:/home/helco/github/PebbleLocalSim/local/pebble_os.c
+1381407538 source:/home/helco/github/PebbleLocalSim/local/pebble_os.c
 	"globals.h"
 
 1381331664 source:/home/helco/github/PebbleLocalSim/test/src/floating-dials.c
@@ -103,7 +104,7 @@
 	"config.h"
 	"rockshot.h"
 
-1381214356 /home/helco/github/PebbleLocalSim/test/src/config.h
+1371324802 /home/helco/github/PebbleLocalSim/test/src/config.h
 
 1381386138 source:/home/helco/github/PebbleLocalSim/test/src/num2words.c
 	"num2words.h"
@@ -118,4 +119,22 @@
 	"pebble_app.h"
 	"pebble_fonts.h"
 	"num2words.h"
+
+1381472393 source:/home/helco/github/PebbleLocalSim/test/src/ninety_one_dub.c
+	"pebble_os.h"
+	"pebble_app.h"
+	"pebble_fonts.h"
+
+1381473182 source:/home/helco/github/PebbleLocalSim/test/src/brains.c
+	"pebble_os.h"
+	"pebble_app.h"
+	"pebble_fonts.h"
+
+1371324802 source:/home/helco/github/PebbleLocalSim/test/src/Timely.c
+	"pebble_os.h"
+	"pebble_app.h"
+	"pebble_fonts.h"
+	<math.h>
+	"resource_ids.auto.h"
+	"config.h"
 

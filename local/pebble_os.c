@@ -2,9 +2,24 @@
 
 static bool clock24hStyle=true;
 
-//the implementation of this functions is located in render.c because
-//it has to access previously drawn sections
-void inverter_layer_update (Layer* me,GContext* ctx);
+void inverter_layer_update (Layer* me,GContext* ctx) {
+    SDL_Surface* myScreen=getTopScreen ();
+    SDL_Rect rect;
+    uint32_t* pixel;
+    int x,y;
+    meltScreens();
+    SDL_GetClipRect(myScreen,&rect);
+    LOCK(myScreen);
+    if (rect.w>0&&rect.h>0) {
+        for (y=rect.y;y<rect.y+rect.h;y++) {
+            for (x=rect.x;x<rect.x+rect.w;x++) {
+                pixel=(uint32_t*)(((uint8_t*)myScreen->pixels)+y*myScreen->pitch+4*x);
+                *pixel=~(*pixel) | 0x000000ff;
+            }
+        }
+    }
+    UNLOCK(myScreen);
+}
 
 void inverter_layer_init(InverterLayer *inverter, GRect frame) {
     layer_init ((Layer*)inverter,frame);

@@ -126,31 +126,35 @@ void gpath_draw_filled(GContext *ctx, GPath *path) {
     free(pointsY);
 }
 
-//#verify #helco
-void graphics_draw_bitmap_in_rect(GContext *ctx, const GBitmap *bitmap, GRect rect) {
+//This is because the graphics_draw_* functions are too big to not be controlled by something bigger
+//-1,0 means Start
+//0,-1 means End
+//x,x means getPixel at x,y
+typedef uint32_t (*graphics_draw_something_callback) (void* what,int16_t x,int16_t y);
+
+void graphics_draw_something_in_rect_to(GContext *ctx, void* what,graphics_draw_something_callback callback, GRect rect,SDL_Surface* screen) {
     // TODO: verify composite mode implementations
     // TODO: bitmap->info_flags?
     GCompOp compositing_mode = ctx->compositing_mode;
-    SDL_Surface* screen = getTopScreen();
     GPoint topOffset=getTopOffset ();
-
+    SDL_Rect clipRect;
+    SDL_GetClipRect(screen,&clipRect);
+    meltScreens();
     LOCK(screen);
-
     int16_t x,y;
+    callback (what,-1,0);
     for(x=0; x < rect.size.w; x++) {
         int16_t dst_x = x + rect.origin.x+topOffset.x;
-        if(dst_x < 0) continue;
-        else if(dst_x >= PBL_SCREEN_WIDTH) break;
+        if(dst_x < clipRect.x) continue;
+        else if(dst_x >= clipRect.x+clipRect.w) break;
 
 
         for(y=0; y < rect.size.h; y++) {
             int16_t dst_y = y + rect.origin.y+topOffset.y;
-            if(dst_y < 0) continue;
-            else if(dst_y >= PBL_SCREEN_HEIGHT) break;
+            if(dst_y < clipRect.y) continue;
+            else if(dst_y >= clipRect.y+clipRect.h) break;
 
-            uint32_t src_c = (bitmap->bounds.origin.x+(x%bitmap->bounds.size.w));
-            src_c = (*(((uint8_t*)bitmap->addr)+bitmap->row_size_bytes*(bitmap->bounds.origin.y+(y%bitmap->bounds.size.h))+src_c/8))&(1<<(src_c%8)); //(bitmap_base + line_start + byte_indedx))
-            src_c = (src_c>0?r_white:r_black);
+            uint32_t src_c = callback(what,x,y);
             uint32_t *dst_c = (uint32_t *)(((uint8_t*)screen->pixels) + screen->pitch * dst_y + 4 * dst_x);
 
             switch(compositing_mode) {
@@ -177,8 +181,51 @@ void graphics_draw_bitmap_in_rect(GContext *ctx, const GBitmap *bitmap, GRect re
             }
         }
     }
-
+    callback(what,0,-1);
     UNLOCK(screen);
+}
+
+uint32_t graphics_draw_bitmap_callback (void* what,int16_t x,int16_t y) {
+    if (x>=0&&y>=0) {
+        GBitmap* bitmap=(GBitmap*)what;
+        uint32_t src_c=(bitmap->bounds.origin.x+(x%bitmap->bounds.size.w));
+        src_c = (*(((uint8_t*)bitmap->addr)+bitmap->row_size_bytes*(bitmap->bounds.origin.y+(y%bitmap->bounds.size.h))+src_c/8))&(1<<(src_c%8)); //(bitmap_base + line_start + byte_indedx))
+        src_c = (src_c>0?r_white:r_black);
+        return src_c;
+    }
+    return 0;
+}
+
+void graphics_draw_bitmap_in_rect (GContext* ctx,const GBitmap* bitmap,GRect rect) {
+    graphics_draw_something_in_rect_to (ctx,(void*)bitmap,graphics_draw_bitmap_callback,rect,getTopScreen ());
+}
+
+void graphics_draw_bitmap_in_rect_to (GContext* ctx,const GBitmap* bitmap,GRect rect,SDL_Surface* to) {
+    graphics_draw_something_in_rect_to (ctx,(void*)bitmap,graphics_draw_bitmap_callback,rect,to);
+}
+
+uint32_t graphics_draw_surface_callback (void* what,int16_t x,int16_t y) {
+    SDL_Surface* sur=(SDL_Surface*) what;
+    if (x<0) {
+        LOCK(sur);
+    }
+    else if (y<0) {
+        UNLOCK(sur);
+    }
+    else {
+        uint8_t* address=((uint8_t*)sur->pixels)+(y%sur->h)*sur->pitch+(x%sur->w)*4;
+        uint32_t src_c=*((uint32_t*)address);
+        return src_c;
+    }
+    return 0;
+}
+
+void graphics_draw_surface_in_rect (GContext* ctx,SDL_Surface* sur,GRect rect) {
+    graphics_draw_something_in_rect_to (ctx,sur,graphics_draw_surface_callback,rect,getTopScreen());
+}
+
+void graphics_draw_surface_in_rect_to (GContext* ctx,SDL_Surface* sur,GRect rect,SDL_Surface* to) {
+    graphics_draw_something_in_rect_to (ctx,sur,graphics_draw_surface_callback,rect,to);
 }
 
 typedef struct _WrapResult {

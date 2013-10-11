@@ -74,8 +74,8 @@ void heap_bitmap_deinit(HeapBitmap *c) {
 
 bool rotbmp_init_container(int resource_id, RotBmpContainer *c) {
     c->data=gbitmap_init_from_resource (&c->bmp,resource_id);
+    rotbmp_layer_init (&c->layer,c->bmp.bounds);
     c->layer.bitmap=&c->bmp;
-    layer_init ((Layer*)&c->layer,c->bmp.bounds);
     return c->data!=0;
 }
 
@@ -88,17 +88,11 @@ void rotbmp_deinit_container(RotBmpContainer *c) {
 
 bool rotbmp_pair_init_container(int white_resource_id, int black_resource_id, RotBmpPairContainer *c) {
     c->white_data=gbitmap_init_from_resource(&c->white_bmp,white_resource_id);
-    if (!c->white_data)
-        return false;
     c->black_data=gbitmap_init_from_resource(&c->black_bmp,black_resource_id);
-    if (!c->black_data)
-        return false;
+    rotbmp_pair_layer_init (&c->layer,c->white_bmp.bounds);
     c->layer.white_layer.bitmap=&c->white_bmp;
     c->layer.black_layer.bitmap=&c->black_bmp;
-    layer_init ((Layer*)&c->layer,c->white_bmp.bounds);
-    layer_init ((Layer*)&c->layer.white_layer,c->white_bmp.bounds);
-    layer_init ((Layer*)&c->layer.black_layer,c->white_bmp.bounds);
-    return true;
+    return (c->white_data!=0&&c->black_data!=0);
 }
 
 void rotbmp_pair_deinit_container(RotBmpPairContainer *c) {
@@ -119,6 +113,7 @@ void bitmap_layer_update_func (Layer* me,GContext* ctx) {
     grect_align (&rect,&me->frame,bitmapLayer->alignment,me->clips);
     rect.origin.x-=me->frame.origin.x;
     rect.origin.y-=me->frame.origin.y;
+    graphics_context_set_compositing_mode (ctx,bitmapLayer->compositing_mode);
     graphics_draw_bitmap_in_rect (ctx,bitmapLayer->bitmap,rect);
 }
 
@@ -147,8 +142,58 @@ void bitmap_layer_set_compositing_mode(BitmapLayer *image, GCompOp mode) {
     image->compositing_mode=mode;
 }
 
-//#todo #sprint1
-void rotbmp_pair_layer_set_src_ic(RotBmpPairLayer *pair, GPoint ic);
+void rotbmp_layer_update_func (Layer* me,GContext* ctx) {
+    GPoint topOffset=getTopOffset ();
+    setTopOffset(GPoint(0,0));
+    GRect rect=GRect(0,0,me->frame.size.w,me->frame.size.h);
+    RotBitmapLayer* bitmapLayer=(RotBitmapLayer*)me;
 
-//#todo #sprint1
-void rotbmp_pair_layer_set_angle(RotBmpPairLayer *pair, int32_t angle);
+    SDL_Surface* bitmap=createSurface(bitmapLayer->bitmap->bounds.size.w,bitmapLayer->bitmap->bounds.size.h);
+    graphics_context_set_compositing_mode (ctx,bitmapLayer->compositing_mode);
+    graphics_draw_bitmap_in_rect_to (ctx,bitmapLayer->bitmap,rect,bitmap);
+    double angle=(double)bitmapLayer->rotation/TRIG_MAX_ANGLE*360.0;
+    SDL_Surface* rotated=rotozoomSurface(bitmap,-angle,1.0,SMOOTHING_OFF);
+    SDL_FreeSurface(bitmap);
+    GPoint offset=getPivotRotationOffset(bitmapLayer->bitmap->bounds.size,GSize(rotated->w,rotated->h),bitmapLayer->src_ic,angle);
+
+    setTopOffset(topOffset);
+    graphics_context_set_compositing_mode (ctx,GCompOpAssign);
+    graphics_draw_surface_in_rect (ctx,rotated,GRect(bitmapLayer->dest_ic.x-offset.x,bitmapLayer->dest_ic.y-offset.y,rotated->w,rotated->h));
+    SDL_FreeSurface(rotated);
+}
+
+void rotbmp_layer_init (RotBitmapLayer* layer,GRect frame) {
+    layer_init ((Layer*)layer,frame);
+    layer->bitmap=0;
+    layer->corner_clip_color=GColorClear; //What is this?!
+    layer->rotation=0;
+    layer->src_ic=GPoint(0,0);
+    layer->dest_ic=GPoint(0,0);
+    layer->compositing_mode=GCompOpAssign;
+    layer_set_update_proc((Layer*)layer,rotbmp_layer_update_func);
+}
+
+void rotbmp_pair_layer_update_func (Layer* me,GContext* ctx) {
+    RotBmpPairLayer* pairLayer=(RotBmpPairLayer*)me;
+    rotbmp_layer_update_func ((Layer*)&pairLayer->white_layer,ctx);
+    rotbmp_layer_update_func ((Layer*)&pairLayer->black_layer,ctx);
+}
+
+void rotbmp_pair_layer_init (RotBmpPairLayer* layer,GRect frame) {
+    layer_init((Layer*)layer,frame);
+    rotbmp_layer_init (&layer->white_layer,frame); //the white and black layers are not added as childs
+    rotbmp_layer_init (&layer->black_layer,frame);
+    layer->white_layer.compositing_mode=GCompOpSet;
+    layer->black_layer.compositing_mode=GCompOpClear;
+    layer_set_update_proc ((Layer*)layer,rotbmp_pair_layer_update_func);
+}
+
+void rotbmp_pair_layer_set_src_ic(RotBmpPairLayer *pair, GPoint ic) {
+    pair->white_layer.src_ic=ic;
+    pair->white_layer.src_ic=ic;
+}
+
+void rotbmp_pair_layer_set_angle(RotBmpPairLayer *pair, int32_t angle) {
+    pair->white_layer.rotation=angle;
+    pair->black_layer.rotation=angle;
+}
