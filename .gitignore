@@ -3,3 +3,6 @@ build/windows/obj/
 build/linux/codeblocks/obj/
 build/linux/codeblocks/bin/
 test/
+
+*.goutput*
+*~

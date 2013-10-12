@@ -185,6 +185,7 @@ bool render () {
     PebbleRenderEvent event={window_stack_get_top_window(),app_get_current_graphics_context()};
     PebbleAppHandlers* app=getAppHandlers();
     if (isDirty==true) {
+        SDL_FillRect(getTopScreen(),0,r_black);
         if (app->render_handler!=0)
             app->render_handler (0,&event);
         else
@@ -265,7 +266,13 @@ Window *window_stack_remove(Window *window, bool animated) {
 }
 
 void meltScreens () {
-    SDL_Surface* myScreen=getTopScreen ();
-    for (int i=0;i<renderListSize-1;i++)
+    SDL_Rect clipRect;
+    SDL_GetClipRect(getTopScreen(),&clipRect);
+    SDL_Surface* myScreen=getTopScreen();
+    renderList[renderListSize-1].clipScreen=pushScreen();
+    SDL_SetClipRect(renderList[renderListSize-1].clipScreen,&clipRect);
+    for (int i=0;i<renderListSize;i++)
         SDL_gfxBlitRGBA(renderList[i].clipScreen,0,myScreen,0);
+    popScreen();
+    renderList[renderListSize-1].clipScreen=myScreen;
 }

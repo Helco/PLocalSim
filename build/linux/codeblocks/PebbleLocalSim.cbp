@@ -120,13 +120,6 @@
 		<Unit filename="../../../local/window.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../../test/src/Timely.c">
-			<Option compilerVar="CC" />
-			<Option target="Debug" />
-		</Unit>
-		<Unit filename="../../../test/src/config.h">
-			<Option target="Debug" />
-		</Unit>
 		<Extensions>
 			<code_completion />
 			<envvars />

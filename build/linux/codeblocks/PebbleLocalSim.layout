@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
-	<ActiveTarget name="Debug" />
+	<ActiveTarget name="Release" />
 	<File name="../../../SDL_gfx/SDL_gfxPrimitives.c" open="0" top="0" tabpos="0">
 		<Cursor position="72626" topLine="3169" />
 	</File>
@@ -10,7 +10,7 @@
 	<File name="../../../include/pebble_app.h" open="0" top="0" tabpos="0">
 		<Cursor position="65" topLine="0" />
 	</File>
-	<File name="../../../include/pebble_os.h" open="1" top="0" tabpos="2">
+	<File name="../../../include/pebble_os.h" open="0" top="0" tabpos="2">
 		<Cursor position="4748" topLine="133" />
 	</File>
 	<File name="../../../local/animation.c" open="0" top="0" tabpos="0">
@@ -23,7 +23,7 @@
 		<Cursor position="1476" topLine="42" />
 	</File>
 	<File name="../../../local/draw.c" open="0" top="0" tabpos="1">
-		<Cursor position="925" topLine="31" />
+		<Cursor position="7943" topLine="196" />
 	</File>
 	<File name="../../../local/font.c" open="0" top="0" tabpos="0">
 		<Cursor position="3030" topLine="48" />
@@ -31,19 +31,16 @@
 	<File name="../../../local/globals.h" open="0" top="0" tabpos="3">
 		<Cursor position="420" topLine="0" />
 	</File>
-	<File name="../../../local/main.c" open="1" top="0" tabpos="1">
+	<File name="../../../local/main.c" open="0" top="0" tabpos="1">
 		<Cursor position="4496" topLine="172" />
 	</File>
 	<File name="../../../local/math.c" open="0" top="0" tabpos="7">
 		<Cursor position="5119" topLine="113" />
 	</File>
-	<File name="../../../local/pebble_os.c" open="1" top="1" tabpos="3">
+	<File name="../../../local/pebble_os.c" open="0" top="0" tabpos="3">
 		<Cursor position="10513" topLine="141" />
 	</File>
 	<File name="../../../local/render.c" open="0" top="0" tabpos="5">
-		<Cursor position="3877" topLine="126" />
-	</File>
-	<File name="../../../test/src/Timely.c" open="0" top="0" tabpos="2">
-		<Cursor position="12602" topLine="338" />
+		<Cursor position="3702" topLine="113" />
 	</File>
 </CodeBlocks_layout_file>

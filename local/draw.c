@@ -139,7 +139,6 @@ void graphics_draw_something_in_rect_to(GContext *ctx, void* what,graphics_draw_
     GPoint topOffset=getTopOffset ();
     SDL_Rect clipRect;
     SDL_GetClipRect(screen,&clipRect);
-    meltScreens();
     LOCK(screen);
     int16_t x,y;
     callback (what,-1,0);
@@ -165,10 +164,12 @@ void graphics_draw_something_in_rect_to(GContext *ctx, void* what,graphics_draw_
                 *dst_c = ~(src_c) | 0x000000ff;
                 break;
             case GCompOpOr:
-                *dst_c = src_c | *dst_c;
+                if (src_c == r_white)
+                    *dst_c = r_white;
                 break;
             case GCompOpAnd:
-                *dst_c = src_c & *dst_c;
+                if (src_c == r_black)
+                    *dst_c = r_black;
                 break;
             case GCompOpClear:
                 if (src_c == r_white)

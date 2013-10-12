@@ -58,13 +58,13 @@
 1381388230 source:/home/helco/github/PebbleLocalSim/local/animation.c
 	"globals.h"
 
-1381473218 source:/home/helco/github/PebbleLocalSim/local/bitmap.c
+1381558375 source:/home/helco/github/PebbleLocalSim/local/bitmap.c
 	"globals.h"
 
 1381474245 source:/home/helco/github/PebbleLocalSim/local/buttons.c
 	"globals.h"
 
-1381473158 source:/home/helco/github/PebbleLocalSim/local/draw.c
+1381557994 source:/home/helco/github/PebbleLocalSim/local/draw.c
 	"globals.h"
 
 1380869236 source:/home/helco/github/PebbleLocalSim/local/font.c
@@ -82,13 +82,13 @@
 1380893574 source:/home/helco/github/PebbleLocalSim/local/layer.c
 	"globals.h"
 
-1381474093 source:/home/helco/github/PebbleLocalSim/local/main.c
+1381499690 source:/home/helco/github/PebbleLocalSim/local/main.c
 	"globals.h"
 
 1381434553 source:/home/helco/github/PebbleLocalSim/local/math.c
 	"globals.h"
 
-1381409785 source:/home/helco/github/PebbleLocalSim/local/render.c
+1381523319 source:/home/helco/github/PebbleLocalSim/local/render.c
 	"globals.h"
 
 1381313728 source:/home/helco/github/PebbleLocalSim/local/window.c
@@ -137,4 +137,9 @@
 	<math.h>
 	"resource_ids.auto.h"
 	"config.h"
+
+1381558404 source:/home/helco/github/PebbleLocalSim/test/src/vaultBoy.c
+	"pebble_os.h"
+	"pebble_app.h"
+	"pebble_fonts.h"
 

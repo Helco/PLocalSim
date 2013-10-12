@@ -149,7 +149,8 @@ void rotbmp_layer_update_func (Layer* me,GContext* ctx) {
     RotBitmapLayer* bitmapLayer=(RotBitmapLayer*)me;
 
     SDL_Surface* bitmap=createSurface(bitmapLayer->bitmap->bounds.size.w,bitmapLayer->bitmap->bounds.size.h);
-    graphics_context_set_compositing_mode (ctx,bitmapLayer->compositing_mode);
+    SDL_FillRect(bitmap,0,0);
+    graphics_context_set_compositing_mode (ctx,GCompOpAssign);
     graphics_draw_bitmap_in_rect_to (ctx,bitmapLayer->bitmap,rect,bitmap);
     double angle=(double)bitmapLayer->rotation/TRIG_MAX_ANGLE*360.0;
     SDL_Surface* rotated=rotozoomSurface(bitmap,-angle,1.0,SMOOTHING_OFF);
@@ -157,7 +158,7 @@ void rotbmp_layer_update_func (Layer* me,GContext* ctx) {
     GPoint offset=getPivotRotationOffset(bitmapLayer->bitmap->bounds.size,GSize(rotated->w,rotated->h),bitmapLayer->src_ic,angle);
 
     setTopOffset(topOffset);
-    graphics_context_set_compositing_mode (ctx,GCompOpAssign);
+    graphics_context_set_compositing_mode (ctx,bitmapLayer->compositing_mode);
     graphics_draw_surface_in_rect (ctx,rotated,GRect(bitmapLayer->dest_ic.x-offset.x,bitmapLayer->dest_ic.y-offset.y,rotated->w,rotated->h));
     SDL_FreeSurface(rotated);
 }
@@ -183,14 +184,14 @@ void rotbmp_pair_layer_init (RotBmpPairLayer* layer,GRect frame) {
     layer_init((Layer*)layer,frame);
     rotbmp_layer_init (&layer->white_layer,frame); //the white and black layers are not added as childs
     rotbmp_layer_init (&layer->black_layer,frame);
-    layer->white_layer.compositing_mode=GCompOpSet;
+    layer->white_layer.compositing_mode=GCompOpOr;
     layer->black_layer.compositing_mode=GCompOpClear;
     layer_set_update_proc ((Layer*)layer,rotbmp_pair_layer_update_func);
 }
 
 void rotbmp_pair_layer_set_src_ic(RotBmpPairLayer *pair, GPoint ic) {
     pair->white_layer.src_ic=ic;
-    pair->white_layer.src_ic=ic;
+    pair->black_layer.src_ic=ic;
 }
 
 void rotbmp_pair_layer_set_angle(RotBmpPairLayer *pair, int32_t angle) {
