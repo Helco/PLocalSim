@@ -57,6 +57,9 @@ int main(int argc,char* argv[]) {
 #ifndef WIN32
     flags|=SDL_INIT_EVENTTHREAD;
 #endif
+#ifdef __MACH__
+	flags = SDL_INIT_EVERYTHING;
+#endif
     if (SDL_Init(flags)==-1) {
         printf("SDL_Init: %s\n", SDL_GetError ());
         return -1;
@@ -274,6 +277,8 @@ void app_event_loop(AppTaskContextRef app_task_ctx, PebbleAppHandlers *handlers)
                 ;
             }
         }
+
+		fire_timers();
         if(_PebbleAppHandlers.tick_info.tick_handler != NULL)
             tick (false);
         updateButtons();

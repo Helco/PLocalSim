@@ -1,6 +1,26 @@
 #include "globals.h"
 
 static bool clock24hStyle=true;
+static int timer_number = 0;
+
+
+
+AppTimerHandle app_timer_send_event(AppContextRef app_ctx, uint32_t timeout_ms, uint32_t cookie) {
+	
+	uint32_t handle = timer_number++;
+	
+	create_new_timer(timeout_ms, cookie, handle);
+	
+	return handle;
+}
+
+
+bool app_timer_cancel_event(AppContextRef app_ctx_ref, AppTimerHandle handle) {
+
+	return remove_timer(search_timer_with_handle(handle));	
+		
+}
+
 
 void inverter_layer_update (Layer* me,GContext* ctx) {
     SDL_Surface* myScreen=getTopScreen ();
@@ -207,8 +227,6 @@ Layer *simple_menu_layer_get_layer(SimpleMenuLayer *simple_menu);
 int simple_menu_layer_get_selected_index(SimpleMenuLayer *simple_menu);
 void simple_menu_layer_set_selected_index(SimpleMenuLayer *simple_menu, int index, bool animated);
 
-AppTimerHandle app_timer_send_event(AppContextRef app_ctx, uint32_t timeout_ms, uint32_t cookie);
-bool app_timer_cancel_event(AppContextRef app_ctx_ref, AppTimerHandle handle);
 AppMessageResult app_message_register_callbacks(AppMessageCallbacksNode *callbacks_node);
 AppMessageResult app_message_deregister_callbacks(AppMessageCallbacksNode *callbacks_node);
 AppMessageResult app_message_out_get(DictionaryIterator **iter_out);
