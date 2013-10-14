@@ -137,7 +137,7 @@ void updateAnimations ();
 
 typedef struct TimerEvent 
 {
-	struct timespec elapsed_time;
+	uint32_t timeout;
 	uint32_t cookie;
 	uint32_t handle;
 	struct TimerEvent *next;
