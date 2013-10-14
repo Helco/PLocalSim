@@ -94,6 +94,7 @@ The actual simulator and the custom resource compiler are licensed by Helco (me)
 
 [Credits]
 Many many thanks to:
+https://github.com/robhh - for his AppTimer implementation
 Otto Greenslade (Chaotic) - for his pebble pictures
 https://github.com/abl - for his empebble (which was original the basecode of this simulator, now
 	nearly all code is rewritten)
