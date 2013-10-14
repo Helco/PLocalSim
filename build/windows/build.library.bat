@@ -7,9 +7,7 @@ set PLS_SIM_INCLUDES=-I %PLS_SDL_INCLUDE% -isystem %PLS_SDK_INCLUDE% -I %PLS_DIR
 set PLS_SIM_OUTPUT=.\bin\libpebbleLocalSim.a
 set PLS_SIM_DIR_OUTPUT=.\obj\
 
-if not exist %PLS_SIM_DIR_OUTPUT% (
-	mkdir %PLS_SIM_DIR_OUTPUT%
-)
+if not exist %PLS_SIM_DIR_OUTPUT% mkdir %PLS_SIM_DIR_OUTPUT%
 
 REM compile the simulator
 for %%F in (%PLS_DIR_LOCAL%\*.c) do (

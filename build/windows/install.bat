@@ -31,4 +31,4 @@ robocopy %PLS_INST_FROM% %PLS_INST_TO% envvars.bat %PLS_ROBOCOPY_SILENT% >NUL
 robocopy %PLS_INST_FROM% %PLS_INST_TO% build.project.bat %PLS_ROBOCOPY_SILENT% >NUL
 robocopy %PLS_INST_FROM% %PLS_INST_TO% run.project.bat %PLS_ROBOCOPY_SILENT% >NUL
 robocopy %PLS_INST_FROM% %PLS_INST_TO% create.project.bat %PLS_ROBOCOPY_SILENT% >NUL
-robocopy %PLS_INST_FROM% %PLS_INST_TO% run.resCompiler.bat %PLS_ROBOCOPY_SILENT% >NUL
+robocopy %PLS_INST_FROM% %PLS_INST_TO% run.withSDL.bat %PLS_ROBOCOPY_SILENT% >NUL
