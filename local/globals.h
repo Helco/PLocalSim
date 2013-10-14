@@ -133,6 +133,24 @@ void rotbmp_pair_layer_init (RotBmpPairLayer* layer,GRect frame);
 //ANIMATION ANIMATION ANIMATION ANIMATION ANIMATION ANIMATION ANIMATION
 void updateAnimations ();
 
+//TIMERS
+
+typedef struct TimerEvent 
+{
+	struct timespec elapsed_time;
+	uint32_t cookie;
+	uint32_t handle;
+	struct TimerEvent *next;
+} TimerEvent;
+
+
+void fire_timers();
+bool remove_timer(TimerEvent *timer);
+TimerEvent* search_timer_with_handle(uint32_t handle);
+void create_new_timer(uint32_t timeout_ms, uint32_t cookie, uint32_t handle);
+
+
+
 //RESHELPER RESHELPER RESHELPER RESHELPER RESHELPER RESHELPER RESHELPER
 #define MAX_RESOURCE_NAME 32
 #define RESOURCE_NAME_BASE "./resources/%d"
