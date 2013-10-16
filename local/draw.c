@@ -241,7 +241,6 @@ _WrapResult wrap_points (const char* line,const int maxWidth,const GFont font);
 
 //#verify #verify #verify !!!!!!!!!!
 void graphics_text_draw(GContext *ctx, const char *text, const GFont font, const GRect box, const GTextOverflowMode overflow_mode, const GTextAlignment alignment, const GTextLayoutCacheRef layout) {
-    //TODO: What is layout?!
     char buffer [256]; //SHIT!! I need to mark the end of the string but I can't use the original parameter...
     TextWrapper textWrapper=(overflow_mode==GTextOverflowModeWordWrap?wrap_words:wrap_points);
     int lineHeight=0,usedHeight=0;
@@ -260,8 +259,10 @@ void graphics_text_draw(GContext *ctx, const char *text, const GFont font, const
         memcpy(buffer,text,wrap.lineLen);
         buffer[wrap.lineLen]=0;
         text=wrap.newString;
-        if (wrap.lineLen==0)
+        if (wrap.lineLen==0) {
+            usedHeight+=lineHeight;
             continue;
+        }
         lineSurfaceTemp=TTF_RenderText_Solid ((TTF_Font*)font,buffer,color);
         if (lineSurfaceTemp==0) {
             printf("[WARN] TTF_RenderText_Solid: %s\n",TTF_GetError ());
@@ -317,11 +318,34 @@ void graphics_text_draw(GContext *ctx, const char *text, const GFont font, const
         SDL_FreeSurface(pointsSurface);
 }
 
-int _wrap_getStringWidth (const char* start,const char* end,const GFont font) { //this function is needed as strings without a 0-end-mark have to be measured
-    int sx,ex;
-    TTF_SizeText (font,start,&sx,0);
+GSize _wrap_getStringSize (const char* start,const char* end,const GFont font) {
+    int sx,ex,sy;
+    TTF_SizeText (font,start,&sx,&sy);
     TTF_SizeText (font,end,&ex,0);
-    return sx-ex;
+    return GSize(sx-ex,sy);
+}
+
+int _wrap_getStringWidth (const char* start,const char* end,const GFont font) { //this function is needed as strings without a 0-end-mark have to be measured
+    return _wrap_getStringSize(start,end,font).w;
+}
+
+GSize graphics_text_layout_get_max_used_size(GContext *ctx, const char *text, const GFont font, const GRect box, const GTextOverflowMode overflow_mode, const GTextAlignment alignment, GTextLayoutCacheRef layout) {
+    TextWrapper textWrapper=(overflow_mode==GTextOverflowModeWordWrap?wrap_words:wrap_points);
+    GSize usedSize={0,0};
+    GSize lineSize;
+    _WrapResult wrap;
+    if (text==0)
+        return usedSize;
+    while (*text!=0&&usedSize.h<box.size.h) {
+        wrap=textWrapper (text,box.size.w,font);
+        lineSize=_wrap_getStringSize(text,wrap.newString,font);
+        usedSize.w=max(usedSize.w,lineSize.w);
+        usedSize.h+=lineSize.h;
+        text=wrap.newString;
+    }
+    usedSize.w=min(box.size.w,usedSize.w);
+    usedSize.h=min(box.size.h,usedSize.h);
+    return usedSize;
 }
 
 int _wrap_maxLineLength (const char* string,const int maxWidth,const GFont font) {

@@ -6,19 +6,19 @@ static int timer_number = 0;
 
 
 AppTimerHandle app_timer_send_event(AppContextRef app_ctx, uint32_t timeout_ms, uint32_t cookie) {
-	
+
 	uint32_t handle = timer_number++;
-	
+
 	create_new_timer(timeout_ms, cookie, handle);
-	
+
 	return handle;
 }
 
 
 bool app_timer_cancel_event(AppContextRef app_ctx_ref, AppTimerHandle handle) {
 
-	return remove_timer(search_timer_with_handle(handle));	
-		
+	return remove_timer(search_timer_with_handle(handle));
+
 }
 
 
@@ -196,19 +196,6 @@ uint16_t time_ms (time_t* tloc,uint16_t* out_ms) {
         *out_ms=ms;
     return ms;
 }
-
-void scroll_layer_init(ScrollLayer *scroll_layer, GRect frame);
-void scroll_layer_add_child(ScrollLayer *scroll_layer, Layer *child);
-void scroll_layer_set_click_config_onto_window(ScrollLayer *scroll_layer, struct Window *window);
-void scroll_layer_set_callbacks(ScrollLayer *scroll_layer, ScrollLayerCallbacks callbacks);
-void scroll_layer_set_context(ScrollLayer *scroll_layer, void *context);
-void scroll_layer_set_content_offset(ScrollLayer *scroll_layer, GPoint offset, bool animated);
-GPoint scroll_layer_get_content_offset(ScrollLayer *scroll_layer);
-void scroll_layer_set_content_size(ScrollLayer *scroll_layer, GSize size);
-GSize scroll_layer_get_content_size(ScrollLayer *scroll_layer);
-void scroll_layer_set_frame(ScrollLayer *scroll_layer, GRect rect);
-void scroll_layer_scroll_up_click_handler(ClickRecognizerRef recognizer, ScrollLayer *scroll_layer);
-void scroll_layer_scroll_down_click_handler(ClickRecognizerRef recognizer, ScrollLayer *scroll_layer);
 
 void menu_cell_basic_draw(GContext *ctx, const Layer *cell_layer, const char *title, const char *subtitle, GBitmap *icon);
 void menu_cell_title_draw(GContext *ctx, const Layer *cell_layer, const char *title);

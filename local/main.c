@@ -82,27 +82,12 @@ int main(int argc,char* argv[]) {
         return -4;
     }
 
-    bodyImg=IMG_Load("./simdata/images/body.png");
-    if (!bodyImg) {
-        printf ("IMG_Load (body): %s\n",IMG_GetError());
+    if (!loadSimulatorImages())
         return -5;
-    }
-    shadowImg=IMG_Load("./simdata/images/shadow.png");
-    if (!shadowImg) {
-        printf ("IMG_Load (shadow): %s\n",IMG_GetError());
-        return -6;
-    }
-    vibeImg=IMG_Load("./simdata/images/vibe.png");
-    if (!vibeImg) {
-        printf ("IMG_Load (vibe): %s\n",IMG_GetError());
-        return -7;
-    }
-    lightImg=IMG_Load("./simdata/images/backlight.png");
-    if (!lightImg) {
-        printf ("IMG_Load (backlight): %s\n",IMG_GetError());
-        return -8;
-    }
-
+    bodyImg=getSimulatorImage(SIM_IMG_BODY);
+    shadowImg=getSimulatorImage(SIM_IMG_SCREEN_SHADOW);
+    vibeImg=getSimulatorImage(SIM_IMG_VIBE);
+    lightImg=getSimulatorImage(SIM_IMG_BACKLIGHT);
     logFile=fopen (LOG_FILE,"a");
 
     if (!initRender(pebbleScreen))
@@ -116,11 +101,7 @@ int main(int argc,char* argv[]) {
     if (logFile!=0)
         fclose(logFile);
 
-    SDL_FreeSurface(lightImg);
-    SDL_FreeSurface(vibeImg);
-    SDL_FreeSurface(shadowImg);
-    SDL_FreeSurface(bodyImg);
-
+    freeSimulatorImages();
     IMG_Quit ();
     TTF_Quit ();
     SDL_Quit ();

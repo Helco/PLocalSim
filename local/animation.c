@@ -115,6 +115,9 @@ void updateAnimations () {
             if (cursor->duration_ms==ANIMATION_DURATION_INFINITE)
                 time=ANIMATION_DURATION_INFINITE;
             else if (SDL_GetTicks()-cursor->abs_start_time_ms>=cursor->duration_ms) {
+                //the simulator runs on 60 fps. to ensure the maximal value is reached, this has to be done
+                cursor->implementation->update (cursor,ANIMATION_NORMALIZED_MAX);
+
                 isDirty=true;
                 cursor->is_completed=true;
                 tempCursor=cursor;

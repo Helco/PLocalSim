@@ -90,7 +90,7 @@ void onButtonUp (ButtonId id)
     rec=clickRecognizer+id;
     conf=clickConfig+id;
     rec->isDown=false;
-    if (conf->click.handler!=0&&(conf->long_click.handler==0||SDL_GetTicks()-rec->lastDown<conf->long_click.delay_ms))
+    if (conf->click.handler!=0&&!rec->longClick)
         conf->click.handler(rec,conf->context);
     if (conf->raw.up_handler!=0)
         conf->raw.up_handler(rec,conf->raw.context);

@@ -146,3 +146,8 @@ GPoint getPivotRotationOffset(GSize rectOrig,GSize rectRotated,GPoint pivot,doub
     offset.y=pivot.x*s + pivot.y*c + rectRotated.h/2;
     return offset;
 }
+
+void gpoint_move_into_rect (GPoint* const point,const GRect* const rect) {
+    point->x=clamp(rect->origin.x,point->x,rect->origin.x+rect->size.w);
+    point->y=clamp(rect->origin.y,point->y,rect->origin.y+rect->size.h);
+}

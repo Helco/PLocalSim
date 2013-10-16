@@ -11,8 +11,9 @@
 #else
 #define min(A, B) (((A) < (B) ? (A) : (B)))
 #define max(A, B) (((A) > (B) ? (A) : (B)))
-#define clamp(A, X, B)  min(max(A, X), B)
 #endif
+
+#define clamp(A, X, B)  min(max(A, X), B)
 
 #define PI 3.14159265
 #define DEGtoRAD(deg) ((PI/180.0)*(deg))
@@ -27,6 +28,11 @@
 #include <SDL/SDL_image.h>
 
 //SYSTEM SYSTEM SYSTEM SYSTEM SYSTEM SYSTEM SYSTEM SYSTEM SYSTEM SYSTEM SYSTEM SYSTEM
+#define SCROLL_LAYER_CLICK_DELAY 350
+#define SCROLL_LAYER_SCROLL_AMOUNT 25
+#define SCROLL_LAYER_SCROLL_DELAY 360
+#define SCROLL_LAYER_SCROLL_DELAY_MAX 350
+#define SCROLL_LAYER_SCROLL_SPEED ((double)SCROLL_LAYER_SCROLL_DELAY/SCROLL_LAYER_SCROLL_AMOUNT)
 
 extern void pbl_main(void *params);
 
@@ -38,6 +44,21 @@ void toggle_24h_style ();
 GPoint getPivotRotationOffset (GSize rectOrig,GSize rectRotated,GPoint pivot,double angle);
 
 extern FILE* logFile;
+
+//SIMDATA SIMDATA SIMDATA SIMDATA SIMDATA SIMDATA SIMDATA SIMDATA SIMDATA SIMDATA SIMDATA
+enum SimImages
+{
+    SIM_IMG_BODY=0,
+    SIM_IMG_SCREEN_SHADOW,
+    SIM_IMG_BACKLIGHT,
+    SIM_IMG_STATUS_BAR,
+    SIM_IMG_VIBE,
+    SIM_IMG_SCROLL_SHADOW,
+    SIM_IMG_COUNT
+};
+bool loadSimulatorImages ();
+void freeSimulatorImages ();
+SDL_Surface* getSimulatorImage (int imageID);
 
 //DRAW DRAW DRAW DRAW DRAW DRAW DRAW DRAW DRAW DRAW DRAW DRAW DRAW DRAW DRAW DRAW DRAW
 #define PBL_SCREEN_WIDTH 144
@@ -129,13 +150,14 @@ bool render ();
 //functions, the original pebble API might have but doesn't
 void rotbmp_layer_init (RotBitmapLayer* layer,GRect frame);
 void rotbmp_pair_layer_init (RotBmpPairLayer* layer,GRect frame);
+void gpoint_move_into_rect (GPoint* const point,const GRect* const rect);
 
 //ANIMATION ANIMATION ANIMATION ANIMATION ANIMATION ANIMATION ANIMATION
 void updateAnimations ();
 
 //TIMERS
 
-typedef struct TimerEvent 
+typedef struct TimerEvent
 {
 	uint32_t timeout;
 	uint32_t cookie;

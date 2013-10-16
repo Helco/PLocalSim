@@ -156,11 +156,6 @@ void text_layer_set_text_alignment(TextLayer *text_layer, GTextAlignment text_al
     layer_mark_dirty ((Layer*)text_layer);
 }
 
-GSize graphics_text_layout_get_max_used_size(GContext *ctx, const char *text, const GFont font, const GRect box, const GTextOverflowMode overflow_mode, const GTextAlignment alignment, GTextLayoutCacheRef layout) {
-    //TODO: Implement proper
-    return box.size;
-}
-
 void text_layer_set_size(TextLayer *text_layer, const GSize max_size) {
     GRect frame=layer_get_frame ((Layer*)text_layer);
     frame.size=max_size;

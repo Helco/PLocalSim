@@ -36,11 +36,7 @@ bool initRender (SDL_Surface* screen)
     renderListSize=1;
     renderList[0]=((RenderEntry){screen,0});
     isDirty=true;
-    statusImg=IMG_Load("./simdata/images/statusbar.png");
-    if (statusImg==0) {
-        printf ("IMG_Load (statusbar): %s\n",IMG_GetError());
-        return false;
-    }
+    statusImg=getSimulatorImage(SIM_IMG_STATUS_BAR);
     statusTimeFont=fonts_get_system_font (FONT_KEY_GOTHIC_14);
     return (statusTimeFont!=0);
 }
@@ -59,7 +55,6 @@ void quitRender ()
             screenPool[i]=0;
         }
     }
-    SDL_FreeSurface(statusImg);
 }
 
 void pushWindow (Window* w) {
