@@ -31,8 +31,8 @@ for %%F in (%PLS_SIM_DIR_SOURCE%\*.c) do (
 	if not exist %PLS_SIM_OBJ_DIR%\%%~nF.o goto exit
 	set PLS_SIM_SOURCE_OBJ=!PLS_SIM_SOURCE_OBJ! %PLS_SIM_OBJ_DIR%\%%~nF.o
 	REM Extracting metadata 
-	start %PLS_SDK_PATH%\%PLS_MINGW%\objcopy --only-section=.pbl_header -O binary %PLS_SIM_OBJ_DIR%\%%~nF.o %PLS_SIM_TMP_DIR%\metadata.bin > NUL
-	if exist %PLS_SIM_TMP_DIR%\metadata.bin cp %PLS_SIM_TMP_DIR%\metadata.bin %PLS_SIM_OUTPUT%\metadata.bin >NUL
+	start /WAIT %PLS_SDK_PATH%\%PLS_MINGW%\objcopy --only-section=.pbl_header -O binary %PLS_SIM_OBJ_DIR%\%%~nF.o %PLS_SIM_TMP_DIR%\metadata.bin > NUL
+	if exist %PLS_SIM_TMP_DIR%\metadata.bin copy %PLS_SIM_TMP_DIR%\metadata.bin %PLS_SIM_OUTPUT%\metadata.bin >NUL
 )
 
 call %PLS_SDK_PATH%\run.withSDL.bat -ARG metaCompiler.exe %PLS_PROJECT_NAME%

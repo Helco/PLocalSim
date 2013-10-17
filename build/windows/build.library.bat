@@ -15,14 +15,23 @@ for %%F in (%PLS_DIR_LOCAL%\*.c) do (
 		echo Compiling %%~nxF
 	)
 	%PLS_MINGW%\gcc -c -x c -O2 -Wall -std=c99 -DWIN32 -mconsole %PLS_SIM_INCLUDES% %PLS_DIR_LOCAL%\%%~nxF -o %PLS_SIM_DIR_OUTPUT%\%%~nF.o 
+	if not exist %PLS_SIM_DIR_OUTPUT%\%%~nF.o goto exit
 	%PLS_MINGW%\ar rcs %PLS_SIM_OUTPUT% %PLS_SIM_DIR_OUTPUT%\%%~nF.o
 )
 
 REM compile SDL_gfx
 if not "%1"=="silent" (
-	echo Compiling SDL_gfx
+	echo Compiling SDL_gfx and additional source
 )
 for %%F in (%PLS_DIR_SDL_GFX%\*.c) do (
-	%PLS_MINGW%\gcc -c -x c -O2 -w -std=c99 -mconsole %PLS_SIM_INCLUDES% %PLS_DIR_SDL_GFX%\%%~nxF -o %PLS_SIM_DIR_OUTPUT%\%%~nF.o 
+	%PLS_MINGW%\gcc -c -x c -O2 -w -std=c99 -mconsole %PLS_SIM_INCLUDES% %PLS_DIR_SDL_GFX%\%%~nxF -o %PLS_SIM_DIR_OUTPUT%\%%~nF.o
+	if not exist %PLS_SIM_DIR_OUTPUT%\%%~nF.o goto exit 
 	%PLS_MINGW%\ar rcs %PLS_SIM_OUTPUT% %PLS_SIM_DIR_OUTPUT%\%%~nF.o
 )
+for %%F in (%PLS_DIR_ADD_SRC%\*.c) do (
+	%PLS_MINGW%\gcc -c -x c -O2 -w -std=c99 -mconsole %PLS_SIM_INCLUDES% %PLS_DIR_ADD_SRC%\%%~nxF -o %PLS_SIM_DIR_OUTPUT%\%%~nF.o 
+	if not exist %PLS_SIM_DIR_OUTPUT%\%%~nF.o goto exit
+	%PLS_MINGW%\ar rcs %PLS_SIM_OUTPUT% %PLS_SIM_DIR_OUTPUT%\%%~nF.o
+)
+
+:exit

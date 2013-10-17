@@ -91,6 +91,7 @@ The fonts are copyright by Google Inc. under Apache License, Version 2.0
 The pebble pictures are copyright by Chaotic
 The used libraries (see [Credits]) are copyright by their copyright holder (not me)
 The actual simulator and the custom resource compiler are licensed by Helco (me) under GNU GPL v3
+additionalSource/strftime.c stands under Public Domain (is part of MinGW I suppose)
 
 [Credits]
 Many many thanks to:
