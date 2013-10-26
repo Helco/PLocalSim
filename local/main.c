@@ -53,6 +53,9 @@ void simulatorRender ();
 
 int main(int argc,char* argv[]) {
     printf("[INFO] Entering main\n");
+
+    printf("[INFO] Running \"%s\" by %s\n", APP_INFO.name, APP_INFO.company);
+
     uint32_t flags=SDL_INIT_VIDEO;
 #ifndef WIN32
     flags|=SDL_INIT_EVENTTHREAD;

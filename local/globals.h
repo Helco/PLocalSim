@@ -2,6 +2,7 @@
 #define __GLOBALS_H__
 #include "pebble_os.h"
 #include "pebble_fonts.h"
+#include "pebble_app_info.h"
 #include "SDL_gfxPrimitives.h"
 #include "SDL_gfxBlitFunc.h"
 #include "SDL_rotozoom.h"
@@ -34,7 +35,10 @@
 #define SCROLL_LAYER_SCROLL_DELAY_MAX 350
 #define SCROLL_LAYER_SCROLL_SPEED ((double)SCROLL_LAYER_SCROLL_DELAY/SCROLL_LAYER_SCROLL_AMOUNT)
 
+#define APP_INFO __pbl_app_info
+
 extern void pbl_main(void *params);
+extern PebbleAppInfo __pbl_app_info;
 
 void unloadSystemFonts ();
 void defaultRender (AppContextRef app_ctx, PebbleRenderEvent *event);
