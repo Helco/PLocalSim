@@ -15,7 +15,9 @@ void window_init(Window *window, const char *debug_name) {
     window->click_config_provider=0;
     window->input_handlers.buttons.up=0;
     window->input_handlers.buttons.down=0;
-    layer_init (&window->layer, (window->is_fullscreen ? GRect(0,0,144,168) : GRect(0, 16, 144, 152)));
+    layer_init(&window->layer, GRect(0, 0, 144, 168));
+    // This seems to be causing problems:
+    //layer_init (&window->layer, (window->is_fullscreen ? GRect(0,0,144,168) : GRect(0, 16, 144, 152))); 
     window->layer.window=window;
     window->window_handlers.load=0;
     window->window_handlers.unload=0;
@@ -39,13 +41,10 @@ void window_set_background_color(Window *window, GColor background_color) {
 void window_set_fullscreen(Window *window, bool enabled) {
     window->is_fullscreen = enabled;
 
-    if (enabled==true) {
+    if (enabled==true)
         window->layer.bounds.origin.y=0;
-        window->layer.bounds.size.h=168;
-    } else {
+    else
         window->layer.bounds.origin.y=16;
-        window->layer.bounds.size.h=152;
-    }
 }
 
 void window_deinit(Window *window) {
