@@ -2,7 +2,7 @@
 Version: 0.2 BETA
 
 [Overview]
-This project is an extension to the PebbleSDK1.2 which allows you to build and run your pebble
+This project is an extension to the PebbleSDK2.0 Beta2 which allows you to build and run your pebble
 applications on your computer.
 
 [Installation and Use]
@@ -60,17 +60,16 @@ source code like it is for your watch, but there are a few problems:
 	  the layer frame with and reducing the margin.
 I tested the sample watches from the SDK to detect these problems:
 	big_time	[No problems]
-	brains		[Doesn't work, because of RotBmpContainer)
 	classio		[Minor font problem]
+	classio-battery-connection [Unsupported feature (battery)]
 	drop_zone	[No problems]
 	fuzzy_time	[No problems]
 	just_a_bit	[No problems]
-	ninety_one_dub	[No problems]
+	ninety_one_dub  [Probably invalid? day_name_layer is being used without initialising]
 	onthebutton	[Minor font and margin problems]
-	rumbletime	[No problems] [Vibrating not verified]
+	rumbletime	[No problems]
 	segment_six	[No problems]
-	simple_analog	[Minor graphic glitches with the analog part] [Text probably incorrect,
-			no verification possibility for me]
+	simple_analog	[No problems]
 	simplicity	[No problems]
 	tic_tock_toe	[No problems]
 Pretty good result, isn't it :)
@@ -99,6 +98,7 @@ https://github.com/robhh - for his AppTimer implementation
 Otto Greenslade (Chaotic) - for his pebble pictures
 https://github.com/abl - for his empebble (which was original the basecode of this simulator, now
 	nearly all code is rewritten)
+https://github.com/AmandaCameron - for his metadata support implementation (in PebbleSDK 1.2)
 The Pebble Team - for the amazing watch, the SDK and their long shipping procedure, which was the
 	motivation to build this
 Libraries that I used:
