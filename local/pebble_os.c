@@ -59,7 +59,7 @@ void app_log(uint8_t log_level, const char *src_filename, int src_line_number, c
 
 void copyResName(char* name,int id) {
     memset(name,0,MAX_RESOURCE_NAME);
-    sprintf (name,RESOURCE_NAME_BASE,id-1);
+    sprintf (name,RESOURCE_NAME_BASE,id);
 }
 
 ResHandle resource_get_handle(uint32_t file_id) {
