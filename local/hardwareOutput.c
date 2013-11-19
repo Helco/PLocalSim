@@ -18,7 +18,7 @@ void initHardwareOutput ()
 {
 }
 
-void updateHardwareOutput() {
+void service_hardware_output () {
     if (vibeSize>0) {
         if (vibesTick==0) {
             vibesTick=SDL_GetTicks();

@@ -87,7 +87,7 @@ void popWindow () {
     windowStack[windowStackSize]=0;
     if (windowStackSize>0) {
         w=windowStack[windowStackSize-1];
-        topOffset=w->layer.frame.origin;
+        topOffset=w->layer->frame.origin;
         if (w->window_handlers.appear)
             w->window_handlers.appear(w);
     }
@@ -175,16 +175,24 @@ void renderLayer (Layer* l,GContext* ctx) {
     popLayer ();
 }
 
+void window_render (Window* w,GContext* ctx)
+{
+    Layer* cursor;
+    if (w!=0) {
+        SDL_FillRect(getTopScreen(),0,getRawColor (w->background_color));
+        cursor=w->layer;
+        while (cursor!=0) {
+            renderLayer(cursor,ctx);
+            cursor=cursor->next_sibling;
+        }
+    }
+}
+
 bool render () {
     SDL_Rect src,dst;
-    PebbleRenderEvent event={window_stack_get_top_window(),app_get_current_graphics_context()};
-    PebbleAppHandlers* app=getAppHandlers();
     if (isDirty==true) {
         SDL_FillRect(getTopScreen(),0,r_black);
-        if (app->render_handler!=0)
-            app->render_handler (0,&event);
-        else
-            defaultRender(0,&event);
+        window_render(window_stack_get_top_window (),app_get_current_graphics_context());
         //Render status bar
         if (statusBarVisible) {
             dst=(SDL_Rect){0,0,144,16};
@@ -202,31 +210,13 @@ bool render () {
             SDL_BlitSurface(statusImg,&src,getTopScreen(),&dst);
             clock_copy_time_string(statusTimeBuffer,STATUS_TIME_BUFFER_SIZE);
             graphics_context_set_text_color (app_get_current_graphics_context(),GColorWhite);
-            graphics_text_draw (app_get_current_graphics_context(),statusTimeBuffer,statusTimeFont,GRect(0,0,144,16),GTextOverflowModeTrailingEllipsis,GTextAlignmentCenter,0);
+            graphics_draw_text (app_get_current_graphics_context(),statusTimeBuffer,statusTimeFont,GRect(0,0,144,16),GTextOverflowModeTrailingEllipsis,GTextAlignmentCenter,0);
         }
 
         isDirty=false;
         return true;
     }
     return false;
-}
-
-void defaultRender (AppContextRef app_ctx, PebbleRenderEvent *event) {
-    if (event->window!=0)
-        window_render (event->window,event->ctx);
-}
-
-void window_render (Window* w,GContext* ctx)
-{
-    Layer* cursor;
-    if (w!=0) {
-        SDL_FillRect(getTopScreen(),0,getRawColor (w->background_color));
-        cursor=&w->layer;
-        while (cursor!=0) {
-            renderLayer(cursor,ctx);
-            cursor=cursor->next_sibling;
-        }
-    }
 }
 
 bool window_stack_contains_window(Window *window) {
@@ -244,20 +234,24 @@ Window *window_stack_get_top_window(void) {
     return 0;
 }
 
-Window *window_stack_remove(Window *window, bool animated) {
+bool window_stack_remove(Window *window, bool animated) {
     int i,j;
-    if (window_stack_get_top_window ()==window)
+    if (window_stack_get_top_window ()==window) {
         popWindow (); //for animated and window_handlers
+        return true;
+    }
     else {
         for (i=0;i<windowStackSize;i++) {
             if (windowStack[i]==window) {
                 break; //to get the index in i
             }
         }
-        for (j=i;j<windowStackSize;j++) //if no window is found j=i=windowStackSize so !(j<windowStackSize)
+        if (i==windowStackSize)
+            return false;
+        for (j=i;j<windowStackSize;j++)
             windowStack[j]=windowStack[j+1];
+        return true;
     }
-    return window; //no documentation about return?
 }
 
 void meltScreens () {

@@ -1,45 +1,46 @@
 #include "globals.h"
 
-static TimerEvent *timers = NULL;
+struct AppTimer
+{
+	uint32_t timeout;
+	AppTimerCallback callback;
+	void* context;
+	struct AppTimer *next;
+};
 
-static PebbleAppHandlers* appHandlers=0;
+static AppTimer *timers = NULL;
 
-void add_timer(TimerEvent *timer) {
-
-	TimerEvent *tp = timers;
+void add_timer(AppTimer *timer) {
+	AppTimer *tp = timers;
 
 	//add first timer to the list
 	if (timers == NULL) {
 		timers = timer;
 		return;
-	} 
-		
+	}
+
 	//add the timer to the end of the list
-	while (tp->next != NULL) {	
+	while (tp->next != NULL) {
 		tp = tp->next;
 	}
-	
+
 	tp->next = timer;
-	
-	return;
+	timer->next = 0;
 }
 
+bool remove_timer(AppTimer*timer) {
+	AppTimer *tp = timers;
 
-bool remove_timer(TimerEvent *timer) {
-	
-	TimerEvent *tp = timers;
-	
-	
 	if (timer == NULL)
 		return false;
-	
+
 	// if first element, set head of list to next pointer
 	if (tp == timer) {
 		timers = tp->next;
 		free(timer);
 		return true;
 	}
-	
+
 	// find the timer that's supposed to be deleted from the list
 	while ( (tp != NULL) && (tp->next != timer)) {
 		if (tp->next == NULL) {
@@ -57,30 +58,12 @@ bool remove_timer(TimerEvent *timer) {
 		tp->next = tp->next->next;
 		free(timer);
 	}
-		
-	
+
 	return true;
 }
 
-
-TimerEvent* search_timer_with_handle(uint32_t handle) {
-	
-	TimerEvent *tp = timers;
-	
-	while ( (tp != NULL) && (tp->handle != handle)) {
-		tp = tp->next;
-		if (tp == NULL) {
-			printf("ERROR: Timer handle not found!");
-			return NULL;
-		}
-	}
-	
-	return tp;
-}
-
-
-TimerEvent* find_expired_timer() {
-	TimerEvent* tp = timers;
+AppTimer* find_expired_timer() {
+	AppTimer* tp = timers;
 
 	//find the first expired timer in the list
 	while (tp != NULL) {
@@ -88,67 +71,53 @@ TimerEvent* find_expired_timer() {
 		if (SDL_GetTicks() >= tp->timeout) {
 			return tp;
 		}
-		
+
 		tp = tp->next;
 	}
-	
+
 	return NULL;
-	
 }
 
+bool is_timer_registered (AppTimer* timer) {
+    AppTimer* tp=timers;
+    while (tp!=0&&tp!=timer)
+        tp=tp->next;
+    return tp==timer;
+}
 
-void fire_timers() {
-	
-	TimerEvent *timer = NULL;
-	
-	if (appHandlers==0)
-        appHandlers=getAppHandlers();
-	if (appHandlers->timer_handler==NULL)
-		return;    
-	
+void service_timers () {
+	AppTimer *timer = NULL;
 	//find all rexpired timers, call timer handler on them, and remove them
 	while ( (timer = find_expired_timer()) != NULL ) {
-		(appHandlers->timer_handler)(NULL, timer->handle, timer->cookie);
-	    
+		timer->callback(timer->context);
 		remove_timer(timer);
 	}
-	
-	return;
 }
 
-
-void print_timers() {
-	
-	TimerEvent *tp = timers;
-	uint32_t current_time = SDL_GetTicks();
-	
-	
-	printf("Current time: %u\n",current_time);
-	
-	
-	//find the first expired timer in the list
-	while (tp != NULL) {
-		printf("Timer: %d, %u\n", tp->handle, tp->timeout);
-		
-		tp = tp->next;
-	}
-	
-	
+AppTimer* app_timer_register (uint32_t timeout_ms,AppTimerCallback callback,void* callback_data) {
+    if (callback==0)
+        return 0;
+    AppTimer* timer=(AppTimer*)malloc(sizeof(AppTimer));
+    if (timer==0) {
+        printf ("[ERROR] Timer memory allocation failed!\n");
+        return 0;
+    }
+    timer->timeout=SDL_GetTicks()+timeout_ms;
+    timer->callback=callback;
+    timer->context=callback_data;
+    add_timer(timer);
+    return timer;
 }
 
+bool app_timer_reschedule (AppTimer* timer_handle,uint32_t new_timeout_ms) {
+    if (is_timer_registered(timer_handle)) {
+        timer_handle->timeout=SDL_GetTicks()+new_timeout_ms;
+        return true;
+    }
+    else
+        return false;
+}
 
-void create_new_timer(uint32_t timeout_ms, uint32_t cookie, uint32_t handle) {
-
-	TimerEvent *timer = malloc(sizeof(TimerEvent));
-	timer->timeout=SDL_GetTicks()+timeout_ms;
-	timer->cookie = cookie;
-	timer->handle = handle;
-	timer->next = NULL;
-
-	add_timer(timer);
-
-//	printf("New Timer: %u, %u, %u, %u\n", handle, timeout_ms, cookie, timer->timeout);
-
-//	print_timers();
-	
+void app_timer_cancel(AppTimer* timer_handle) {
+    remove_timer(timer_handle);
 }

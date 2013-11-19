@@ -1,8 +1,16 @@
 #ifndef __GLOBALS_H__
 #define __GLOBALS_H__
-#include "pebble_os.h"
-#include "pebble_fonts.h"
-#include "pebble_app_info.h"
+#define _TIME_H
+#define _TIME_H_
+#define _TIME_T_DEFINED
+#define __time_t_defined
+
+#include <SDL/SDL.h>
+#include <SDL/SDL_ttf.h>
+#include <SDL/SDL_image.h>
+
+#include "impl_pebble.h"
+
 #include "SDL_gfxPrimitives.h"
 #include "SDL_gfxBlitFunc.h"
 #include "SDL_rotozoom.h"
@@ -20,13 +28,8 @@
 #define DEGtoRAD(deg) ((PI/180.0)*(deg))
 
 #include <math.h>
-#include <time.h>
-#include <unistd.h>
 #include <stdio.h>
 #include <stdarg.h>
-#include <SDL/SDL.h>
-#include <SDL/SDL_ttf.h>
-#include <SDL/SDL_image.h>
 
 //SYSTEM SYSTEM SYSTEM SYSTEM SYSTEM SYSTEM SYSTEM SYSTEM SYSTEM SYSTEM SYSTEM SYSTEM
 #define SCROLL_LAYER_CLICK_DELAY 350
@@ -35,19 +38,36 @@
 #define SCROLL_LAYER_SCROLL_DELAY_MAX 350
 #define SCROLL_LAYER_SCROLL_SPEED ((double)SCROLL_LAYER_SCROLL_DELAY/SCROLL_LAYER_SCROLL_AMOUNT)
 
-#define APP_INFO __pbl_app_info
+extern int pbl_main (void);
 
-extern void pbl_main(void *params);
-extern PebbleAppInfo __pbl_app_info;
-
-void unloadSystemFonts ();
-void defaultRender (AppContextRef app_ctx, PebbleRenderEvent *event);
-PebbleAppHandlers* getAppHandlers ();
+//#define APP_INFO __pbl_app_info
+//extern PebbleAppInfo __pbl_app_info;
 void toggle_24h_style ();
+void toggle_bluetooth_connection ();
 
-GPoint getPivotRotationOffset (GSize rectOrig,GSize rectRotated,GPoint pivot,double angle);
-
-extern FILE* logFile;
+//SERVICES SERVICES SERVICES SERVICES SERVICES SERVICES SERVICES SERVICES
+typedef void (*ServiceUpdateCallback) (void);
+enum SimServices {
+    SIM_SERVICE_BUTTONS=0,
+    SIM_SERVICE_HARDWARE_OUTPUT,
+    SIM_SERVICE_ANIMATIONS,
+    SIM_SERVICE_TIMERS,
+    SIM_SERVICE_TICKS,
+    SIM_SERVICE_COUNT
+};
+typedef struct {
+    struct {
+        TimeUnits units;
+        TickHandler handler;
+    } ticks;
+    ServiceUpdateCallback services[SIM_SERVICE_COUNT];
+} ServiceData;
+extern ServiceData serviceData;
+void service_buttons ();
+void service_hardware_output ();
+void service_animations ();
+void service_timers ();
+void service_ticks ();
 
 //SIMDATA SIMDATA SIMDATA SIMDATA SIMDATA SIMDATA SIMDATA SIMDATA SIMDATA SIMDATA SIMDATA
 enum SimImages
@@ -63,6 +83,8 @@ enum SimImages
 bool loadSimulatorImages ();
 void freeSimulatorImages ();
 SDL_Surface* getSimulatorImage (int imageID);
+void unloadSystemFonts ();
+extern FILE* logFile;
 
 //DRAW DRAW DRAW DRAW DRAW DRAW DRAW DRAW DRAW DRAW DRAW DRAW DRAW DRAW DRAW DRAW DRAW
 #define PBL_SCREEN_WIDTH 144
@@ -100,11 +122,11 @@ void sdlrect_clip (SDL_Rect* const rect_to_clip,const SDL_Rect* const clipper);
 void graphics_draw_bitmap_in_rect_to(GContext* ctx,const GBitmap* bitmap,GRect,SDL_Surface* to);
 void graphics_draw_surface_in_rect (GContext* ctx,SDL_Surface* sur,GRect rect);
 void graphics_draw_surface_in_rect_to (GContext* ctx,SDL_Surface* sur,GRect rect,SDL_Surface* to);
+GContext *app_get_current_graphics_context(void);
 
 //BUTTONS BUTTONS BUTTONS BUTTONS BUTTONS BUTTONS BUTTONS BUTTONS BUTTONS BUTTONS
 void onButtonDown (ButtonId id);
 void onButtonUp (ButtonId id);
-void updateButtons ();
 void buttonsUpdateWindow (Window* w);
 void initButtons ();
 ClickConfig** getClickConfig ();
@@ -119,7 +141,6 @@ bool getVibeState ();
 bool getLightState ();
 
 void initHardwareOutput ();
-void updateHardwareOutput ();
 
 //RENDER RENDER RENDER RENDER RENDER RENDER RENDER RENDER RENDER RENDER
 #define MAX_WINDOWS 8
@@ -150,35 +171,19 @@ void setTopOffset (GPoint set);
 
 bool render ();
 
-//ADDITIONAL PEBBLE OS ADDITIONAL PEBBLE OS ADDITIONAL PEBBLE OS
-//functions, the original pebble API might have but doesn't
-void rotbmp_layer_init (RotBitmapLayer* layer,GRect frame);
-void rotbmp_pair_layer_init (RotBmpPairLayer* layer,GRect frame);
-void gpoint_move_into_rect (GPoint* const point,const GRect* const rect);
-
-//ANIMATION ANIMATION ANIMATION ANIMATION ANIMATION ANIMATION ANIMATION
-void updateAnimations ();
-
 //TIMERS
-
-typedef struct TimerEvent
-{
-	uint32_t timeout;
-	uint32_t cookie;
-	uint32_t handle;
-	struct TimerEvent *next;
-} TimerEvent;
-
-
-void fire_timers();
-bool remove_timer(TimerEvent *timer);
-TimerEvent* search_timer_with_handle(uint32_t handle);
-void create_new_timer(uint32_t timeout_ms, uint32_t cookie, uint32_t handle);
-
-
+void freeTimers();
 
 //RESHELPER RESHELPER RESHELPER RESHELPER RESHELPER RESHELPER RESHELPER
 #define MAX_RESOURCE_NAME 32
 #define RESOURCE_NAME_BASE "./resources/%d"
 void copyResName (char* name,int id);
-#endif //__GLOBAS_H__
+
+//ADDITIONAL PEBBLE OS ADDITIONAL PEBBLE OS ADDITIONAL PEBBLE OS
+//functions, the original pebble API might have but doesn't
+void gpoint_move_into_rect (GPoint* const point,const GRect* const rect);
+
+//Helper functions
+GPoint getPivotRotationOffset (GSize rectOrig,GSize rectRotated,GPoint pivot,double angle);
+
+#endif //__GLOBALS_H_

@@ -1,28 +1,36 @@
 #include "globals.h"
 
-void window_init(Window *window, const char *debug_name) {
-    printf("[INFO] Loading window: %s\n", debug_name);
-    window->debug_name=debug_name;
-    window->is_fullscreen=((APP_INFO.flags & APP_INFO_WATCH_FACE) == APP_INFO_WATCH_FACE);
-    window->overrides_back_button=false;
+Window* window_create (void) {
+    Window* window=(Window*)malloc(sizeof(Window));
+    if (!window) {
+        printf("[ERROR] Memory allocation failed!\n");
+        return 0;
+    }
+    window->layer=layer_create(GRect(0, 0, 144, 168));
+    if (window->layer==0) {
+        free(window);
+        return 0;
+    }
+    window->is_fullscreen=true; //TODO: copy appinfo.json to output and read if app is watchface or watchapp
     window->is_loaded=false;
-    window->on_screen=false;
-    window->is_render_scheduled=false;
     window->background_color=GColorBlack;
     window->user_data=0;
     window->click_config_context=0;
     window->status_bar_icon=0;
     window->click_config_provider=0;
-    window->input_handlers.buttons.up=0;
-    window->input_handlers.buttons.down=0;
-    layer_init(&window->layer, GRect(0, 0, 144, 168));
-    // This seems to be causing problems:
-    //layer_init (&window->layer, (window->is_fullscreen ? GRect(0,0,144,168) : GRect(0, 16, 144, 152))); 
-    window->layer.window=window;
+    window->layer->window=window;
     window->window_handlers.load=0;
     window->window_handlers.unload=0;
     window->window_handlers.appear=0;
     window->window_handlers.disappear=0;
+    return window;
+}
+
+void window_destroy (Window* window) {
+    if (window) {
+        layer_destroy(window->layer);
+        free(window);
+    }
 }
 
 void window_set_click_config_provider(Window *window, ClickConfigProvider click_config_provider) {
@@ -34,7 +42,7 @@ void window_set_click_config_provider(Window *window, ClickConfigProvider click_
 void window_set_background_color(Window *window, GColor background_color) {
     if (window->background_color!=background_color) {
         window->background_color=background_color;
-        layer_mark_dirty (&window->layer);
+        layer_mark_dirty (window->layer);
     }
 }
 
@@ -42,9 +50,9 @@ void window_set_fullscreen(Window *window, bool enabled) {
     window->is_fullscreen = enabled;
 
     if (enabled==true)
-        window->layer.bounds.origin.y=0;
+        window->layer->bounds.origin.y=0;
     else
-        window->layer.bounds.origin.y=16;
+        window->layer->bounds.origin.y=16;
 }
 
 void window_deinit(Window *window) {
@@ -61,7 +69,7 @@ void window_set_click_config_provider_with_context(Window *window, ClickConfigPr
         buttonsUpdateWindow (window);
 }
 
-ClickConfigProvider window_get_click_config_provider(Window *window) {
+ClickConfigProvider window_get_click_config_provider(const Window *window) {
     return window->click_config_provider;
 }
 
@@ -69,11 +77,11 @@ void window_set_window_handlers(Window *window, WindowHandlers handlers) {
     window->window_handlers=handlers;
 }
 
-struct Layer *window_get_root_layer(Window *window) {
-    return &window->layer;
+struct Layer *window_get_root_layer(const Window *window) {
+    return window->layer;
 }
 
-bool window_get_fullscreen(Window *window) {
+bool window_get_fullscreen(const Window *window) {
     return window->is_fullscreen;
 }
 
@@ -83,6 +91,14 @@ void window_set_status_bar_icon(Window *window, const GBitmap *icon) {
 
 bool window_is_loaded(Window *window) {
     return window->is_loaded;
+}
+
+void window_set_user_data (Window* window,void* user_data) {
+    window->user_data=user_data;
+}
+
+void* window_get_user_data (const Window* window) {
+    return window->user_data;
 }
 
 void window_stack_push(Window *window, bool animated) {

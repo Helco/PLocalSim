@@ -30,21 +30,9 @@ for %%F in (%PLS_SIM_DIR_SOURCE%\*.c) do (
 	%PLS_SDK_PATH%\%PLS_MINGW%\gcc -c -x c -O2 -Wall -std=c99 -DWIN32 -mconsole -DLOCALSIM %PLS_SIM_INCLUDES% %PLS_SIM_DIR_SOURCE%\%%~nxF -o %PLS_SIM_OBJ_DIR%\%%~nF.o
 	if not exist %PLS_SIM_OBJ_DIR%\%%~nF.o goto exit
 	set PLS_SIM_SOURCE_OBJ=!PLS_SIM_SOURCE_OBJ! %PLS_SIM_OBJ_DIR%\%%~nF.o
-	REM Extracting metadata 
-	start /WAIT %PLS_SDK_PATH%\%PLS_MINGW%\objcopy --only-section=.pbl_header -O binary %PLS_SIM_OBJ_DIR%\%%~nF.o %PLS_SIM_TMP_DIR%\metadata.bin > NUL
-	if exist %PLS_SIM_TMP_DIR%\metadata.bin copy %PLS_SIM_TMP_DIR%\metadata.bin %PLS_SIM_OUTPUT%\metadata.bin /Y >NUL
 )
 
-call %PLS_SDK_PATH%\run.withSDL.bat -ARG metaCompiler.exe %PLS_PROJECT_NAME%
-if errorlevel 0 goto compilewinres
-goto exit
-
-:compilewinres
-echo Compiling metadata
-%PLS_SDK_PATH%\%PLS_MINGW%\windres %PLS_SIM_WINRES_PATH%.rc -O coff -o %PLS_SIM_WINRES_PATH%.res
-if not exist %PLS_SIM_WINRES_PATH%.res goto exit
-
 echo Linking
-%PLS_SDK_PATH%\%PLS_MINGW%\gcc -std=c99 -Wall -O2 -mconsole -DLOCALSIM %PLS_SIM_INCLUDES% %PLS_SDK_PATH%\%PLS_SDL_MAIN% %PLS_SIM_SOURCE_OBJ% %PLS_SIM_LIB% %PLS_SIM_LIBS% %PLS_SIM_WINRES_PATH%.res -o %PLS_SIMULATOR_EXE%	
+%PLS_SDK_PATH%\%PLS_MINGW%\gcc -std=c99 -Wall -O2 -mconsole -DLOCALSIM %PLS_SIM_INCLUDES% %PLS_SDK_PATH%\%PLS_SDL_MAIN% %PLS_SIM_SOURCE_OBJ% %PLS_SIM_LIB% %PLS_SIM_LIBS% -o %PLS_SIMULATOR_EXE%	
 
 :exit

@@ -28,8 +28,7 @@ const SDL_Rect buttonRects [NUM_BUTTONS]= {
 const SDL_Rect vibeBaseRect= {0,0,60,BODY_HEIGHT};
 const SDL_Rect lightRect= {0,0,SCREEN_WIDTH,SCREEN_HEIGHT};
 
-static PebbleAppHandlers _PebbleAppHandlers= {0};
-static PblTm _then={0};
+static struct tm _then={0};
 static SDL_Surface* pebbleScreen=0,* screen=0,* bodyImg,* shadowImg,* vibeImg,* lightImg;
 static float elapsed=0.0f;
 static int bodyID=1;
@@ -38,23 +37,29 @@ static bool buttonState [NUM_BUTTONS]= {0,0,0,0};
 static bool bodyRender=true;
 static bool lastVibeState=false;
 static bool lastLightState=false;
+static bool firstTick=true;
 static char titleBuffer[]="./simdata/screenshots/yyyy-mm-dd-hh-mm.bmp\0\0";
+
+ServiceData serviceData={{0,0},{service_buttons,service_hardware_output,service_animations,service_timers,service_ticks}};
 
 FILE* logFile=0;
 
-PebbleAppHandlers* getAppHandlers() {
-    return &_PebbleAppHandlers;
-}
 float getTimeElapsed () {
     return elapsed;
 }
 
 void simulatorRender ();
 
-int main(int argc,char* argv[]) {
-    printf("[INFO] Entering main\n");
+#ifdef WIN32
+	int SDL_main (int argc,char* argv[]) {
+#else
+	#ifdef main
+	#undef main
+	#endif
+	int main(int argc,char* argv[]) {
+#endif
 
-    printf("[INFO] Running \"%s\" by %s\n", APP_INFO.name, APP_INFO.company);
+    printf("[INFO] Entering main\n");
 
     uint32_t flags=SDL_INIT_VIDEO;
 #ifndef WIN32
@@ -97,7 +102,7 @@ int main(int argc,char* argv[]) {
         return -9;
     initHardwareOutput ();
     initButtons();
-    pbl_main(NULL);
+    pbl_main();
     unloadSystemFonts ();
     quitRender();
 
@@ -111,48 +116,53 @@ int main(int argc,char* argv[]) {
     return 0;
 }
 
-void tick(bool firstTick) {
-    PblTm time;
-    PebbleTickEvent event;
-    get_time(&time);
-    TimeUnits units=_PebbleAppHandlers.tick_info.tick_units;
-    TimeUnits changed=0;
+void tick_timer_service_subscribe (TimeUnits units,TickHandler handler) {
+    serviceData.ticks.units=units;
+    serviceData.ticks.handler=handler;
+}
 
-    if (!firstTick) {
-        if ((units&SECOND_UNIT) >0 && time.tm_sec!=_then.tm_sec)
-            changed |= SECOND_UNIT;
-        if ((units&MINUTE_UNIT) >0 && time.tm_min!=_then.tm_min)
-            changed |= MINUTE_UNIT;
-        if ((units&HOUR_UNIT) >0 && time.tm_hour!=_then.tm_hour)
-            changed |= HOUR_UNIT;
-        if ((units&DAY_UNIT) >0 && time.tm_yday!=_then.tm_yday)
-            changed |= DAY_UNIT;
-        if ((units&MONTH_UNIT) >0 && time.tm_mon!=_then.tm_mon)
-            changed |= MONTH_UNIT;
-        if ((units&YEAR_UNIT) >0 && time.tm_year!=_then.tm_year)
-            changed |= YEAR_UNIT;
-    }
+void tick_timer_service_unsubscribe (void) {
+    serviceData.ticks.handler=0;
+}
 
-    if (firstTick||changed!=0) {
-        _then = time;
-        event.tick_time=&_then; //_then lifes longer
-        event.units_changed=_PebbleAppHandlers.tick_info.tick_units;
-        (_PebbleAppHandlers.tick_info.tick_handler)(app_get_current_graphics_context(), &event);
+void service_ticks() {
+    if (serviceData.ticks.handler!=0) {
+        time_t timeSec=time(0);
+        struct tm* tim=localtime(&timeSec);
+        TimeUnits units=serviceData.ticks.units;
+        TimeUnits changed=0;
+
+        if (!firstTick) {
+            if ((units&SECOND_UNIT) >0 && tim->tm_sec!=_then.tm_sec)
+                changed |= SECOND_UNIT;
+            if ((units&MINUTE_UNIT) >0 && tim->tm_min!=_then.tm_min)
+                changed |= MINUTE_UNIT;
+            if ((units&HOUR_UNIT) >0 && tim->tm_hour!=_then.tm_hour)
+                changed |= HOUR_UNIT;
+            if ((units&DAY_UNIT) >0 && tim->tm_yday!=_then.tm_yday)
+                changed |= DAY_UNIT;
+            if ((units&MONTH_UNIT) >0 && tim->tm_mon!=_then.tm_mon)
+                changed |= MONTH_UNIT;
+            if ((units&YEAR_UNIT) >0 && tim->tm_year!=_then.tm_year)
+                changed |= YEAR_UNIT;
+        }
+
+        if (firstTick||changed!=0) {
+            memcpy(&_then,tim,sizeof(struct tm));
+            serviceData.ticks.handler (tim,changed);
+            firstTick=false;
+        }
     }
 }
 
-void app_event_loop(AppTaskContextRef app_task_ctx, PebbleAppHandlers *handlers) {
+void app_event_loop() {
     bool isRunning=true;
     SDL_Event event;
     uint32_t lastTick;
     int32_t delay;
-    PblTm now;
+    int i;
+    struct tm* now;
     printf("[DEBUG] Got app_event_loop\n");
-    _PebbleAppHandlers = *handlers;
-    if (_PebbleAppHandlers.init_handler!=NULL)
-        (_PebbleAppHandlers.init_handler)(app_get_current_graphics_context());
-    if(_PebbleAppHandlers.tick_info.tick_handler != NULL)
-        tick (true);
     while (isRunning) {
         lastTick=SDL_GetTicks ();
         SDL_PumpEvents ();
@@ -188,8 +198,9 @@ void app_event_loop(AppTaskContextRef app_task_ctx, PebbleAppHandlers *handlers)
                 }
                 break;
                 case(SDLK_F12): {
-                    get_time (&now);
-                    string_format_time (titleBuffer,strlen(titleBuffer),"./simdata/screenshots/%Y-%m-%e-%H-%M-%S",&now);
+                    time_t timeSec=time(0);
+                    now=localtime(&timeSec);
+                    strftime (titleBuffer,strlen(titleBuffer),"./simdata/screenshots/%Y-%m-%e-%H-%M-%S",now);
                     strcat(titleBuffer,".bmp");
                     if (SDL_SaveBMP(screen,titleBuffer)<0)
                         printf("[WARN] SDL_SaveBMP: %s\n",SDL_GetError ());
@@ -262,12 +273,8 @@ void app_event_loop(AppTaskContextRef app_task_ctx, PebbleAppHandlers *handlers)
             }
         }
 
-		fire_timers();
-        if(_PebbleAppHandlers.tick_info.tick_handler != NULL)
-            tick (false);
-        updateButtons();
-        updateAnimations ();
-        updateHardwareOutput();
+		for (i=0;i<SIM_SERVICE_COUNT;i++)
+            (serviceData.services[i]) ();
         if (lastVibeState!=getVibeState()) {
             bodyRender=true;
             lastVibeState=getVibeState();
@@ -287,8 +294,6 @@ void app_event_loop(AppTaskContextRef app_task_ctx, PebbleAppHandlers *handlers)
         if (delay>0)
             SDL_Delay(delay);
     }
-    if (_PebbleAppHandlers.deinit_handler!=NULL)
-        (_PebbleAppHandlers.deinit_handler)(app_get_current_graphics_context());
 }
 
 void simulatorRender() {

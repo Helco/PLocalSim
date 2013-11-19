@@ -8,9 +8,31 @@ int32_t cos_lookup(int32_t angle) {
     return cos((double)angle/TRIG_MAX_RATIO* 2*PI)*TRIG_MAX_RATIO;
 }
 
-void gpath_init(GPath *path, const GPathInfo *init) {
+GPath* gpath_create(const GPathInfo *init) {
+    GPath* path=(GPath*)malloc(sizeof(GPath));
+    if (!path) {
+        printf ("[ERROR] Memory allocation failed!\n");
+        return 0;
+    }
+    path->points=(GPoint*)malloc(sizeof(GPoint)*init->num_points);
+    if (!path->points) {
+        printf ("[ERROR] Memory allocation failed!\n");
+        free(path);
+        return 0;
+    }
+    path->rotation=0;
+    path->offset=GPointZero;
     path->num_points = init->num_points;
-    path->points = init->points;
+    memcpy(path->points,init->points,sizeof(GPoint)*init->num_points);
+    return path;
+}
+
+void gpath_destroy (GPath* path) {
+    if (path) {
+        if (path->points)
+            free(path->points);
+        free(path);
+    }
 }
 
 void gpath_move_to(GPath *path, GPoint point) {
@@ -21,7 +43,7 @@ void gpath_rotate_to(GPath *path, int32_t angle) {
     path->rotation = angle%TRIG_MAX_ANGLE;
 }
 
-GPoint grect_center_point(GRect *rect) {
+GPoint grect_center_point(const GRect *rect) {
     GPoint output;
     output.x = rect->origin.x + (rect->size.w)/2;
     output.y = rect->origin.y + (rect->size.h)/2;
@@ -33,7 +55,7 @@ bool gpoint_equal(const GPoint * const point_a, const GPoint * const point_b) {
     return (point_a->x==point_b->x&&point_a->y==point_b->y);
 }
 
-bool gsize_equal(GSize *size_a, GSize *size_b) {
+bool gsize_equal(const GSize *size_a, const GSize *size_b) {
     return (size_a->w==size_b->w&&size_a->h==size_b->h);
 }
 
@@ -46,7 +68,7 @@ bool grect_equal (const GRect* const a,const GRect* const b) {
             a->size.h==b->size.h);
 }
 
-bool grect_contains_point(GRect *rect, GPoint *point) {
+bool grect_contains_point(const GRect *rect,const GPoint *point) {
     return (point->x>=rect->origin.x&&
             point->x<=rect->origin.x+rect->size.w&&
             point->y>=rect->origin.y&&

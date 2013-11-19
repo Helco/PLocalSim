@@ -63,7 +63,7 @@ void graphics_draw_line(GContext *ctx, GPoint p0, GPoint p1) {
     lineColor(getTopScreen(), topOffset.x+p0.x, topOffset.y+p0.y, topOffset.x+p1.x, topOffset.y+p1.y, getRawColor(ctx->stroke_color));
 }
 
-void graphics_fill_rect(GContext *ctx, GRect rect, uint8_t corner_radius, GCornerMask corner_mask) {
+void graphics_fill_rect(GContext *ctx, GRect rect, uint16_t corner_radius, GCornerMask corner_mask) {
     //TODO: corner_mask
     GPoint topOffset=getTopOffset ();
     if (corner_radius>0)
@@ -72,17 +72,17 @@ void graphics_fill_rect(GContext *ctx, GRect rect, uint8_t corner_radius, GCorne
         boxColor (getTopScreen(),topOffset.x+rect.origin.x,topOffset.y+rect.origin.y,topOffset.x+rect.origin.x+rect.size.w,topOffset.y+rect.origin.y+rect.size.h,getRawColor(ctx->fill_color));
 }
 
-void graphics_draw_circle(GContext *ctx, GPoint p, int radius) {
+void graphics_draw_circle(GContext *ctx, GPoint p, uint16_t radius) {
     GPoint topOffset=getTopOffset ();
     circleColor(getTopScreen(), topOffset.x+p.x, topOffset.y+p.y, radius, getRawColor(ctx->stroke_color));
 }
 
-void graphics_fill_circle(GContext *ctx, GPoint p, int radius) {
+void graphics_fill_circle(GContext *ctx, GPoint p, uint16_t radius) {
     GPoint topOffset=getTopOffset ();
     filledCircleColor(getTopScreen(), topOffset.x+p.x, topOffset.y+p.y, radius, getRawColor(ctx->fill_color));
 }
 
-void graphics_draw_round_rect(GContext *ctx, GRect rect, int radius) {
+void graphics_draw_round_rect(GContext *ctx, GRect rect, uint16_t radius) {
     GPoint topOffset=getTopOffset ();
     roundedRectangleColor(getTopScreen(),topOffset.x+rect.origin.x,topOffset.y+rect.origin.y,topOffset.x+rect.origin.x+rect.size.w,topOffset.y+rect.origin.y+rect.size.h,radius,getRawColor(ctx->stroke_color));
 }
@@ -239,8 +239,7 @@ typedef _WrapResult (*TextWrapper)(const char* line,const int maxWidth,const GFo
 _WrapResult wrap_words (const char* line,const int maxWidth,const GFont font);
 _WrapResult wrap_points (const char* line,const int maxWidth,const GFont font);
 
-//#verify #verify #verify !!!!!!!!!!
-void graphics_text_draw(GContext *ctx, const char *text, const GFont font, const GRect box, const GTextOverflowMode overflow_mode, const GTextAlignment alignment, const GTextLayoutCacheRef layout) {
+void graphics_draw_text(GContext *ctx, const char *text, const GFont font, const GRect box, const GTextOverflowMode overflow_mode, const GTextAlignment alignment, const GTextLayoutCacheRef layout) {
     char buffer [256]; //SHIT!! I need to mark the end of the string but I can't use the original parameter...
     TextWrapper textWrapper=(overflow_mode==GTextOverflowModeWordWrap?wrap_words:wrap_points);
     int lineHeight=0,usedHeight=0;

@@ -2,7 +2,7 @@
 REM prepare for compiling
 call envvars.bat
 
-set PLS_SIM_INCLUDES=-I %PLS_SDL_INCLUDE% -isystem %PLS_SDK_INCLUDE% -I %PLS_DIR_LOCAL% -I %PLS_DIR_SDL_GFX% 
+set PLS_SIM_INCLUDES=-I %PLS_SDL_INCLUDE% -isystem %PLS_SDK_INCLUDE% -I %PLS_DIR_LOCAL% -I%PLS_DIR_LOCAL%\dummy -I %PLS_DIR_SDL_GFX% 
 
 set PLS_SIM_OUTPUT=.\bin\libpebbleLocalSim.a
 set PLS_SIM_DIR_OUTPUT=.\obj\

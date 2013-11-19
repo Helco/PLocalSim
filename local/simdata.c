@@ -41,3 +41,7 @@ void freeSimulatorImages() {
 SDL_Surface* getSimulatorImage(int imageID) {
     return simImages[imageID].surface;
 }
+
+bool bluetooth_connection_service_peek(void);
+void bluetooth_connection_service_subscribe(BluetoothConnectionHandler handler);
+void bluetooth_connection_service_unsubscribe(void);

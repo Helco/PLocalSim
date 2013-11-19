@@ -2,9 +2,12 @@
 
 static Animation* firstScheduledAnimation=0;
 
-void animation_init(struct Animation *animation) {
-    if (animation_is_scheduled (animation))
-        animation_unschedule (animation);
+struct Animation* animation_create() {
+    Animation* animation=(Animation*)malloc(sizeof(Animation));
+    if (!animation) {
+        printf ("[ERROR] Memory allocation failed!\n");
+        return 0;
+    }
     animation->list_node.next=0;
     animation->list_node.prev=0;
     animation->abs_start_time_ms=0;
@@ -17,6 +20,12 @@ void animation_init(struct Animation *animation) {
     animation->handlers.stopped=0;
     animation->context=0;
     animation->implementation=0;
+    return animation;
+}
+
+void animation_destroy (struct Animation* animation) {
+    if (animation)
+        free(animation);
 }
 
 void animation_set_delay(struct Animation *animation, uint32_t delay_ms) {
@@ -98,7 +107,7 @@ bool animation_is_scheduled(struct Animation *animation) {
     return false;
 }
 
-void updateAnimations () {
+void service_animations () {
     Animation* cursor=firstScheduledAnimation,* tempCursor;
     bool isDirty=false;
     uint32_t time=0;
@@ -136,9 +145,13 @@ void updateAnimations () {
         markDirty (true);
 }
 
-void property_animation_init (PropertyAnimation* animation,const PropertyAnimationImplementation* implementation,void* subject,void* from_value,void* to_value)
+struct PropertyAnimation* property_animation_create(const struct PropertyAnimationImplementation* implementation,void* subject,void* from_value,void* to_value)
 {
-    animation_init(&animation->animation);
+    PropertyAnimation* animation=(PropertyAnimation*)malloc(sizeof(PropertyAnimation));
+    if (!animation) {
+        printf ("[ERROR] Memory allocation failed!\n");
+        return 0;
+    }
     animation->animation.implementation=(AnimationImplementation*)implementation;
     animation->subject=subject;
     if (implementation->base.update==(AnimationUpdateImplementation)property_animation_update_int16) {
@@ -173,6 +186,12 @@ void property_animation_init (PropertyAnimation* animation,const PropertyAnimati
     }
     else
         printf ("[WARN] Invalid property animation implementation!\n");
+    return animation;
+}
+
+void property_animation_destroy (struct PropertyAnimation* animation) {
+    if (animation)
+        free(animation);
 }
 
 #define PROPERTY_ANIMATION_INT16_VALUE(from,to,time) from+(int16_t)((to-from)*((float)time/ANIMATION_NORMALIZED_MAX));
@@ -225,7 +244,7 @@ static PropertyAnimationImplementation layer_property_animation_implementation={
     }
 };
 
-void property_animation_init_layer_frame (PropertyAnimation* animation,Layer* layer,GRect* from,GRect* to)
+PropertyAnimation* property_animation_create_layer_frame (Layer* layer,GRect* from,GRect* to)
 {
-    property_animation_init (animation,&layer_property_animation_implementation,layer,from,to);
+    return property_animation_create (&layer_property_animation_implementation,layer,from,to);
 }

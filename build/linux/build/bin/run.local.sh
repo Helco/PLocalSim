@@ -1,10 +1,10 @@
 #!/bin/bash
 
-while [ ! -e "pebble_app.ld" ]
+while [ ! -e "appinfo.json" ]
 do
 	if [ `pwd` == '/' ]
 	then
-		echo "[FAIL] Could not find 'pebble_app.ld' in this directory or any parent" 1>&2
+		echo "[FAIL] Could not find 'appinfo.json' in this directory or any parent" 1>&2
 		exit 1
 	fi
 	cd ..

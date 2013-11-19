@@ -32,7 +32,7 @@
 				</Linker>
 			</Target>
 			<Target title="Release">
-				<Option output="../build/tools/local/libPebbleLocalSim" prefix_auto="1" extension_auto="1" />
+				<Option output="../build/bin/localsim/libPebbleLocalSim" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
 				<Option object_output="obj/Release" />
 				<Option type="2" />
@@ -42,6 +42,7 @@
 					<Add option="-O2" />
 					<Add option="-std=c99" />
 					<Add option="-I../../../local/" />
+					<Add option="-I../../../local/dummy/" />
 					<Add option="-I../../../SDL_gfx/" />
 					<Add option="-I../../../include/" />
 				</Compiler>
@@ -72,10 +73,9 @@
 			<Option compiler="gcc" use="1" buildCommand="$compiler $options $includes -c $file -o $object -w" />
 		</Unit>
 		<Unit filename="../../../SDL_gfx/SDL_rotozoom.h" />
-		<Unit filename="../../../include/pebble_app.h" />
+		<Unit filename="../../../include/pebble.h" />
 		<Unit filename="../../../include/pebble_app_info.h" />
 		<Unit filename="../../../include/pebble_fonts.h" />
-		<Unit filename="../../../include/pebble_os.h" />
 		<Unit filename="../../../local/actionbar.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -98,6 +98,7 @@
 		<Unit filename="../../../local/hardwareOutput.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="../../../local/impl_pebble.h" />
 		<Unit filename="../../../local/jsmn.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -117,8 +118,24 @@
 		<Unit filename="../../../local/render.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="../../../local/scrolllayer.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../local/simdata.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../local/src/resource_ids.auto.h">
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="../../../local/timer.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="../../../local/window.c">
 			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../test/src/tic_tock_toe.c">
+			<Option compilerVar="CC" />
+			<Option target="Debug" />
 		</Unit>
 		<Extensions>
 			<code_completion />

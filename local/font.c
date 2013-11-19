@@ -100,65 +100,85 @@ void fonts_unload_custom_font(GFont font) {
     TTF_CloseFont((TTF_Font*)font);
 }
 
-void text_layer_update_func (Layer* me,GContext* ctx) {
-    GRect rect=GRect(0,0,me->frame.size.w,me->frame.size.h);
-    TextLayer* textLayer=(TextLayer*)me;
-    graphics_context_set_fill_color(ctx,textLayer->background_color);
+#define TEXT_LAYER_GET Layer* text_layer=(Layer*)l
+#define TEXT_GET TEXT_LAYER_GET;TextLayerData* text=(TextLayerData*)layer_get_data(text_layer);
+
+void text_layer_update_func (Layer* l,GContext* ctx) {
+    TEXT_GET;
+    GRect rect=GRect(0,0,l->frame.size.w,l->frame.size.h);
+    graphics_context_set_fill_color(ctx,text->background_color);
     graphics_fill_rect (ctx,rect,0,0);
-    graphics_context_set_text_color(ctx,textLayer->text_color);
-    graphics_text_draw (ctx,textLayer->text,textLayer->font,rect,textLayer->overflow_mode,textLayer->text_alignment,0);
+    graphics_context_set_text_color(ctx,text->text_color);
+    graphics_draw_text (ctx,text->text,text->font,rect,text->overflow_mode,text->text_alignment,0);
 }
 
-void text_layer_init(TextLayer *text_layer, GRect frame) {
-    layer_init ((Layer*)text_layer,frame);
-    layer_set_update_proc ((Layer*)text_layer,text_layer_update_func);
-
-    //Defaults taken from the SDK's documentation.
+TextLayer* text_layer_create(GRect frame) {
+    Layer* layer=layer_create_with_data(frame,sizeof(TextLayerData));
+    TextLayerData* text_layer=(TextLayerData*)layer_get_data(layer);
+    layer_set_update_proc (layer,text_layer_update_func);
     text_layer->font = fonts_get_system_font(FONT_KEY_GOTHIC_14);
     text_layer->text_alignment = GTextAlignmentLeft;
-    text_layer->text_color = 0;
-    text_layer->background_color = 1;
+    text_layer->text_color = GColorBlack;
+    text_layer->background_color = GColorWhite;
     text_layer->overflow_mode = GTextOverflowModeWordWrap;
     text_layer->should_cache_layout = false;
+    return (TextLayer*)layer;
 }
 
-const char *text_layer_get_text(TextLayer *text_layer) {
-    return text_layer->text;
+void text_layer_destroy (TextLayer* layer) {
+    if (layer)
+        layer_destroy((Layer*)layer);
 }
 
-void text_layer_set_text(TextLayer *text_layer, const char *text) {
-    text_layer->text = text;
-    layer_mark_dirty ((Layer*)text_layer);
+const char *text_layer_get_text(TextLayer *l) {
+    TEXT_GET;
+    return text->text;
 }
 
-void text_layer_set_font(TextLayer *text_layer, GFont font) {
-    text_layer->font = font;
-    layer_mark_dirty ((Layer*)text_layer);
+void text_layer_set_text(TextLayer *l, const char *txt) {
+    TEXT_GET;
+    text->text = txt;
+    layer_mark_dirty (text_layer);
 }
 
-void text_layer_set_text_color(TextLayer *text_layer, GColor color) {
-    text_layer->text_color = color;
-    layer_mark_dirty ((Layer*)text_layer);
+void text_layer_set_font(TextLayer *l, GFont font) {
+    TEXT_GET;
+    text->font = font;
+    layer_mark_dirty (text_layer);
 }
 
-void text_layer_set_background_color(TextLayer *text_layer, GColor color) {
-    text_layer->background_color = color;
-    layer_mark_dirty ((Layer*)text_layer);
+void text_layer_set_text_color(TextLayer *l, GColor color) {
+    TEXT_GET;
+    text->text_color = color;
+    layer_mark_dirty (text_layer);
 }
 
-void text_layer_set_overflow_mode(TextLayer *text_layer, GTextOverflowMode line_mode) {
-    text_layer->overflow_mode = line_mode;
-    layer_mark_dirty ((Layer*)text_layer);
+void text_layer_set_background_color(TextLayer *l, GColor color) {
+    TEXT_GET;
+    text->background_color = color;
+    layer_mark_dirty (text_layer);
 }
 
-void text_layer_set_text_alignment(TextLayer *text_layer, GTextAlignment text_alignment) {
-    text_layer->text_alignment = text_alignment;
-    layer_mark_dirty ((Layer*)text_layer);
+void text_layer_set_overflow_mode(TextLayer *l, GTextOverflowMode line_mode) {
+    TEXT_GET
+    text->overflow_mode = line_mode;
+    layer_mark_dirty (text_layer);
 }
 
-void text_layer_set_size(TextLayer *text_layer, const GSize max_size) {
-    GRect frame=layer_get_frame ((Layer*)text_layer);
+void text_layer_set_text_alignment(TextLayer *l, GTextAlignment text_alignment) {
+    TEXT_GET;
+    text->text_alignment = text_alignment;
+    layer_mark_dirty (text_layer);
+}
+
+void text_layer_set_size(TextLayer *l, const GSize max_size) {
+    TEXT_LAYER_GET;
+    GRect frame=layer_get_frame (text_layer);
     frame.size=max_size;
-    layer_set_frame ((Layer*)text_layer,frame);
-    layer_mark_dirty ((Layer*)text_layer);
+    layer_set_frame (text_layer,frame);
+    layer_mark_dirty (text_layer);
+}
+
+Layer* text_layer_get_layer (TextLayer* l) {
+    return (Layer*)l;
 }

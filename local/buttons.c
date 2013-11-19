@@ -1,6 +1,6 @@
 #include "globals.h"
 
-#define LONG_CLICK_STD_DELAY 750 //no sdk value for this... because of onthebutton there is one
+#define LONG_CLICK_STD_DELAY 750 //no sdk value for this...
 
 typedef struct ClickRecognizer
 {
@@ -11,7 +11,6 @@ typedef struct ClickRecognizer
     bool longClick;
 } ClickRecognizer;
 
-static PebbleAppHandlers* appHandlers=0;
 static ClickConfig clickConfig [NUM_BUTTONS];
 static ClickConfig* clickConfigPtr [NUM_BUTTONS];
 static ClickRecognizer clickRecognizer [NUM_BUTTONS];
@@ -50,15 +49,8 @@ void onButtonDown (ButtonId id)
     ClickRecognizer* rec;
     ClickConfig* conf;
     bool handled=false;
-    if (appHandlers==0)
-        appHandlers=getAppHandlers();
-    if (appHandlers->input_handlers.buttons.down!=0) {
-        PebbleButtonEvent event;
-        event.button_id=id;
-        appHandlers->input_handlers.buttons.down(app_get_current_graphics_context(),&event);
-    }
     rec=clickRecognizer+id;
-    conf=clickConfig+id;
+    conf=&(clickConfig[id]);
     rec->clickCount++;
     rec->lastDown=SDL_GetTicks();
     rec->isDown=true;
@@ -80,13 +72,6 @@ void onButtonUp (ButtonId id)
 {
     ClickRecognizer* rec;
     ClickConfig* conf;
-    if (appHandlers==0)
-        appHandlers=getAppHandlers();
-    if (appHandlers->input_handlers.buttons.up!=0) {
-        PebbleButtonEvent event;
-        event.button_id=id;
-        appHandlers->input_handlers.buttons.up(app_get_current_graphics_context(),&event);
-    }
     rec=clickRecognizer+id;
     conf=clickConfig+id;
     rec->isDown=false;
@@ -99,7 +84,7 @@ void onButtonUp (ButtonId id)
     rec->longClick=false;
 }
 
-void updateButtons ()
+void service_buttons ()
 {
     ClickRecognizer* rec;
     ClickConfig* conf;
@@ -115,8 +100,9 @@ void updateButtons ()
                 rec->lastDown=SDL_GetTicks();
                 rec->clickCount++;
             }
-            if (conf->long_click.handler!=0&&conf->long_click.delay_ms>0&&!rec->longClick&&SDL_GetTicks()-rec->lastDown>=conf->long_click.delay_ms) {
-                conf->long_click.handler(rec,conf->context);
+            if (conf->long_click.delay_ms>0&&!rec->longClick&&SDL_GetTicks()-rec->lastDown>=conf->long_click.delay_ms) {
+                if (conf->long_click.handler!=0)
+                    conf->long_click.handler(rec,conf->context);
                 rec->longClick=true;
             }
         }
@@ -125,14 +111,9 @@ void updateButtons ()
 
 void buttonsUpdateWindow (Window* w)
 {
-    ClickConfig* configs[NUM_BUTTONS];
-    int i;
     resetClickConfig ();
-    if (w!=0&&w->click_config_provider!=0) {
-        for (i=0;i<NUM_BUTTONS;i++)
-            configs[i]=clickConfig+i;
-        w->click_config_provider(configs,w->click_config_context);
-    }
+    if (w!=0&&w->click_config_provider!=0)
+        w->click_config_provider(w->click_config_context);
 }
 
 uint8_t click_number_of_clicks_counted (ClickRecognizerRef recognizer) {
@@ -141,4 +122,38 @@ uint8_t click_number_of_clicks_counted (ClickRecognizerRef recognizer) {
 
 ButtonId click_recognizer_get_button_id (ClickRecognizerRef recognizer) {
     return ((ClickRecognizer*)recognizer)->id;
+}
+
+void window_single_click_subscribe(ButtonId button_id,ClickHandler handler) {
+    clickConfig[button_id].click.repeat_interval_ms=0;
+    clickConfig[button_id].click.handler=handler;
+}
+
+void window_single_repeating_click_subscribe(ButtonId button_id,uint16_t repeat_interval_ms,ClickHandler handler) {
+    clickConfig[button_id].click.repeat_interval_ms=repeat_interval_ms;
+    clickConfig[button_id].click.handler=handler;
+}
+
+void window_multi_click_subscribe(ButtonId button_id,uint8_t min_clicks,uint8_t max_clicks,uint16_t timeout,bool last_click_only,ClickHandler handler) {
+    clickConfig[button_id].multi_click.min=min_clicks;
+    clickConfig[button_id].multi_click.max=max_clicks;
+    clickConfig[button_id].multi_click.timeout=timeout;
+    clickConfig[button_id].multi_click.last_click_only=last_click_only;
+    clickConfig[button_id].multi_click.handler=handler;
+}
+
+void window_long_click_subscribe(ButtonId button_id,uint16_t delay_ms,ClickHandler down_handler,ClickHandler up_handler) {
+    clickConfig[button_id].long_click.delay_ms=(delay_ms<=0?LONG_CLICK_STD_DELAY:delay_ms);
+    clickConfig[button_id].long_click.handler=down_handler;
+    clickConfig[button_id].long_click.release_handler=up_handler;
+}
+
+void window_raw_click_subscribe(ButtonId button_id,ClickHandler down_handler,ClickHandler up_handler,void* context) {
+    clickConfig[button_id].raw.down_handler=down_handler;
+    clickConfig[button_id].raw.up_handler=up_handler;
+    clickConfig[button_id].raw.context=context;
+}
+
+void window_set_click_context (ButtonId button_id,void* context) {
+    clickConfig[button_id].context=context;
 }

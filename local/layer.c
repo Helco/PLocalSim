@@ -1,5 +1,45 @@
 #include "globals.h"
 
+Layer* layer_create(GRect frame) {
+    Layer* layer=(Layer*)malloc(sizeof(Layer));
+    if (!layer) {
+        printf ("[ERROR] Memory allocation failed!\n");
+        return 0;
+    }
+    layer->frame = frame;
+    layer->bounds=GRect(0,0,frame.size.w,frame.size.h);
+    layer->clips=true;
+    layer->hidden=false;
+    layer->parent=0;
+    layer->first_child=0;
+    layer->next_sibling=0;
+    layer->window=0;
+    layer->update_proc=0;
+    layer->extra_data=0;
+    return layer;
+}
+
+Layer* layer_create_with_data (GRect frame,size_t size) {
+    Layer* layer=layer_create(frame);
+    if (!layer)
+        return 0;
+    layer->extra_data=malloc(size);
+    if (!layer->extra_data) {
+        printf ("[ERROR] Extra data allocation failed!\n");
+        free(layer);
+        return 0;
+    }
+    return layer;
+}
+
+void layer_destroy (Layer* layer) {
+    if (layer) {
+        if (layer->extra_data)
+            free(layer->extra_data);
+        free(layer);
+    }
+}
+
 void layer_mark_dirty(Layer *layer) {
     if (layer!=0&&window_stack_get_top_window()==layer->window)
         markDirty (true);
@@ -42,7 +82,7 @@ void layer_add_child(Layer *parent, Layer *child) {
     }
 }
 
-GRect layer_get_frame(Layer *layer) {
+GRect layer_get_frame(const Layer *layer) {
     return layer->frame;
 }
 
@@ -65,18 +105,6 @@ void layer_set_hidden(Layer *layer, bool hidden) {
     }
 }
 
-//#verify
-void layer_init(Layer *layer, GRect frame) {
-    layer->frame = frame;
-    layer->bounds=GRect(0,0,frame.size.w,frame.size.h);
-    layer->clips=true;
-    layer->hidden=false;
-    layer->parent=0;
-    layer->first_child=0;
-    layer->window=0;
-    layer->update_proc=0;
-}
-
 void layer_set_bounds(Layer *layer, GRect bounds) {
     if (!grect_equal(&layer->bounds,&bounds)) {
         layer->bounds = bounds;
@@ -84,7 +112,7 @@ void layer_set_bounds(Layer *layer, GRect bounds) {
     }
 }
 
-GRect layer_get_bounds(Layer *layer) {
+GRect layer_get_bounds(const Layer *layer) {
     return layer->bounds;
 }
 
@@ -92,7 +120,7 @@ void layer_set_update_proc(Layer *layer, LayerUpdateProc update_proc) {
     layer->update_proc = update_proc;
 }
 
-struct Window *layer_get_window(Layer *layer) {
+struct Window *layer_get_window(const Layer *layer) {
     return layer->window;
 }
 
@@ -106,6 +134,9 @@ void layer_remove_child_layers(Layer *parent) {
     layer_mark_dirty (parent);
 }
 
+void* layer_get_data (const Layer* layer) {
+    return layer->extra_data;
+}
 
 void layer_insert_below_sibling(Layer *layer_to_insert, Layer *below_sibling_layer) {
     layer_to_insert->next_sibling = below_sibling_layer->next_sibling;
@@ -134,7 +165,7 @@ void layer_insert_above_sibling(Layer *layer_to_insert, Layer *above_sibling_lay
 }
 
 
-bool layer_get_hidden(Layer *layer) {
+bool layer_get_hidden(const Layer *layer) {
     return layer->hidden;
 }
 
@@ -143,6 +174,6 @@ void layer_set_clips(Layer *layer, bool clips) {
     layer_mark_dirty (layer);
 }
 
-bool layer_get_clips(Layer *layer) {
+bool layer_get_clips(const Layer *layer) {
     return layer->clips;
 }

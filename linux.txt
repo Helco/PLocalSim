@@ -1,17 +1,17 @@
 [Installation]
 1. Copy the content of the directory ./build/linux/build/ into your pebble sdk directory 
-   (e.g. /home/helco/pebble/PebbleSDK1.2/Pebble/sdk/) It will not overwrite any original files. 
+   (e.g. /home/helco/pebble/PebbleSDK-2.0/) It will not overwrite any original files. 
 2. It may be that you have to install some SDL libraries if you haven't done this before.
    On ubuntu this requires one simple command:
 	sudo apt-get install libsdl1.2-dev libsdl-image1.2-dev libsdl-ttf2.0-dev
 
 [Use]
 To build your app, switch (in the terminal) to your project's main directory and run
-	./tools/build.local.sh
+	build.local.sh
 This will build your application, compile your resources and put all files necessary to run
 your application in the directory <project>/build/local/ .You can run it from there or simply
 type:
-	./tools/run.local.sh
+	run.local.sh
 which will run it for you.
 
 [Build the project on your own]

@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Release" />
-	<File name="../../../resourceCompiler/main.c" open="0" top="0" tabpos="0">
-		<Cursor position="2648" topLine="71" />
+	<File name="../../../resourceCompiler/jsmn.c" open="0" top="0" tabpos="0">
+		<Cursor position="3117" topLine="71" />
+	</File>
+	<File name="../../../resourceCompiler/main.c" open="1" top="1" tabpos="2">
+		<Cursor position="3169" topLine="78" />
 	</File>
 </CodeBlocks_layout_file>
