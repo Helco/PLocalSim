@@ -14,6 +14,7 @@
 #define RESOURCES_MAX_COUNT 32
 #define RESOURCE_NAME_MAXLEN VERSION_DEF_MAXLEN
 #define RESOURCE_FILE_MAXLEN 63
+#define PNG_TRANS_POSTFIX_LEN 6
 
 #define JSMN_TOKENS_MAX 256
 
@@ -87,7 +88,7 @@ int compileResourceMap (FILE* f) {
     size_t len;
     ResourceHandler resHandler;
     char resFileBuf [RESOURCE_FILE_MAXLEN+1];
-    int parentToken,resourceToken,fragmentToken,r;
+    int parentToken,resourceToken,fragmentToken,r,resElement;
     fseek(f,0,SEEK_END);
     len=ftell(f);
     fseek(f,0,SEEK_SET);
@@ -116,7 +117,7 @@ int compileResourceMap (FILE* f) {
     parentToken=skipToToken(tokens,buffer,parentToken,"media")+1;
     if (parentToken<1||tokens[parentToken].type!=JSMN_ARRAY) RET_ERROR ("Resource map invalid (No array \"media\" found)\n",-6)
     resourceToken=parentToken+1;
-    for (resCount=0;resCount<tokens[parentToken].size;resCount++) {
+    for (resElement=0;resElement<tokens[parentToken].size;resElement++) {
         if (tokens[resourceToken].type!=JSMN_OBJECT) RET_ERROR ("Resource map invalid (Resource element is not an object)\n",-7)
 
         //read name
@@ -141,9 +142,18 @@ int compileResourceMap (FILE* f) {
         if (fragmentToken<1||tokens[fragmentToken].type!=JSMN_STRING) RET_ERROR("Resource map invalid (Resource string \"type\" not found)\n",-11)
              if (cmptoken(buffer,tokens[fragmentToken],"raw")>0)        resHandler=handleRawResource;
         else if (cmptoken(buffer,tokens[fragmentToken],"png")>0)        resHandler=handlePngResource;
-        else if (cmptoken(buffer,tokens[fragmentToken],"png-trans")>0)  resHandler=handlePngTransResource; //Verify if this exist
+        else if (cmptoken(buffer,tokens[fragmentToken],"png-trans")>0) {
+            len=strlen(resourceNames[resCount]);
+            if (len+PNG_TRANS_POSTFIX_LEN>RESOURCE_FILE_MAXLEN) RET_ERROR("Resource map invalid (Resource name is too long (for a png-trans name))\n",-13)
+            strcpy(resourceNames[resCount+1],resourceNames[resCount]);
+            strcat(resourceNames[resCount],"_WHITE");
+            strcat(resourceNames[resCount+1],"_BLACK");
+            resCount++;
+            resHandler=handlePngTransResource; //Verify if this exist
+        }
         else if (cmptoken(buffer,tokens[fragmentToken],"font")>0)       resHandler=handleFontResource;
         else RET_ERROR("Resource map invalid (Invalid resource type)\n",-12)
+        resCount++;
         r=resHandler(resFileBuf,resCount);
         if (r<0)
             return r;
@@ -252,6 +262,7 @@ int handlePngResource (char* fileBuf,int index) {
 }
 
 int handlePngTransResource (char* fileBuf,int index) {
+    index--; //the given index points to the second image
     char fileBuffer [RESOURCE_FILE_MAXLEN+32];
     sprintf (fileBuffer,"./resources/%s",fileBuf);
     SDL_Surface* sur=IMG_Load (fileBuffer);
