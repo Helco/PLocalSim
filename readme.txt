@@ -18,24 +18,20 @@ The simulator has several key commands you can use:
 	[F12]		Saves a screenshot in <simulator>\simdata\screenshots\
 
 [Non-implemented features]
-I tried to put as much from the original SDK into the first release, but there are some things
-that are not implemented yet:
-	PebbleAppTimerHandler		- Because I think this is a rather minor feature
-	AppTimerHandle
-	RotBmp(Pair)Container		- The SDK documentation marks this as "Deprecated", but
-	(and their layer types)		  presumably this will be in the next release
+There are some things that are not implemented yet:
 	Dictionary			- Because this seems to be used only for mobile phone 
 					  communication
 	AppMessage			- Because this is hard to implement into a simulator, I
 	AppSync				  would like to ask you, how this should be implemented
-	Logging				- This will be in the next release
-	ScrollLayer			- This will be in one of the next releases
 	MenuLayer			
 	SimpleMenuLayer
 	NumberWindow
+	BatteryState
+	Accelerosensor
+	JavaScript API
 Except from these,  all other features should be implemented
 
-[Compability]
+[Compatibility]
 The most important feature for this simulator is compability. You should be able to leave your
 source code like it is for your watch, but there are a few problems:
 	- Non-implemented features. Very simple. I try to implement all features left as soon
@@ -74,7 +70,7 @@ I tested the sample watches from the SDK to detect these problems:
 	tic_tock_toe	[No problems]
 Pretty good result, isn't it :)
 
-[Compability between different operating systems]
+[Compatibility between different operating systems]
 
 
 [I want YOU!]
@@ -99,6 +95,7 @@ Otto Greenslade (Chaotic) - for his pebble pictures
 https://github.com/abl - for his empebble (which was original the basecode of this simulator, now
 	nearly all code is rewritten)
 https://github.com/AmandaCameron - for his metadata support implementation (in PebbleSDK 1.2)
+https://github.com/epatel - for his mac support
 The Pebble Team - for the amazing watch, the SDK and their long shipping procedure, which was the
 	motivation to build this
 Libraries that I used:
