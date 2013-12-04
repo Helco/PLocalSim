@@ -1,0 +1,22 @@
+# Add your Pebble source files to APP_SRCS
+# Remove ../src/bit_time.c which is here as an example
+
+APP_SRCS = \
+	../src/big_time.c
+
+INCS = -Iinclude -Ibuild/tempLocal -I.
+
+CFLAGS = -std=c11 -arch i386 -D_TIME_T
+
+all: run_resCompiler PebbleSim
+
+PebbleSim: $(APP_SRCS)
+	cc $(CFLAGS) $(INCS) `sdl-config --libs` -lSDL_image -lSDL_ttf -o $@ $(APP_SRCS) PebbleLocalSim.a
+
+run_resCompiler:
+	( cd .. ; sim/resCompiler )
+	cp -r ../build/local/resources .
+	cp -r ../build/tempLocal/src .
+
+clean:
+	rm -vfr *.o *~ resources src PebbleSim log.txt
