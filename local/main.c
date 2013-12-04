@@ -52,6 +52,8 @@ void simulatorRender ();
 
 #ifdef WIN32
 	int SDL_main (int argc,char* argv[]) {
+#elif __APPLE__
+	int SDL_main (int argc,char* argv[]) {
 #else
 	#ifdef main
 	#undef main

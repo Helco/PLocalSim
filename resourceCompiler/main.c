@@ -389,6 +389,7 @@ int generateResourceHeader() {
         "/*Because of some reasons (perhaps SDL?) changing the entry point creates crashes,\n"
         "but because pebble.h includes this file and all your pebble apps include pebble.h\n"
         "I change the name of your \"main\" function to \"pbl_main\"*/\n"
+        "#undef main\n"
         "#define main pbl_main\n"
         "typedef enum {\n"
         "  INVALID_RESOURCE = 0,\n"
