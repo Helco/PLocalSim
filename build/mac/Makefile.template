@@ -1,10 +1,7 @@
-# Add your Pebble source files to APP_SRCS
-# Remove ../src/bit_time.c which is here as an example
 
-APP_SRCS = \
-	../src/big_time.c
+APP_SRCS = $(wildcard ../src/*.c)
 
-INCS = -Iinclude -Ibuild/tempLocal -I.
+INCS = -Iinclude -Ibuild/tempLocal -I. -I../src
 
 CFLAGS = -std=c11 -arch i386 -D_TIME_T
 
