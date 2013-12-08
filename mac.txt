@@ -3,33 +3,34 @@
 
 [Installation]-----------------------------------------------------------
 
-Install SDL, SDL_ttf, SDL_image with homebrew, use --universal to get 32 bit support.
+Install SDL, SDL_ttf, SDL_image with homebrew, use `--universal` to get 32 bit support.
 
   % brew install SDL SDL_ttf SDL_image --universal
 
 
 [Use]--------------------------------------------------------------------
 
-In build/mac there is a pre-built sim.zip package ready to be used.
+In build/mac there is a pre-built `sim.zip` package ready to be used.
 
 Unzip and place the sim directory in your pebble project. 
 
-Open Terminal.app and cd into it and add your source files to the Makefile.
-(remove the example entry there)
+Open Terminal.app and cd into it
 
   % make
 
+It should compile all `.c` files in src.
+
 Hopefully you will get a PebbleSim binary you can run from the terminal with
-./PebbleSim
+
+  % ./PebbleSim
 
 Good luck!
 
 
 [Build the project on your own]------------------------------------------
 
-Open Terminal.app and cd into build/mac
+Open Terminal.app and cd into `build/mac`
 
   % make
 
 Hopefully you now have a sim directory ready to be used as described above.
-
