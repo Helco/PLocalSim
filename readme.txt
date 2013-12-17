@@ -85,7 +85,8 @@ and tell them to me. I will try to answer them all
 The fonts are copyright by Google Inc. under Apache License, Version 2.0
 The pebble pictures are copyright by Chaotic
 The used libraries (see [Credits]) are copyright by their copyright holder (not me)
-The actual simulator and the custom resource compiler are licensed by Helco (me) under GNU GPL v3
+The actual simulator and the custom resource compiler (C version) are licensed by Helco (me) under GNU GPL v3
+The python based resource compiler was placed in the public domain by Shirk
 additionalSource/strftime.c stands under Public Domain (is part of MinGW I suppose)
 
 [Credits]
@@ -96,6 +97,7 @@ https://github.com/abl - for his empebble (which was original the basecode of th
 	nearly all code is rewritten)
 https://github.com/AmandaCameron - for his metadata support implementation (in PebbleSDK 1.2)
 https://github.com/epatel - for his mac support
+https://github.com/Shirk - for creating the python based resCompiler for unix systems
 The Pebble Team - for the amazing watch, the SDK and their long shipping procedure, which was the
 	motivation to build this
 Libraries that I used:
