@@ -15,6 +15,7 @@ The simulator has several key commands you can use:
 	[F1]		Changes the color of the drawn pebble
 	[F2]		Toggles the lens effect 
 	[F3]		Switches between 24H and 12H mode
+	[F4]		Toggles bluetooth on / off
 	[F12]		Saves a screenshot in <simulator>\simdata\screenshots\
 
 [Non-implemented features]
