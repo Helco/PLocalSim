@@ -1539,21 +1539,21 @@ int32_t persist_read_int(const uint32_t key);
 //! Reads a blob of data for a given key from persistent storage into a given buffer.
 //! If the value has not yet been set, the given buffer is left unchanged.
 //! @param key The key of the field to read from.
-//! @param buffer_size The maximum size of the given buffer.
 //! @param buffer The pointer to a buffer to be written to.
+//! @param buffer_size The maximum size of the given buffer.
 //! @return The number of bytes written into the buffer or \ref E_DOES_NOT_EXIST
 //! if there is no field matching the given key.
-int persist_read_data(const uint32_t key, const size_t buffer_size, void *buffer);
+int persist_read_data(const uint32_t key, void *buffer, const size_t buffer_size);
 
 //! Reads a string for a given key from persistent storage into a given buffer.
 //! The string will be null terminated.
 //! If the value has not yet been set, the given buffer is left unchanged.
 //! @param key The key of the field to read from.
-//! @param buffer_size The maximum size of the given buffer. This includes the null character.
 //! @param buffer The pointer to a buffer to be written to.
+//! @param buffer_size The maximum size of the given buffer. This includes the null character.
 //! @return The number of bytes written into the buffer or \ref E_DOES_NOT_EXIST
 //! if there is no field matching the given key.
-int persist_read_string(const uint32_t key, const size_t buffer_size, char *buffer);
+int persist_read_string(const uint32_t key, char *buffer, const size_t buffer_size);
 
 //! Writes a bool value flag for a given key into persistent storage.
 //! @param key The key of the field to write to.
@@ -1569,10 +1569,10 @@ status_t persist_write_int(const uint32_t key, const int32_t value);
 //! Writes a blob of data of a specified size in bytes for a given key into persistent storage.
 //! The maximum size is \ref PERSIST_DATA_MAX_LENGTH
 //! @param key The key of the field to write to.
-//! @param size The size in bytes.
 //! @param data The pointer to the blob of data.
+//! @param size The size in bytes.
 //! @return The number of bytes written.
-int persist_write_data(const uint32_t key, const size_t size, const void *data);
+int persist_write_data(const uint32_t key, const void *data, const size_t size);
 
 //! Writes a string a given key into persistent storage.
 //! The maximum size is \ref PERSIST_STRING_MAX_LENGTH including the null terminator.

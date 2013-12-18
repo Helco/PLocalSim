@@ -12,9 +12,15 @@ The simulator has several key commands you can use:
 	[Arrow down]	Pebble button: Down
 	[Enter]		Pebble button: Select
 	[Backspace]	Pebble button: Back
+	[+]		Add 10% charge to the battery
+	[-]		Drain 10% charge from the battery
+	[x][y][z]	Simulate an accelerometer tap on the X/Y/Z axis with +1 direction
+	[X][Y][Z]	Simulate an accelerometer tap on the X/Y/Z axis with -1 direction
 	[F1]		Changes the color of the drawn pebble
 	[F2]		Toggles the lens effect 
 	[F3]		Switches between 24H and 12H mode
+	[F4]		Toggles bluetooth on / off
+	[F5]		Toggle charger plugged / not plugged
 	[F12]		Saves a screenshot in <simulator>\simdata\screenshots\
 
 [Non-implemented features]
@@ -26,8 +32,7 @@ There are some things that are not implemented yet:
 	MenuLayer			
 	SimpleMenuLayer
 	NumberWindow
-	BatteryState
-	Accelerosensor
+	Accelerosensor (accel_tap_* is supported)
 	JavaScript API
 Except from these,  all other features should be implemented
 
@@ -57,7 +62,7 @@ source code like it is for your watch, but there are a few problems:
 I tested the sample watches from the SDK to detect these problems:
 	big_time	[No problems]
 	classio		[Minor font problem]
-	classio-battery-connection [Unsupported feature (battery)]
+	classio-battery-connection [Minor font problem]
 	drop_zone	[No problems]
 	fuzzy_time	[No problems]
 	just_a_bit	[No problems]
