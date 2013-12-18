@@ -75,12 +75,11 @@ class ResourceCompiler(object):
 #define main pbl_main
 typedef enum {
 	INVALID_RESOURCE = 0,
-	DEFAULT_MENU_ICON = 0, // Friendly synonym for use in "PBL_APP_INFO()" calls
 %s
 } ResourceId;
 """
-	RESOURCE_ID_STR = "	RESOURCE_ID_%s,\n"
-
+	RESOURCE_ID_STR     = "	RESOURCE_ID_%s,\n"
+	RESOURCE_ID_STR_0   = "	RESOURCE_ID_%s = 0,\n"
 
 	def __init__(self, res_handle, out_path):
 		self._handle = res_handle
@@ -226,12 +225,12 @@ typedef enum {
 			bout_handle.close()
 			return False
 
-		bout_handle.write(bitmap.pbi_header())
-		bout_handle.write(bitmap.image_bits())
+		bout_handle.write(black_map.pbi_header())
+		bout_handle.write(black_map.image_bits())
 		bout_handle.close()
 
-		wout_handle.write(bitmap.pbi_header())
-		wout_handle.write(bitmap.image_bits())
+		wout_handle.write(white_map.pbi_header())
+		wout_handle.write(white_map.image_bits())
 		wout_handle.close()
 		return True
 
@@ -288,12 +287,19 @@ typedef enum {
 			return False
 
 		res_strings = ""
-		for res_def in self._json['resources']['media']:
-			if res_def['type'] == 'png-trans':
-				res_strings += ResourceCompiler.RESOURCE_ID_STR % (res_def['name'] + '_WHITE')
-				res_strings += ResourceCompiler.RESOURCE_ID_STR % (res_def['name'] + '_BLACK')
+		res_fmt_str = ResourceCompiler.RESOURCE_ID_STR
+		for (n, res_def) in enumerate(self._json['resources']['media']):
+			if n == 0:
+				res_fmt_str = ResourceCompiler.RESOURCE_ID_STR_0
 			else:
-				res_strings += ResourceCompiler.RESOURCE_ID_STR % res_def['name']
+				res_fmt_str = ResourceCompiler.RESOURCE_ID_STR
+
+			if res_def['type'] == 'png-trans':
+				res_strings += res_fmt_str % (res_def['name'] + '_WHITE')
+				res_fmt_str  = ResourceCompiler.RESOURCE_ID_STR
+				res_strings += res_fmt_str % (res_def['name'] + '_BLACK')
+			else:
+				res_strings += res_fmt_str % res_def['name']
 
 		out_handle.write(ResourceCompiler.RESOURCE_HEADER_OUTLINE % res_strings)
 		out_handle.close()
