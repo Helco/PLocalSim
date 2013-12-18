@@ -199,17 +199,6 @@ void app_event_loop() {
                         SDL_WM_SetCaption("Pebble Local Simulator - 12H Style",0);
                 }
                 break;
-                case(SDLK_F12): {
-                    time_t timeSec=time(0);
-                    now=localtime(&timeSec);
-                    strftime (titleBuffer,strlen(titleBuffer),"./simdata/screenshots/%Y-%m-%e-%H-%M-%S",now);
-                    strcat(titleBuffer,".bmp");
-                    if (SDL_SaveBMP(screen,titleBuffer)<0)
-                        printf("[WARN] SDL_SaveBMP: %s\n",SDL_GetError ());
-                    else
-                        printf ("[INFO] Saved screenshot: %s\n",titleBuffer);
-                }
-                break;
                 case(SDLK_F4): {
                     toggle_bluetooth_connection();
                     printf("[INFO] Toggle bluetooth %s\n", bluetooth_connection_service_peek() ? "ON":"OFF");
@@ -221,6 +210,17 @@ void app_event_loop() {
                     state = battery_state_service_peek();
                     printf("[INFO] Toggle plugged: %d%%, %s charging, %s plugged\n",
                            state.charge_percent, state.is_charging ? "":"not", state.is_plugged ? "":"not");
+                }
+                break;
+                case(SDLK_F12): {
+                    time_t timeSec=time(0);
+                    now=localtime(&timeSec);
+                    strftime (titleBuffer,strlen(titleBuffer),"./simdata/screenshots/%Y-%m-%e-%H-%M-%S",now);
+                    strcat(titleBuffer,".bmp");
+                    if (SDL_SaveBMP(screen,titleBuffer)<0)
+                        printf("[WARN] SDL_SaveBMP: %s\n",SDL_GetError ());
+                    else
+                        printf ("[INFO] Saved screenshot: %s\n",titleBuffer);
                 }
                 break;
                 case(SDLK_PLUS): {
