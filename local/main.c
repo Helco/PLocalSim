@@ -40,7 +40,7 @@ static bool lastLightState=false;
 static bool firstTick=true;
 static char titleBuffer[]="./simdata/screenshots/yyyy-mm-dd-hh-mm.bmp\0\0";
 
-ServiceData serviceData={{0,0},{service_buttons,service_hardware_output,service_animations,service_timers,service_ticks,service_bluetooth,service_battery}};
+ServiceData serviceData={{0,0},{service_buttons,service_hardware_output,service_animations,service_timers,service_ticks,service_bluetooth,service_battery,service_accel_tap}};
 
 FILE* logFile=0;
 
@@ -237,6 +237,33 @@ void app_event_loop() {
                     state = battery_state_service_peek();
                     printf("[INFO] Battery state: %d%%, %s charging, %s plugged\n",
                            state.charge_percent, state.is_charging ? "":"not", state.is_plugged ? "":"not");
+                }
+                break;
+                case (SDLK_x): {
+                    int32_t direction=1;
+                    if(event.key.keysym.mod & KMOD_SHIFT) {
+                        direction=-1;
+                    }
+                    accel_do_tap_on_axis(ACCEL_AXIS_X, direction);
+                    printf("[INFO] Tap X %d\n", direction);
+                }
+                break;
+                case (SDLK_y): {
+                    int32_t direction=1;
+                    if(event.key.keysym.mod & KMOD_SHIFT) {
+                        direction=-1;
+                    }
+                    accel_do_tap_on_axis(ACCEL_AXIS_Y, direction);
+                    printf("[INFO] Tap Y %d\n", direction);
+                }
+                break;
+                case (SDLK_z): {
+                    int32_t direction=1;
+                    if(event.key.keysym.mod & KMOD_SHIFT) {
+                        direction=-1;
+                    }
+                    accel_do_tap_on_axis(ACCEL_AXIS_Z, direction);
+                    printf("[INFO] Tap Z %d\n", direction);
                 }
                 break;
                 case (KEY_BUTTON_BACK): {

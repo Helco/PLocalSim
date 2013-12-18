@@ -49,6 +49,8 @@ void toggle_battery_charger_plugged ();
 uint8_t battery_charge_increase(void);
 uint8_t battery_charge_decrease(void);
 
+void accel_do_tap_on_axis(AccelAxisType axis, int32_t direction);
+
 //SERVICES SERVICES SERVICES SERVICES SERVICES SERVICES SERVICES SERVICES
 typedef void (*ServiceUpdateCallback) (void);
 enum SimServices {
@@ -59,6 +61,7 @@ enum SimServices {
     SIM_SERVICE_TICKS,
     SIM_SERVICE_BLUETOOTH,
     SIM_SERVICE_BATTERY,
+    SIM_SERVICE_ACCEL_TAP,
     SIM_SERVICE_COUNT
 };
 typedef struct {
@@ -76,6 +79,7 @@ void service_timers ();
 void service_ticks ();
 void service_bluetooth ();
 void service_battery ();
+void service_accel_tap ();
 
 //SIMDATA SIMDATA SIMDATA SIMDATA SIMDATA SIMDATA SIMDATA SIMDATA SIMDATA SIMDATA SIMDATA
 enum SimImages
