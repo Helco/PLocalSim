@@ -1,14 +1,14 @@
 #include "globals.h"
 #include <stdio.h>
 
-#define STORAGE_DATA "persistant.store"
+#define STORAGE_DATA "persistent.store"
 
 //
 // This file implements the Storage API
 //
 // Values created by persist_* are stored in a global storage which is then
-// stored in "persistant.store" in build/local/ alongside the other simdata.
-// Persistant keys will survive as long as this file exists.
+// stored in "persistent.store" in build/local/ alongside the other simdata.
+// Persistent keys will survive as long as this file exists.
 //
 
 typedef enum {
@@ -17,11 +17,11 @@ typedef enum {
 	KEY_INTEGER,
 	KEY_STRING,
 	KEY_DATA
-} PersistantKeyType;
+} PersistentKeyType;
 
-typedef struct _PersistantKey {
+typedef struct _PersistentKey {
 	uint32_t id;
-	PersistantKeyType  type;
+	PersistentKeyType  type;
 	union {
 		bool    boolean;
 		int32_t integer;
@@ -29,13 +29,13 @@ typedef struct _PersistantKey {
 		uint8_t data[PERSIST_DATA_MAX_LENGTH];
 	} val;
 	size_t byte_size; // required for string / data, used by all others :)
-} __attribute__((__packed__)) PersistantKey;
+} __attribute__((__packed__)) PersistentKey;
 
 static int key_count = 0;
-static PersistantKey* key_store = NULL;
+static PersistentKey* key_store = NULL;
 
 // key lookup to reduce code duplication
-static PersistantKey* _lookup_key(const uint32_t key, const bool get_unused) {
+static PersistentKey* _lookup_key(const uint32_t key, const bool get_unused) {
 	int i;
 
 	if (key_store == NULL || key_count == 0) {
@@ -56,7 +56,7 @@ static PersistantKey* _lookup_key(const uint32_t key, const bool get_unused) {
 
 	if (get_unused) {
 		// no free keys, we have to create a new one..
-		key_store = (PersistantKey*)realloc(key_store, sizeof(PersistantKey) * (key_count + 1));
+		key_store = (PersistentKey*)realloc(key_store, sizeof(PersistentKey) * (key_count + 1));
 		if (key_store == NULL) {
 			// oops.. disable the store
 			printf("[ERROR] out of memory while reallocating the key_store!\n");
@@ -75,7 +75,7 @@ static PersistantKey* _lookup_key(const uint32_t key, const bool get_unused) {
 
 // simulator access
 
-bool persistant_storage_load() {
+bool persistent_storage_load() {
 	if(key_store != NULL) {
 		printf("[WARNING] multiple calls to persistant_storage_load!\n");
 		return false;
@@ -88,7 +88,7 @@ bool persistant_storage_load() {
 	}
 	else {
 		fseek(handle, 0, SEEK_END);
-		key_count = ftell(handle) / sizeof(PersistantKey);
+		key_count = ftell(handle) / sizeof(PersistentKey);
 		fseek(handle, 0, SEEK_SET);
 
 		if (key_count == 0) {
@@ -99,7 +99,7 @@ bool persistant_storage_load() {
 	if(key_count == 0) {
 		// no keys, either it's a first initialization or the old file was corrupt
 		key_count = 1;
-		key_store = (PersistantKey*)malloc(sizeof(PersistantKey));
+		key_store = (PersistentKey*)malloc(sizeof(PersistentKey));
 		if (key_store == NULL) {
 			printf("[ERROR] failed to allocate memory for persistant storage!\n");
 			return false;
@@ -110,7 +110,7 @@ bool persistant_storage_load() {
 	}
 	else {
 		// read stored data
-		key_store = (PersistantKey*)malloc(sizeof(PersistantKey) * key_count);
+		key_store = (PersistentKey*)malloc(sizeof(PersistentKey) * key_count);
 		if (key_store == NULL) {
 			printf("[ERROR] failed to allocate memory for persistant storage!\n");
 			return false;
@@ -119,7 +119,7 @@ bool persistant_storage_load() {
 		uint8_t* ptr = (uint8_t*)key_store;
 		size_t total, read = 0;
 
-		total = key_count * sizeof(PersistantKey);
+		total = key_count * sizeof(PersistentKey);
 		while ((read = fread(ptr, 1, total, handle)) != total) {
 			ptr   += read;
 			total -= read;
@@ -135,7 +135,7 @@ bool persistant_storage_load() {
 	return true;
 }
 
-bool persistant_storage_save() {
+bool persistent_storage_save() {
 	if (key_store == NULL || key_count == 0) {
 		printf("[INFO] Persistant storeg is empty.\n");
 		return true;
@@ -150,7 +150,7 @@ bool persistant_storage_save() {
 	uint8_t* ptr = (uint8_t*)key_store;
 	size_t total, written = 0;
 
-	total = key_count * sizeof(PersistantKey);
+	total = key_count * sizeof(PersistentKey);
 	while ((written = fwrite(ptr, 1, total, handle)) != total) {
 		ptr   += written;
 		total -= written;
@@ -165,7 +165,7 @@ bool persistant_storage_save() {
 	return true;
 }
 
-void persistant_storage_free() {
+void persistent_storage_free() {
 	persistant_storage_save();
 	if (key_store != NULL) {
 		free(key_store);
@@ -177,7 +177,7 @@ void persistant_storage_free() {
 // pebble API part
 
 status_t persist_delete(const uint32_t key) {
-	PersistantKey* ptr = NULL;
+	PersistentKey* ptr = NULL;
 
 	ptr = _lookup_key(key, false);
 	if (ptr != NULL) {
@@ -196,7 +196,7 @@ bool persist_exists(const uint32_t key) {
 }
 
 int persist_get_size(const uint32_t key) {
-	PersistantKey* ptr = NULL;
+	PersistentKey* ptr = NULL;
 
 	ptr = _lookup_key(key, false);
 	if (ptr != NULL) {
@@ -206,7 +206,7 @@ int persist_get_size(const uint32_t key) {
 }
 
 bool persist_read_bool(const uint32_t key) {
-	PersistantKey* ptr = NULL;
+	PersistentKey* ptr = NULL;
 
 	ptr = _lookup_key(key, false);
 	if (ptr != NULL && ptr->type == KEY_BOOL) {
@@ -216,7 +216,7 @@ bool persist_read_bool(const uint32_t key) {
 }
 
 int persist_read_data(const uint32_t key, void* buffer, const size_t buffer_size) {
-	PersistantKey* ptr = NULL;
+	PersistentKey* ptr = NULL;
 
 	ptr = _lookup_key(key, false);
 	if (ptr != NULL && ptr->type == KEY_DATA) {
@@ -233,7 +233,7 @@ int persist_read_data(const uint32_t key, void* buffer, const size_t buffer_size
 }
 
 int32_t persist_read_int(const uint32_t key) {
-	PersistantKey* ptr = NULL;
+	PersistentKey* ptr = NULL;
 
 	ptr = _lookup_key(key, false);
 	if (ptr != NULL && ptr->type == KEY_INTEGER) {
@@ -243,7 +243,7 @@ int32_t persist_read_int(const uint32_t key) {
 }
 
 int persist_read_string(const uint32_t key, char* buffer, const size_t buffer_size) {
-	PersistantKey* ptr = NULL;
+	PersistentKey* ptr = NULL;
 
 	ptr = _lookup_key(key, false);
 	if (ptr != NULL && ptr->type == KEY_STRING) {
@@ -260,14 +260,14 @@ int persist_read_string(const uint32_t key, char* buffer, const size_t buffer_si
 }
 
 status_t persist_write_bool(const uint32_t key, const bool value) {
-	PersistantKey* ptr = NULL;
+	PersistentKey* ptr = NULL;
 
 	ptr = _lookup_key(key, false);
 	if (ptr == NULL) {
 		ptr = _lookup_key(key, true);
 	}
 	if (ptr != NULL) {
-		memset(ptr, 0, sizeof(PersistantKey));
+		memset(ptr, 0, sizeof(PersistentKey));
 
 		ptr->id = key;
 		ptr->type = KEY_BOOL;
@@ -280,7 +280,7 @@ status_t persist_write_bool(const uint32_t key, const bool value) {
 }
 
 int persist_write_data(const uint32_t key, const void* value, const size_t size) {
-	PersistantKey* ptr = NULL;
+	PersistentKey* ptr = NULL;
 
 	if (value == NULL) {
 		return E_INVALID_ARGUMENT;
@@ -292,7 +292,7 @@ int persist_write_data(const uint32_t key, const void* value, const size_t size)
 	}
 	if (ptr != NULL) {
 		size_t cnt = (size < PERSIST_DATA_MAX_LENGTH) ? size : PERSIST_DATA_MAX_LENGTH;
-		memset(ptr, 0, sizeof(PersistantKey));
+		memset(ptr, 0, sizeof(PersistentKey));
 
 		ptr->id = key;
 		ptr->type = KEY_DATA;
@@ -305,14 +305,14 @@ int persist_write_data(const uint32_t key, const void* value, const size_t size)
 }
 
 status_t persist_write_int(const uint32_t key, const int32_t value) {
-	PersistantKey* ptr = NULL;
+	PersistentKey* ptr = NULL;
 
 	ptr = _lookup_key(key, false);
 	if (ptr == NULL) {
 		ptr = _lookup_key(key, true);
 	}
 	if (ptr != NULL) {
-		memset(ptr, 0, sizeof(PersistantKey));
+		memset(ptr, 0, sizeof(PersistentKey));
 
 		ptr->id = key;
 		ptr->type = KEY_INTEGER;
@@ -325,7 +325,7 @@ status_t persist_write_int(const uint32_t key, const int32_t value) {
 }
 
 int persist_write_string(const uint32_t key, const char* cstring) {
-	PersistantKey* ptr = NULL;
+	PersistentKey* ptr = NULL;
 
 	if (cstring == NULL) {
 		return E_INVALID_ARGUMENT;
@@ -339,7 +339,7 @@ int persist_write_string(const uint32_t key, const char* cstring) {
 		size_t cnt = strlen(cstring);
 		cnt = (cnt < PERSIST_STRING_MAX_LENGTH - 1) ? cnt : PERSIST_STRING_MAX_LENGTH;
 
-		memset(ptr, 0, sizeof(PersistantKey));
+		memset(ptr, 0, sizeof(PersistentKey));
 
 		ptr->id = key;
 		ptr->type = KEY_STRING;

@@ -102,13 +102,13 @@ void simulatorRender ();
 
     if (!initRender(pebbleScreen))
         return -9;
-    persistant_storage_load();
+    persistent_storage_load();
     initHardwareOutput ();
     initButtons();
     pbl_main();
     unloadSystemFonts ();
     quitRender();
-    persistant_storage_free();
+    persistent_storage_free();
 
     if (logFile!=0)
         fclose(logFile);

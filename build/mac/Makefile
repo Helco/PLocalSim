@@ -26,7 +26,7 @@ SIM_SRCS = \
 	../../local/bluetooth.c \
 	../../local/battery.c \
 	../../local/accel_tap.c \
-	../../local/persistant_storage.c \
+	../../local/persistent_storage.c \
 
 INCS = \
 	-I../../include \
