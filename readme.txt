@@ -14,6 +14,8 @@ The simulator has several key commands you can use:
 	[Backspace]	Pebble button: Back
 	[+]		Add 10% charge to the battery
 	[-]		Drain 10% charge from the battery
+	[x][y][z]	Simulate an accelerometer tap on the X/Y/Z axis with +1 direction
+	[X][Y][Z]	Simulate an accelerometer tap on the X/Y/Z axis with -1 direction
 	[F1]		Changes the color of the drawn pebble
 	[F2]		Toggles the lens effect 
 	[F3]		Switches between 24H and 12H mode
@@ -30,7 +32,7 @@ There are some things that are not implemented yet:
 	MenuLayer			
 	SimpleMenuLayer
 	NumberWindow
-	Accelerosensor
+	Accelerosensor (accel_tap_* is supported)
 	JavaScript API
 Except from these,  all other features should be implemented
 
