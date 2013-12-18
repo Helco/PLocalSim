@@ -1,5 +1,9 @@
 #include "globals.h"
 
+//
+// This file implements the BluetoothConnectionService
+//
+
 static bool bluetooth_state = true;
 static bool bluetooth_notify = false;
 static BluetoothConnectionHandler bluetooth_callback = NULL;
