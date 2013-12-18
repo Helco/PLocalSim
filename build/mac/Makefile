@@ -1,6 +1,5 @@
-RSRC_SRCS = \
-	../../resourceCompiler/jsmn.c \
-	../../resourceCompiler/main.c
+RSRC_SRC = \
+	../../resourceCompiler/resCompiler.py
 
 SIM_SRCS = \
 	../../SDL_gfx/SDL_gfxBlitFunc.c \
@@ -37,8 +36,9 @@ CFLAGS = -std=c11 -arch i386 -D_TIME_T
 
 all: resCompiler PebbleLocalSim.a make_sim_dir
 
-resCompiler: $(RSRC_SRCS)
-	cc $(CFLAGS) `sdl-config --libs` -lSDL_image -o $@ $(RSRC_SRCS) 
+resCompiler: $(RSRC_SRC)
+	cp $(RSRC_SRC) $@
+	chmod +x $@
 
 PebbleLocalSim.a: $(SIM_SRCS:.c=.o)
 	ar -r $@ $(SIM_SRCS:.c=.o)
