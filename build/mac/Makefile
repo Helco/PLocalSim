@@ -23,6 +23,10 @@ SIM_SRCS = \
 	../../local/simdata.c \
 	../../local/timer.c \
 	../../local/window.c
+	../../local/bluetooth.c \
+	../../local/battery.c \
+	../../local/accel_tap.c \
+	../../local/persistant_storage.c \
 
 INCS = \
 	-I../../include \
