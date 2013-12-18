@@ -166,7 +166,7 @@ bool persistent_storage_save() {
 }
 
 void persistent_storage_free() {
-	persistant_storage_save();
+	persistent_storage_save();
 	if (key_store != NULL) {
 		free(key_store);
 		key_store = NULL;
