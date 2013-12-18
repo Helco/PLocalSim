@@ -53,6 +53,7 @@ enum SimServices {
     SIM_SERVICE_ANIMATIONS,
     SIM_SERVICE_TIMERS,
     SIM_SERVICE_TICKS,
+    SIM_SERVICE_BLUETOOTH,
     SIM_SERVICE_COUNT
 };
 typedef struct {
@@ -68,6 +69,7 @@ void service_hardware_output ();
 void service_animations ();
 void service_timers ();
 void service_ticks ();
+void service_bluetooth ();
 
 //SIMDATA SIMDATA SIMDATA SIMDATA SIMDATA SIMDATA SIMDATA SIMDATA SIMDATA SIMDATA SIMDATA
 enum SimImages

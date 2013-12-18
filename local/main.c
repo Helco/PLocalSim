@@ -40,7 +40,7 @@ static bool lastLightState=false;
 static bool firstTick=true;
 static char titleBuffer[]="./simdata/screenshots/yyyy-mm-dd-hh-mm.bmp\0\0";
 
-ServiceData serviceData={{0,0},{service_buttons,service_hardware_output,service_animations,service_timers,service_ticks}};
+ServiceData serviceData={{0,0},{service_buttons,service_hardware_output,service_animations,service_timers,service_ticks,service_bluetooth}};
 
 FILE* logFile=0;
 
@@ -208,6 +208,11 @@ void app_event_loop() {
                         printf("[WARN] SDL_SaveBMP: %s\n",SDL_GetError ());
                     else
                         printf ("[INFO] Saved screenshot: %s\n",titleBuffer);
+                }
+                break;
+                case(SDLK_F4): {
+                    toggle_bluetooth_connection();
+                    printf("[INFO] Toggle bluetooth %s\n", bluetooth_connection_service_peek() ? "ON":"OFF");
                 }
                 break;
                 case (KEY_BUTTON_BACK): {
