@@ -51,6 +51,10 @@ uint8_t battery_charge_decrease(void);
 
 void accel_do_tap_on_axis(AccelAxisType axis, int32_t direction);
 
+bool persistant_storage_load();
+bool persistant_storage_save();
+void persistant_storage_free();
+
 //SERVICES SERVICES SERVICES SERVICES SERVICES SERVICES SERVICES SERVICES
 typedef void (*ServiceUpdateCallback) (void);
 enum SimServices {
