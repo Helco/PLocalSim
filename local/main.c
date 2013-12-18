@@ -40,7 +40,7 @@ static bool lastLightState=false;
 static bool firstTick=true;
 static char titleBuffer[]="./simdata/screenshots/yyyy-mm-dd-hh-mm.bmp\0\0";
 
-ServiceData serviceData={{0,0},{service_buttons,service_hardware_output,service_animations,service_timers,service_ticks,service_bluetooth}};
+ServiceData serviceData={{0,0},{service_buttons,service_hardware_output,service_animations,service_timers,service_ticks,service_bluetooth,service_battery}};
 
 FILE* logFile=0;
 
@@ -213,6 +213,30 @@ void app_event_loop() {
                 case(SDLK_F4): {
                     toggle_bluetooth_connection();
                     printf("[INFO] Toggle bluetooth %s\n", bluetooth_connection_service_peek() ? "ON":"OFF");
+                }
+                break;
+                case(SDLK_F5): {
+                    BatteryChargeState state;
+                    toggle_battery_charger_plugged();
+                    state = battery_state_service_peek();
+                    printf("[INFO] Toggle plugged: %d%%, %s charging, %s plugged\n",
+                           state.charge_percent, state.is_charging ? "":"not", state.is_plugged ? "":"not");
+                }
+                break;
+                case(SDLK_PLUS): {
+                    BatteryChargeState state;
+                    battery_charge_increase();
+                    state = battery_state_service_peek();
+                    printf("[INFO] Battery state: %d%%, %s charging, %s plugged\n",
+                           state.charge_percent, state.is_charging ? "":"not", state.is_plugged ? "":"not");
+                }
+                break;
+                case(SDLK_MINUS): {
+                    BatteryChargeState state;
+                    battery_charge_decrease();
+                    state = battery_state_service_peek();
+                    printf("[INFO] Battery state: %d%%, %s charging, %s plugged\n",
+                           state.charge_percent, state.is_charging ? "":"not", state.is_plugged ? "":"not");
                 }
                 break;
                 case (KEY_BUTTON_BACK): {
