@@ -64,6 +64,13 @@ void layer_remove_from_parent(Layer *child) {
 }
 
 void layer_add_child(Layer *parent, Layer *child) {
+    if (parent==0||child==0) {
+        return;
+    }
+    if (child->parent!=0 && child->parent!=parent) {
+        // re-parent as required by API docs
+        layer_remove_from_parent(child);
+    }
     layer_mark_dirty (parent);
     child->parent=parent;
     child->window=parent->window;
@@ -139,8 +146,22 @@ void* layer_get_data (const Layer* layer) {
 }
 
 void layer_insert_below_sibling(Layer *layer_to_insert, Layer *below_sibling_layer) {
+    if(layer_to_insert->parent != below_sibling_layer->parent) {
+        // layers have to have the same parent otherwise this is a no-op
+        return;
+    }
+    Layer* prev_sibling = below_sibling_layer;
+    while(prev_sibling->next_sibling != layer_to_insert) {
+        prev_sibling = prev_sibling->next_sibling;
+        if(prev_sibling == NULL) {
+            // that should not happen with a common parent!
+            return;
+        }
+    }
+    prev_sibling->next_sibling = layer_to_insert->next_sibling;
     layer_to_insert->next_sibling = below_sibling_layer->next_sibling;
     below_sibling_layer->next_sibling = layer_to_insert;
+
     layer_to_insert->parent = below_sibling_layer->parent;
     layer_to_insert->window = below_sibling_layer->window;
     layer_mark_dirty (below_sibling_layer);
