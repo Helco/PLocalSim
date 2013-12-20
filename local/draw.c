@@ -63,6 +63,11 @@ void graphics_draw_line(GContext *ctx, GPoint p0, GPoint p1) {
     lineColor(getTopScreen(), topOffset.x+p0.x, topOffset.y+p0.y, topOffset.x+p1.x, topOffset.y+p1.y, getRawColor(ctx->stroke_color));
 }
 
+void graphics_draw_rect(GContext *ctx, GRect rect) {
+    GPoint topOffset=getTopOffset ();
+    rectangleColor (getTopScreen(),topOffset.x+rect.origin.x,topOffset.y+rect.origin.y,topOffset.x+rect.origin.x+rect.size.w,topOffset.y+rect.origin.y+rect.size.h,getRawColor(ctx->stroke_color));
+}
+
 void graphics_fill_rect(GContext *ctx, GRect rect, uint16_t corner_radius, GCornerMask corner_mask) {
     //TODO: corner_mask
     GPoint topOffset=getTopOffset ();
