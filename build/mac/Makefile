@@ -21,7 +21,7 @@ SIM_SRCS = \
 	../../local/scrolllayer.c \
 	../../local/simdata.c \
 	../../local/timer.c \
-	../../local/window.c
+	../../local/window.c \
 	../../local/bluetooth.c \
 	../../local/battery.c \
 	../../local/accel_tap.c \
