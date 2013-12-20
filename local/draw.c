@@ -267,9 +267,9 @@ void graphics_draw_text(GContext *ctx, const char *text, const GFont font, const
             usedHeight+=lineHeight;
             continue;
         }
-        lineSurfaceTemp=TTF_RenderText_Solid ((TTF_Font*)font,buffer,color);
+        lineSurfaceTemp=TTF_RenderUTF8_Solid ((TTF_Font*)font,buffer,color);
         if (lineSurfaceTemp==0) {
-            printf("[WARN] TTF_RenderText_Solid: %s\n",TTF_GetError ());
+            printf("[WARN] TTF_RenderUTF8_Solid: %s\n",TTF_GetError ());
             return;
         }
         lineSurface=SDL_ConvertSurface(lineSurfaceTemp,textSurface->format,SDL_SWSURFACE|SDL_SRCALPHA);
@@ -296,9 +296,9 @@ void graphics_draw_text(GContext *ctx, const char *text, const GFont font, const
         SDL_FreeSurface(lineSurface);
         if (wrap.addPoints>0) {
             if (pointsSurface==0) {
-                pointsSurface=TTF_RenderText_Solid ((TTF_Font*)font,"...",color);
+                pointsSurface=TTF_RenderUTF8_Solid ((TTF_Font*)font,"...",color);
                 if (pointsSurface==0) {
-                    printf("[WARN] TTF_RenderText_Solid: %s\n",TTF_GetError ());
+                    printf("[WARN] TTF_RenderUTF8_Solid: %s\n",TTF_GetError ());
                     return;
                 }
             }
