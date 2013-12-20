@@ -236,7 +236,7 @@ typedef enum {
 
 	def _handle_font(self, idx, res_def):
 		# determine the fontheight up-front
-		match = re.match(r'.*([0-9]+)$', res_def['name'])
+		match = re.match(r'.*[^0-9]([0-9]+)$', res_def['name'])
 		if not match:
 			logging.error('Resource #%d: Font definition name is invalid (Size has to be stated at the end)', idx)
 			return False

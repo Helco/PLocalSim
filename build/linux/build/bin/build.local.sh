@@ -17,6 +17,16 @@ mkdir -p ./build/local/simdata
 cp -r $SIM_DIR/localsim/simdata/* ./build/local/simdata/
 
 #Build
+if [ "$1" == "--debug" ]
+then
+	DEBUG_FLAGS="-ggdb"
+fi
+
+if [ "$(uname -m)" == "x86_64" ]
+then
+	ARCH_FLAGS="-m32"
+fi
+
 export LIBRARY_PATH=$LIBRARY_PATH':'$SIM_DIR'/localsim/'
 SDL_LIBS='-lSDL -lSDLmain -lSDL_ttf -lSDL_image -lm'
 RT_LIB='-lPebbleLocalSim'
@@ -32,5 +42,5 @@ $RUN_RESCOMPILER
 
 if [ $? -eq 0 ]
 then
-	gcc -x c -std=c99 -Wall -o $OUTPUT  $INCLUDES $APP_SRC -lm $RT_LIB $SDL_LIBS
+	gcc $ARCH_FLAGS $DEBUG_FLAGS -x c -std=c99 -Wall -o $OUTPUT  $INCLUDES $APP_SRC -lm $RT_LIB $SDL_LIBS
 fi

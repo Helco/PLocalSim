@@ -26,6 +26,17 @@ Hopefully you will get a PebbleSim binary you can run from the terminal with
 
 Good luck!
 
+[Debugging]--------------------------------------------------------------
+
+Follow the steps for normal use but build and run with the following commands:
+
+  % make debuge
+
+It should compile all `.c` files in src with debugging enabled.
+
+Run the debug simulator in gdb:
+
+  % gdb ./PebbleSim.debug
 
 [Build the project on your own]------------------------------------------
 

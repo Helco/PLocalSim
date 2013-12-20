@@ -80,6 +80,7 @@ void battery_state_service_unsubscribe() {
 void service_battery() {
 	if(battery_notify && battery_callback != NULL) {
 		battery_callback(battery_state);
+		battery_notify = false;
 	}
 }
 
