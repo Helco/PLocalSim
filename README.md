@@ -6,9 +6,7 @@
 
 This project is an extension to the PebbleSDK2.0 Beta2 which allows you to build and run your pebble applications on your computer.
 
-## Installation and Use
-
-For OS specific manuals see linux.txt/windows.txt/mac.txt
+## Usage
 
 The simulator has several key commands you can use:
 
@@ -57,7 +55,7 @@ The most important feature for this simulator is compability. You should be able
 *  __Fonts__. The fonts that are most common on the pebble are Bitham (renamed from Gotham) and Gothic. I presume that they are commercial fonts which could be extracted from the firmware, but I think this would be illegal. In the case that you have these fonts (as TrueTypeFont) you can replace them, as I filled the missing fonts up with Droid Serif and Roboto which have a free license (you can find the fonts and their license text in the directory `local/simdata/systemFonts`). The problem with these fonts are, that they are wider than the original ones, so some applications have graphical bugs because of this. In the most sample watches, where this was a problem, it could be solved with extending the layer frame with and reducing the margin.
 
 
-## Watch Demos from SDK
+## Watch Apps from SDK
 
 I tested the sample watches from the SDK to detect these problems:
 
@@ -103,6 +101,107 @@ __I want YOU!__ to find:
 *  questions
 
 and [tell them to me](https://github.com/Helco/PebbleLocalSim/issues). I will try to answer them all.
+
+## Installation
+
+### Linux
+
+1. Copy the content of the directory `./build/linux/build/` into your pebble sdk directory (e.g. `/home/helco/pebble/PebbleSDK-2.0/`) It will not overwrite any original files. 
+2. It may be that you have to install some SDL libraries if you haven't done this before. On ubuntu this requires one simple command: `sudo apt-get install libsdl1.2-dev libsdl-image1.2-dev libsdl-ttf2.0-dev`
+
+To build your app, switch (in the terminal) to your project's main directory and run `build.local.sh`
+
+This will build your application, compile your resources and put all files necessary to run
+your application in the directory `<project>/build/local/`. You can run it from there or simply type: `run.local.sh` which will run it for you.
+
+#### Debugging
+
+If you see the need you can add the flag `--debug` to build.local.sh or `run.local.sh` to build your project with debugging symbols and run it in gdb.
+
+#### Build the project on your own
+
+To build the project on your own, there are two codeblocks projects in the directory `build/linux/codeblocks`
+
+
+### Mac
+
+#### THE MAC SDK IS NOT READY YET
+
+Install SDL, SDL_ttf, SDL_image with homebrew, use `--universal` to get 32 bit support.
+`brew install SDL SDL_ttf SDL_image --universal`
+
+In build/mac there is a pre-built `sim.zip` package ready to be used.
+
+Unzip and place the sim directory in your pebble project. 
+
+Open Terminal.app and cd into it
+
+`make`
+
+It should compile all `.c` files in src.
+
+Hopefully you will get a PebbleSim binary you can run from the terminal with
+
+`./PebbleSim`
+
+Good luck!
+
+#### Debugging
+
+Follow the steps for normal use but build and run with the following commands:
+
+`make debug`
+
+It should compile all `.c` files in src with debugging enabled.
+
+Run the debug simulator in gdb:
+
+`gdb ./PebbleSim.debug`
+
+#### Build the project on your own
+
+Open Terminal.app and cd into `build/mac`
+
+`make`
+
+Hopefully you now have a sim directory ready to be used as described above.
+
+
+### Windows
+
+#### THE WINDOWS SDK IS NOT READY YET
+
+You can use the the directory `.\build\windows\` as a windows sdk but if you like to have it somewhere else (probably easier to access) you can follow these instructions:
+
+1. Switch to your chosen directory and type `<original_sdk>/build/windows/install.bat`
+2. This projects requires MinGW. You have to set the bin path of it in the `<sdk>/envvars.bat` file or you can leave it at default and extract the archives listed below into the folder `<sdk>\MinGW\`
+
+Note: If you do these changes before you use install.bat your installed sdk will have your
+changes too.
+
+#### MinGW Archives:
+
+*  [gcc-core](http://prdownloads.sf.net/mingw/gcc-core-3.4.5-20060117-1.tar.gz)
+*  [gcc-g++](http://prdownloads.sf.net/mingw/gcc-g++-3.4.5-20060117-1.tar.gz)
+*  [mingw-runtime](http://prdownloads.sf.net/mingw/mingw-runtime-3.9.tar.gz)
+*  [mingw-utils](http://prdownloads.sf.net/mingw/mingw-utils-0.3.tar.gz)
+*  [w32api](http://prdownloads.sf.net/mingw/w32api-3.6.tar.gz)
+*  [binutils](http://prdownloads.sf.net/mingw/binutils-2.17.50-20060824-1.tar.gz)
+*  [mingw32-make](http://prdownloads.sf.net/mingw/mingw32-make-3.81-1.tar.gz)
+
+Unlike on other operating systems, the pebble team has no sdk for windows yet, that is why you have to create a project with a tool provided by this sdk. To create a project switch  to the directory you want your projects folder in and run the command: `create.project.bat <project_name>`
+
+This will create a sample project for you to start coding. To build your project run: `.\tools\build.local.bat` from your projects main folder. To run it you can switch to the directory `<project>\build\local\` or you can run: `.\tools\run.local.bat` also from your projects main folder.
+
+#### Build the project on your own
+
+To build an installation of this pebble simulator sdk switch to the directory `.\build\windows`.
+
+There you have two commands:
+*  `build.library.bat` to build the library used to create the simulator
+*  `build.resCompiler.bat` to build the resource compiler
+
+Note that you need MinGW (see [Installation]) to build this project
 
 ## License
 
