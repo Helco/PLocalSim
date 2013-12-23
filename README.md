@@ -87,7 +87,7 @@ These work, with minor font/layout issues:
 
 These do not work:
 
-*  ninety_one_dub  [Probably invalid? day_name_layer is being used without initialising]
+*  ninety_one_dub - (Probably invalid? day_name_layer is being used without initialising)
 
 
 Pretty good result, isn't it :)
