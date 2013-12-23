@@ -107,15 +107,10 @@ and [tell them to me](https://github.com/Helco/PebbleLocalSim/issues). I will tr
 ## License
 
 *  The fonts are copyright by Google Inc. under Apache License, Version 2.0
-
 *  The pebble pictures are copyright by Chaotic
-
 *  The used libraries (see __Credits__) are copyright by their copyright holder (not me)
-
 *  The actual simulator and the custom resource compiler (C version) are licensed by Helco (me) under GNU GPL v3
-
 *  The python based resource compiler was placed in the public domain by Shirk
-
 *  `additionalSource/strftime.c` stands under Public Domain (is part of MinGW I suppose)
 
 ## Credits
