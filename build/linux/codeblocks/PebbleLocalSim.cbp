@@ -133,7 +133,7 @@
 		<Unit filename="../../../local/window.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../../test/src/tic_tock_toe.c">
+		<Unit filename="../../../test/src/vaultBoy.c">
 			<Option compilerVar="CC" />
 			<Option target="Debug" />
 		</Unit>

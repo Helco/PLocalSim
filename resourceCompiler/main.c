@@ -153,11 +153,10 @@ int compileResourceMap (FILE* f) {
         }
         else if (cmptoken(buffer,tokens[fragmentToken],"font")>0)       resHandler=handleFontResource;
         else RET_ERROR("Resource map invalid (Invalid resource type)\n",-12)
-        resCount++;
         r=resHandler(resFileBuf,resCount);
         if (r<0)
             return r;
-
+		resCount++;
         resourceToken+=tokenTokenLength(tokens,resourceToken);
     }
     free(buffer);

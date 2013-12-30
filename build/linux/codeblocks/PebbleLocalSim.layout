@@ -7,7 +7,7 @@
 	<File name="../../../SDL_gfx/SDL_rotozoom.c" open="0" top="0" tabpos="0">
 		<Cursor position="2887" topLine="97" />
 	</File>
-	<File name="../../../include/pebble.h" open="1" top="0" tabpos="1">
+	<File name="../../../include/pebble.h" open="0" top="0" tabpos="1">
 		<Cursor position="7445" topLine="166" />
 	</File>
 	<File name="../../../local/animation.c" open="0" top="0" tabpos="0">
@@ -25,10 +25,10 @@
 	<File name="../../../local/font.c" open="0" top="0" tabpos="0">
 		<Cursor position="6431" topLine="148" />
 	</File>
-	<File name="../../../local/globals.h" open="1" top="1" tabpos="3">
-		<Cursor position="126" topLine="0" />
+	<File name="../../../local/globals.h" open="0" top="0" tabpos="2">
+		<Cursor position="126" topLine="87" />
 	</File>
-	<File name="../../../local/impl_pebble.h" open="1" top="0" tabpos="4">
+	<File name="../../../local/impl_pebble.h" open="0" top="0" tabpos="3">
 		<Cursor position="51" topLine="0" />
 	</File>
 	<File name="../../../local/layer.c" open="0" top="0" tabpos="0">
@@ -40,8 +40,8 @@
 	<File name="../../../local/math.c" open="0" top="0" tabpos="7">
 		<Cursor position="675" topLine="14" />
 	</File>
-	<File name="../../../local/pebble_os.c" open="1" top="0" tabpos="5">
-		<Cursor position="3160" topLine="97" />
+	<File name="../../../local/pebble_os.c" open="0" top="0" tabpos="4">
+		<Cursor position="157" topLine="0" />
 	</File>
 	<File name="../../../local/render.c" open="0" top="0" tabpos="5">
 		<Cursor position="5033" topLine="158" />
@@ -55,7 +55,7 @@
 	<File name="../../../local/window.c" open="0" top="0" tabpos="0">
 		<Cursor position="649" topLine="0" />
 	</File>
-	<File name="../../../test/src/tic_tock_toe.c" open="0" top="0" tabpos="0">
-		<Cursor position="10252" topLine="309" />
+	<File name="../../../test/src/vaultBoy.c" open="0" top="0" tabpos="0">
+		<Cursor position="3259" topLine="96" />
 	</File>
 </CodeBlocks_layout_file>
