@@ -25,6 +25,11 @@ do
 	cd ..
 done
 
-./$APP
+if [ "$1" == "--debug" ]
+then
+	gdb ./$APP
+else
+	./$APP
+fi
 
 cd ../../

@@ -105,6 +105,7 @@ AppTimer* app_timer_register (uint32_t timeout_ms,AppTimerCallback callback,void
     timer->timeout=SDL_GetTicks()+timeout_ms;
     timer->callback=callback;
     timer->context=callback_data;
+    timer->next = NULL;
     add_timer(timer);
     return timer;
 }

@@ -14,6 +14,10 @@ type:
 	run.local.sh
 which will run it for you.
 
+[Debugging]
+If you see the need you can add the flag '--debug' to build.local.sh or run.local.sh
+to build your project with debugging symbols and run it in gdb.
+
 [Build the project on your own]
 To build the project on your own, there are two codeblocks projects in the directory
 ./build/linux/codeblocks

@@ -63,6 +63,11 @@ void graphics_draw_line(GContext *ctx, GPoint p0, GPoint p1) {
     lineColor(getTopScreen(), topOffset.x+p0.x, topOffset.y+p0.y, topOffset.x+p1.x, topOffset.y+p1.y, getRawColor(ctx->stroke_color));
 }
 
+void graphics_draw_rect(GContext *ctx, GRect rect) {
+    GPoint topOffset=getTopOffset ();
+    rectangleColor (getTopScreen(),topOffset.x+rect.origin.x,topOffset.y+rect.origin.y,topOffset.x+rect.origin.x+rect.size.w,topOffset.y+rect.origin.y+rect.size.h,getRawColor(ctx->stroke_color));
+}
+
 void graphics_fill_rect(GContext *ctx, GRect rect, uint16_t corner_radius, GCornerMask corner_mask) {
     //TODO: corner_mask
     GPoint topOffset=getTopOffset ();
@@ -262,9 +267,9 @@ void graphics_draw_text(GContext *ctx, const char *text, const GFont font, const
             usedHeight+=lineHeight;
             continue;
         }
-        lineSurfaceTemp=TTF_RenderText_Solid ((TTF_Font*)font,buffer,color);
+        lineSurfaceTemp=TTF_RenderUTF8_Solid ((TTF_Font*)font,buffer,color);
         if (lineSurfaceTemp==0) {
-            printf("[WARN] TTF_RenderText_Solid: %s\n",TTF_GetError ());
+            printf("[WARN] TTF_RenderUTF8_Solid: %s\n",TTF_GetError ());
             return;
         }
         lineSurface=SDL_ConvertSurface(lineSurfaceTemp,textSurface->format,SDL_SWSURFACE|SDL_SRCALPHA);
@@ -291,9 +296,9 @@ void graphics_draw_text(GContext *ctx, const char *text, const GFont font, const
         SDL_FreeSurface(lineSurface);
         if (wrap.addPoints>0) {
             if (pointsSurface==0) {
-                pointsSurface=TTF_RenderText_Solid ((TTF_Font*)font,"...",color);
+                pointsSurface=TTF_RenderUTF8_Solid ((TTF_Font*)font,"...",color);
                 if (pointsSurface==0) {
-                    printf("[WARN] TTF_RenderText_Solid: %s\n",TTF_GetError ());
+                    printf("[WARN] TTF_RenderUTF8_Solid: %s\n",TTF_GetError ());
                     return;
                 }
             }
