@@ -125,8 +125,6 @@ To build the project on your own, there are two codeblocks projects in the direc
 
 ### Mac
 
-#### THE MAC SDK IS NOT READY YET
-
 Install SDL, SDL_ttf, SDL_image with homebrew, use `--universal` to get 32 bit support.
 `brew install SDL SDL_ttf SDL_image --universal`
 
@@ -168,8 +166,6 @@ Hopefully you now have a sim directory ready to be used as described above.
 
 
 ### Windows
-
-#### THE WINDOWS SDK IS NOT READY YET
 
 You can use the the directory `.\build\windows\` as a windows sdk but if you like to have it somewhere else (probably easier to access) you can follow these instructions:
 
@@ -216,6 +212,7 @@ Note that you need MinGW (see [Installation]) to build this project
 
 ### Many many thanks to:
 
+*  [David Konsumer](https://github.com/konsumer) - for the new README
 *  [robhh](https://github.com/robhh) - for their AppTimer implementation
 *  [Otto Greenslade (Chaotic)](http://dribbble.com/chaotic) - for their pebble pictures
 *  [abl](https://github.com/abl) - for their empebble (which was original the basecode of this simulator, now nearly all code is rewritten)

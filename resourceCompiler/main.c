@@ -153,10 +153,9 @@ int compileResourceMap (FILE* f) {
         }
         else if (cmptoken(buffer,tokens[fragmentToken],"font")>0)       resHandler=handleFontResource;
         else RET_ERROR("Resource map invalid (Invalid resource type)\n",-12)
-        r=resHandler(resFileBuf,resCount);
+        r=resHandler(resFileBuf,++resCount);
         if (r<0)
             return r;
-		resCount++;
         resourceToken+=tokenTokenLength(tokens,resourceToken);
     }
     free(buffer);
@@ -338,7 +337,7 @@ int handleFontResource (char* fileBuf,int index) {
     FILE* out= fopen (fileBuffer,"wb");
     if (!out) RET_ERROR("Couldn't open font resource output file\n",-41)
 
-        char buffer [JSMN_BUFFER_SIZE];
+    char buffer [JSMN_BUFFER_SIZE];
     size_t len = fread (buffer,1,JSMN_BUFFER_SIZE,in);
     while (len>0) {
         fwrite(buffer,1,len,out);
@@ -347,7 +346,7 @@ int handleFontResource (char* fileBuf,int index) {
     fclose (in);
     fclose (out);
 
-    char* sizePointer=resourceNames[index]+strlen(resourceNames[index])-1;
+    char* sizePointer=resourceNames[index]+strlen(resourceNames[index-1])-1;
     while (sizePointer!=resourceNames[index]&&*sizePointer>='0'&&*sizePointer<='9')
         sizePointer--;
     if (sizePointer==resourceNames[index]+strlen(resourceNames[index])-1||sizePointer==resourceNames[index]) RET_ERROR ("Font definition name is invalid (Size has to stated at the end)\n",-42)
