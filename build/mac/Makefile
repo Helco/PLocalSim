@@ -33,7 +33,7 @@ INCS = \
 	-I../../SDL_gfx \
 	-I../../local/dummy
 
-CFLAGS = -std=c11 -arch i386 -D_TIME_T
+CFLAGS = -std=c11 -arch i386
 
 %.o: %.c
 	cc $(CFLAGS) $(INCS) -c $< -o $@
