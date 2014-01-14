@@ -16,28 +16,64 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <time.h>
 #include <string.h>
+
+#ifndef __FILE_NAME__
+#define __FILE_NAME__ __FILE__
+#endif
 
 //! Status codes
 typedef enum StatusCode {
-  S_SUCCESS = 0,              //!< Operation completed successfully.
-  E_ERROR = -1,               //!< An error occurred (no description).
-  E_UNKNOWN = -2,             //!< No idea what went wrong.
-  E_INTERNAL = -3,            //!< There was a generic internal logic error.
-  E_INVALID_ARGUMENT = -4,    //!< The function was not called correctly.
-  E_OUT_OF_MEMORY = -5,       //!< Insufficient allocatable memory available.
-  E_OUT_OF_STORAGE = -6,      //!< Insufficient long-term storage available.
-  E_OUT_OF_RESOURCES = -7,    //!< Insufficient resources available.
-  E_RANGE = -8,               //!< Argument out of range (may be dynamic).
-  E_DOES_NOT_EXIST = -9,      //!< Target of operation does not exist.
-  E_INVALID_OPERATION = -10,  //!< Operation not allowed (may depend on state).
-  E_BUSY = -11,               //!< Another operation prevented this one.
+  //! Operation completed successfully.
+  S_SUCCESS = 0,
 
-  S_TRUE = 1,                 //!< Equivalent of boolean true.
-  S_FALSE = 0,                //!< Equivalent of boolean false.
+  //! An error occurred (no description).
+  E_ERROR = -1,
 
-  S_NO_MORE_ITEMS = 2,        //!< For list-style requests.  At end of list.
-  S_NO_ACTION_REQUIRED = 3,   //!< No action was taken as none was required.
+  //! No idea what went wrong.
+  E_UNKNOWN = -2,
+
+  //! There was a generic internal logic error.
+  E_INTERNAL = -3,
+
+  //! The function was not called correctly.
+  E_INVALID_ARGUMENT = -4,
+
+  //! Insufficient allocatable memory available.
+  E_OUT_OF_MEMORY = -5,
+
+  //! Insufficient long-term storage available.
+  E_OUT_OF_STORAGE = -6,
+
+  //! Insufficient resources available.
+  E_OUT_OF_RESOURCES = -7,
+
+  //! Argument out of range (may be dynamic).
+  E_RANGE = -8,
+
+  //! Target of operation does not exist.
+  E_DOES_NOT_EXIST = -9,
+
+  //! Operation not allowed (may depend on state).
+  E_INVALID_OPERATION = -10,
+
+  //! Another operation prevented this one.
+  E_BUSY = -11,
+
+
+  //! Equivalent of boolean true.
+  S_TRUE = 1,
+
+  //! Equivalent of boolean false.
+  S_FALSE = 0,
+
+  //! For list-style requests.  At end of list.
+  S_NO_MORE_ITEMS = 2,
+
+  //! No action was taken as none was required.
+  S_NO_ACTION_REQUIRED = 3,
+
 } StatusCode;
 
 typedef int32_t status_t;
@@ -55,31 +91,41 @@ typedef struct ListNode {
 //! @{
 
 //! @addtogroup Clicks
-//! \brief Dealing with button input
+//! \brief Handling button click interactions
 //!
-//! The Clicks framework is the preferred way to handle button interactions.
-//! It offers an API that is concerned with "clicks" instead of raw up & down button events.
-//! Each button has a ClickRecognizer, which is represented using the \ref ClickRecognizerRef type,
-//! which are automatically created by the system.
-//! Each of these ClickRecognizers is a little state machine that processes the raw stream of
-//! up & down events for one of the buttons and based upon the raw, incoming events, it tries
-//! to distill and match the "click" events according the application-provided configuration.
+//! Click handlers work by consuming raw button up and button down events and distilling those
+//! events into configurable user interactions. These interactions can be any one of the following:
 //!
-//! There are a 4 types of "click" events:
-//! * Single-click: detects a single click (button down event followed by button up event).
-//! It also offers "hold to repeat" functionality.
-//! * Multi-click: detects double clicking, triple clicking and other arbitrary click counts.
+//! * Single-click. Detects a single click, that is, a button down event followed by button up event.
+//! It also offers hold-to-repeat functionality.
+//! * Multi-click. Detects double-clicking, triple-clicking and other arbitrary click counts.
 //! It can fire its event handler on all of the matched clicks, or just the last.
-//! * Long-click: detects long clicks ("press and hold").
-//! * Raw: this just forwards the raw button events. It is offered as a way to use both the higher
-//! level "clicks" processing and the raw button events at the same time.
+//! * Long-click. Detects long clicks, that is, press-and-hold.
+//! * Raw. Simply forwards the raw button events. It is provided as a way to use both the higher level
+//! "clicks" processing and the raw button events at the same time.
 //!
-//! The configuration of the click recognizers happens inside a callback function (of type \ref ClickConfigProvider)
-//! that is associated with a \ref Window using \ref window_set_click_config_provider() or
-//! using \ref window_set_click_config_provider_with_context().
+//! You set up click handlers in each application window in order to process button input and call the
+//! necessary event handlers.
 //!
-//! <h3>Example</h3>
-//! For example, here, we first associate a click config provider callback with our window:
+//! A Pebble window handles various click inputs, like short and long clicks, hold-to-repeat clicks
+//! and double clicks, by setting a Click Configuration Provider callback function.
+//!
+//! For convenience, a click callback provides a \ref ClickRecognizer and a user-specified context.
+//! The \ref ClickRecognizer can be used to determine which button triggered the callback.
+//!
+//! Note that you could have different buttons that share the same callback.
+//! However, you should use the \ref ClickRecognizer to differentiate actions based on the triggering button.
+//!
+//! You can also have multiple types of handlers on the same button: for example, click and long
+//! click on the Select button.
+//!
+//! Refer to the \htmlinclude UiFramework.html (chapter "Clicks") for a conceptual
+//! overview of clicks and relevant code examples. For SDK code examples, refer to
+//!   * Examples/todolist-demo
+//!
+//! <h3>Usage example</h3>
+//! For example, you first associate a click config provider callback with your window. Your callback
+//! will provide your click configuration to Pebble OS.
 //! \code{.c}
 //! void app_init(void) {
 //!   ...
@@ -87,7 +133,7 @@ typedef struct ListNode {
 //!   ...
 //! }
 //! \endcode
-//! Then in the callback, we set our desired configuration for each button:
+//! Then in the callback, you set your desired configuration for each button:
 //! \code{.c}
 //! void config_provider(Window *window) {
 //!  // single click / repeat-on-hold config:
@@ -101,7 +147,7 @@ typedef struct ListNode {
 //!   window_long_click_subscribe(BUTTON_ID_SELECT, 700, select_long_click_handler, select_long_click_release_handler);
 //! }
 //! \endcode
-//! Then we implement the handlers for each configuration we have set up:
+//! Now you implement the handlers for each click you've subscribed to and set up:
 //! \code{.c}
 //! void down_single_click_handler(ClickRecognizerRef recognizer, void *context) {
 //!   ... called on single click ...
@@ -128,8 +174,8 @@ typedef struct ListNode {
 //!   Window *window = (Window *)context; // This context defaults to the window, but may be changed with \ref window_set_click_context.
 //! }
 //! \endcode
-//! See templates/template_buttons/src/template_buttons.c for a complete example.
-//! @note The Back button cannot be re-configured. It is hard-wired to pop to the previous window on
+//! See Examples/watchapps/pebble_arcade/src/entry.c for an example of click usage.
+//! @note The Back button can't be re-configured. It is hard-wired to pop to the previous window on
 //! the \ref WindowStack.
 //!
 //! @{
@@ -155,67 +201,6 @@ typedef enum {
 
 //! @addtogroup Foundation
 //! @{
-
-//! @addtogroup Time
-//!   \brief Standard system time functions.
-//!
-//! This module contains standard time functions, to get system time,
-//! convert to local time or UTC, and format for printing.
-//! @{
-
-//! Time struct, with values separated 
-//! into incremental: year, month, day_in_month, hour, minute, second
-//! and informational: Day in week, Day in Year, is it daylight savings time
-struct tm {
-    int32_t tm_sec; 
-    int32_t tm_min; 
-    int32_t tm_hour;
-    int32_t tm_mday;
-    int32_t tm_mon;
-    int32_t tm_year;
-    int32_t tm_wday;
-    int32_t tm_yday;
-    int32_t tm_isdst;
-    int32_t tm_gmtoff;
-    const char *tm_zone;
-};
-
-//! Seconds since January 1st, 1970 UTC (Unix Timestamp)
-typedef int32_t time_t;
-
-//! Prints the time provided with conditional formatting into a provided string.
-//! Example: format="Todays Date is %A %B %d, %Y."
-//! Results in "Todays Date is Thursday October 31, 2013."
-//!     @param s provides a preallocated string for storing the date result.
-//!     @param max is the size of the preallocated string.
-//!     @param format is a string containing output date text formatting.
-//!     @param tm contains a Time struct to be formatted for the output string.
-//!     @return The length of the output string placed into param s.
-size_t strftime(char *s, size_t max, const char *format, const struct tm *tm);
-
-//! Converts a provided Unix Timestamp into a Time struct with local time.
-//!     @param timep is the Unix Timestamp to convert
-//!     @return pointer to time converted to static Time struct.
-struct tm *localtime(const time_t *timep);
-
-//! Converts a provided Unix Timestamp into a Time struct with UTC time.
-//! UTC Time is the time at GMT timezone, Coordinated Universal Time.
-//!     @param timep is the Unix Timestamp to convert
-//!     @return pointer to time converted to static Time struct.
-struct tm *gmtime(const time_t *timep);
-
-//! Returns the current time in Unix Timestamp Format
-//!     @param tloc if provided receives current time (NULL recommended)
-//!     @return Current time in Unix Timestamp Format
-time_t time(time_t *tloc);
-
-//! Returns the current time in Unix Timestamp Format with Milliseconds
-//!     @param tloc if provided receives current Unix Time seconds portion
-//!     @param out_ms if provided receives current Unix Time milliseconds portion
-//!     @return Current Unix Time milliseconds portion
-uint16_t time_ms(time_t *tloc, uint16_t *out_ms);
-
-//! @} // group Time
 
 //! @addtogroup Math
 //! @{
@@ -291,6 +276,11 @@ bool clock_is_24h_style(void);
 //! @{
 
 //! @addtogroup BluetoothConnectionService
+//! \brief Determine when Pebble is connected to the phone
+//!
+//! The BluetoothConnectionService allows your app to know whether Pebble is connected to the phone.
+//! You can ask the system for this information at a given time or you can register
+//! to receive events every time Pebble connects or disconnects to the phone.
 //! @{
 
 //! Callback type for bluetooth connection events
@@ -313,6 +303,13 @@ void bluetooth_connection_service_unsubscribe(void);
 //! @} // group BluetoothConnectionService
 
 //! @addtogroup AppFocusService
+//!
+//!
+//! \brief Handling app focus
+//!
+//! The AppFocusService is used for apps that require a high degree of user interactivity, like a game
+//! when you need to know when to pause your app when a notification covers your app window.
+//!
 //! @{
 
 //! Callback type for focus events
@@ -335,6 +332,15 @@ void app_focus_service_unsubscribe(void);
 //! @} // group AppFocusService
 
 //! @addtogroup BatteryStateService
+//!
+//! \brief Determines when the battery state changes
+//!
+//! The BatteryStateService API lets you know when the battery state changes, that is,
+//! its current charge level, whether it is plugged and charging. It uses the
+//! BatteryChargeState structure to describe the current power state of Pebble.
+//!
+//! Refer to /Examples/watchfaces/classio-battery-connection,
+//! which demonstrates using the battery state service in a watchface.
 //! @{
 
 //! Structure for retrieval of the battery charge state
@@ -367,9 +373,17 @@ BatteryChargeState battery_state_service_peek(void);
 //! @} // group BatteryStateService
 
 //! @addtogroup AccelerometerService
+//!
+//! \brief Using the Pebble accelerometer
+//!
+//! The AccelerometerService enables the Pebble accelerometer to detect taps,
+//! perform measures at a given frequency, and transmit samples in batches to save CPU time
+//! and processing.
+//!
+//! For available code samples, see
+//! Examples/watchapps/feature_accel_discs
 //! @{
 
-//! A single accelerometer sample for all three axes
 typedef struct __attribute__((__packed__)) {
   //! acceleration along the x axis
   int16_t x;
@@ -377,17 +391,29 @@ typedef struct __attribute__((__packed__)) {
   int16_t y;
   //! acceleration along the z axis
   int16_t z;
+
+  //! true if the watch vibrated when this sample was collected
+  bool did_vibrate;
+
+  //! Timestamp, in milliseconds
+  uint64_t timestamp;
 } AccelData;
 
 typedef enum {
+  //! Accelerometer's X axis. The positive direction along the X axis goes
+  //! toward the right of the watch.
   ACCEL_AXIS_X = 0,
+  //! Accelerometer's Y axis. The positive direction along the Y axis goes
+  //! toward the top of the watch.
   ACCEL_AXIS_Y = 1,
+  //! Accelerometer's Z axis. The positive direction along the Z axis goes
+  //! vertically out of the watchface.
   ACCEL_AXIS_Z = 2,
 } AccelAxisType;
 
 //! Callback type for accelerometer data events
-//! @param data a pointer to data
-//! @param num_samples the number of available samples
+//! @param data Pointer to the collected accelerometer samples.
+//! @param num_samples the number of samples stored in data.
 typedef void (*AccelDataHandler)(AccelData *data, uint32_t num_samples);
 
 //! Callback type for accelerometer tap events
@@ -397,7 +423,6 @@ typedef void (*AccelTapHandler)(AccelAxisType axis, int32_t direction);
 
 //! Valid accelerometer sampling rates, in Hz
 typedef enum {
-  ACCEL_SAMPLING_1HZ = 1,
   ACCEL_SAMPLING_10HZ = 10,
   ACCEL_SAMPLING_25HZ = 25,
   ACCEL_SAMPLING_50HZ = 50,
@@ -406,7 +431,9 @@ typedef enum {
 
 //! Peek at the last recorded reading.
 //! @param[out] data a pointer to a pre-allocated AccelData item
+//! @note Cannot be used when subscribed to accelerometer data events.
 //! @return -1 if the accel is not running
+//! @return -2 if subscribed to accelerometer events.
 int accel_service_peek(AccelData *data);
 
 //! Change the accelerometer sampling rate.
@@ -419,6 +446,7 @@ int accel_service_set_samples_per_update(uint32_t num_samples);
 
 //! Subscribe to the accelerometer data event service. Once subscribed, the handler
 //! gets called every time there are new accelerometer samples available.
+//! @note Cannot use \ref accel_service_peek() when subscribed to accelerometer data events.
 //! @param handler A callback to be executed on accelerometer data events
 //! @param samples_per_update the number of samples to buffer, between 0 and 25.
 void accel_data_service_subscribe(uint32_t samples_per_update, AccelDataHandler handler);
@@ -439,15 +467,17 @@ void accel_tap_service_unsubscribe(void);
 //! @} // group AccelerometerService
 
 //! @addtogroup TickTimerService
+//! \brief Handling time components
+//!
+//! The TickTimerService allows your app to be called every time one Time component has changed.
+//! This is extremely important for watchfaces. Your app can choose on which time component
+//! change a tick should occur. Time components are defined by the TimeUnits enum in pebble.h.
 //! @{
 
 //! Callback type for tick timer events
 //! @param tick_time the time at which the tick event was triggered
 //! @param units_changed which unit change triggered this tick event
 typedef void (*TickHandler)(struct tm *tick_time, TimeUnits units_changed);
-
-
-void tick_timer_service_init(void);
 
 //! Subscribe to the tick timer event service. Once subscribed, the handler gets called
 //! on every requested unit change
@@ -464,13 +494,28 @@ void tick_timer_service_unsubscribe(void);
 //! @} // group EventService
 
 //! @addtogroup DataLogging
-//! \brief Enables logging data asynchronously to a mobile application
+//! \brief Enables logging data asynchronously to a mobile app
 //!
-//! Allows an application to log data to a session, which will be sent to the associated phone application
-//! at the earliest convenience.
+//! In Pebble OS, data logging is a data storage and transfer subsystem that allows watchapps to save
+//! data on non-volatile storage devices when the phone is not available to process it. The API provides
+//! your watchapp with a mechanism for short-term data buffering for asynchronous data transmission to
+//! a mobile app.
 //!
+//! Using this API, your Pebble watchapp can create an arbitrary number of logs, but you’re limited in
+//! the amount of storage space you can use. Note that approximately 500K is available for data
+//! logging, which is shared among all watchapps that use it.
+//!
+//! Your app can log data to a session, either creating, adding or deleting data to that session.
+//! The data is then sent to the associated phone application at the earliest convenience.
+//! If a phone is available, the data is sent directly to the phone. Otherwise, it is saved to the
+//! watch storage until the watch is connected to a phone.
+//!
+//!
+//! For example:
+//!
+//! To create a data logging session for 4-byte unsigned integers with a tag of 0x1234, you would do this:
 //! \code{.c}
-//! // Create a data logging session for 4-byte unsigned integers with a tag of 0x1234
+//!
 //! DataLoggingSessionRef logging_session = data_logging_create(0x1234, DATA_LOGGING_UINT, 4, false);
 //!
 //! // Fake creating some data and logging it to the session.
@@ -485,11 +530,12 @@ void tick_timer_service_unsubscribe(void);
 //! data_logging_finish(logging_session);
 //! \endcode
 //!
+//! For code samples, refer to Examples/data-logging-demo.
 //! @{
 
 typedef void *DataLoggingSessionRef;
 
-//! The different types of session data we support. This type describes the type of a singular item in the data
+//! The different types of session data that Pebble supports. This type describes the type of a singular item in the data
 //! session. Every item in a given session is the same type and size.
 typedef enum {
   //! Array of bytes. Remember that this is the type of a single item in the logging session, so using this
@@ -570,7 +616,7 @@ void app_log(uint8_t log_level, const char* src_filename, int src_line_number, c
     __attribute__((format(printf, 4, 5)));
 
 #define APP_LOG(level, fmt, args...)                                \
-  app_log(level, __FILE__, __LINE__, fmt, ## args)
+  app_log(level, __FILE_NAME__, __LINE__, fmt, ## args)
 
 //! Suggested log level values
 typedef enum {
@@ -591,23 +637,21 @@ typedef enum {
 //! @addtogroup Dictionary
 //! \brief Data serialization utilities
 //!
-//! On several occassions, pieces of information that might be residing in
-//! different parts of Pebble's memory (RAM), need to be gathered into
-//! one compact, continuous block of data. One of these occassions is when
-//! the pieces of information get sent over the network / Bluetooth connection.
-//! This process of gathering the information and assembling the continous
-//! block of data is called serialization.
-//! The Dictionary, Tuple and Tuplet data structures and accompanying functions
-//! help do this in a lightweight way.
-//! @note There are no transformations done on the actual data. These utilities
-//! merely help assembling the data into one continous buffer according to a
-//! certain format.
 //!
-//! An example subsystem that uses Dictionary and friends is \ref AppMessage,
-//! for sending information between watch apps and phone apps.
+//! Data residing in different parts of Pebble memory (RAM) may need to be gathered and assembled into
+//! a single continuous block for transport over the network via Bluetooth. The process of gathering
+//! and assembling this continuous block of data is called serialization.
 //!
-//! <h3>Write example:</h3>
-//! Writing two key/value pairs:
+//! You use data serialization utilities, like Dictionary, Tuple and Tuplet data structures and accompanying
+//! functions, to accomplish this task. No transformations are performed on the actual data, however.
+//! These Pebble utilities simply help assemble the data into one continuous buffer according to a
+//! specific format.
+//!
+//! \ref AppMessage uses these utilities--in particular, Dictionary--to send information between mobile
+//! and Pebble watchapps.
+//!
+//! <h3>Writing key/value pairs</h3>
+//! To write two key/value pairs, without using Tuplets, you would do this:
 //! \code{.c}
 //! // Byte array + key:
 //! static const uint32_t SOME_DATA_KEY = 0xb00bf00b;
@@ -641,9 +685,9 @@ typedef enum {
 //!
 //! \endcode
 //!
-//! <h3>Read example:</h3>
-//! Read example: iterating over the key/value pairs in the dictionary that
-//! was created in the previous example.
+//! <h3>Reading key/value pairs</h3>
+//! To iterate over the key/value pairs in the dictionary that
+//! was created in the previous example code, you would do this:
 //!
 //! \code{.c}
 //! Tuple *tuple = dict_read_begin_from_buffer(&iter, buffer, final_size);
@@ -660,15 +704,15 @@ typedef enum {
 //! }
 //! \endcode
 //!
-//! <h3>Tuple vs. Tuplet</h3>
-//! Note the difference between the Tuple and Tuplet data structures.
-//! Tuple is the header for a serialized key/value pair. Tuplet is a helper
+//! <h3>Tuple and Tuplet data structures</h3>
+//! To understand the difference between Tuple and Tuplet data structures:
+//! Tuple is the header for a serialized key/value pair, while Tuplet is a helper
 //! data structure that references the value you want to serialize. This data
-//! structure exists to make the creation of a Dictionary nicer to write.
-//! As mnemonic to remember the difference: TupleT(emplate), the Tuplet being
+//! structure exists to make the creation of a Dictionary easier to write.
+//! Use this mnemonic to remember the difference: TupleT(emplate), the Tuplet being
 //! a template to create a Dictionary with Tuple structures.
 //!
-//! Example:
+//! For example:
 //! \code{.c}
 //! Tuplet pairs[] = {
 //!   TupletInteger(WEATHER_ICON_KEY, (uint8_t) 1),
@@ -692,6 +736,9 @@ typedef enum {
   DICT_INVALID_ARGS = 1 << 2,
   //! The lengths and/or count of the dictionary its tuples are inconsistent
   DICT_INTERNAL_INCONSISTENCY = 1 << 3,
+  //! A requested operation required additional memory to be allocated, but
+  //! the allocation failed, likely due to insufficient remaining heap memory.
+  DICT_MALLOC_FAILED = 1 << 4,
 } DictionaryResult;
 
 //! Values representing the type of data that the `value` field of a Tuple contains
@@ -780,6 +827,13 @@ typedef struct {
 //! stored in the dictionary.
 //! @return The total number of bytes of storage needed.
 uint32_t dict_calc_buffer_size(const uint8_t tuple_count, ...);
+
+//! Calculates the size of data that has been written to the dictionary.
+//! AKA, the "dictionary size". Note that this is most likely different
+//! than the size of the backing storage/backing buffer.
+//! @param iter The dictionary iterator
+//! @return The total number of bytes which have been written to the dictionary.
+uint32_t dict_size(DictionaryIterator* iter);
 
 //! Initializes the dictionary iterator with a given buffer and size,
 //! resets and empties it, in preparation of writing key/value tuples.
@@ -929,22 +983,30 @@ typedef void (*DictionarySerializeCallback)(const uint8_t * const data, const ui
 //! that `context` points to, can be stack allocated.
 //! @param callback The callback that will be called with the serialized data of the generated dictionary.
 //! @param context Pointer to any application specific data that gets passed into the callback.
-//! @param tuplets_count The number of tuplets that follow.
 //! @param tuplets An array of Tuplets that need to be serialized into the dictionary.
+//! @param tuplets_count The number of tuplets that follow.
 //! @return \ref DICT_OK, \ref DICT_NOT_ENOUGH_STORAGE or \ref DICT_INVALID_ARGS
-DictionaryResult dict_serialize_tuplets(DictionarySerializeCallback callback, void *context, const uint8_t tuplets_count, const Tuplet * const tuplets);
+DictionaryResult dict_serialize_tuplets(DictionarySerializeCallback callback, void *context, const Tuplet * const tuplets, const uint8_t tuplets_count);
 
 //! Utility function that takes an array of Tuplets and serializes them into
 //! a dictionary with a given buffer and size.
-//! @param tuplets_count The number of tuplets in the array
 //! @param tuplets The array of tuplets
+//! @param tuplets_count The number of tuplets in the array
 //! @param buffer The buffer in which to write the serialized dictionary
 //! @param [in] size_in_out The available buffer size in bytes
 //! @param [out] size_in_out The number of bytes written
 //! @return \ref DICT_OK, \ref DICT_NOT_ENOUGH_STORAGE or \ref DICT_INVALID_ARGS
-DictionaryResult dict_serialize_tuplets_to_buffer(const uint8_t tuplets_count, const Tuplet * const tuplets, uint8_t *buffer, uint32_t *size_in_out);
+DictionaryResult dict_serialize_tuplets_to_buffer(const Tuplet * const tuplets, const uint8_t tuplets_count, uint8_t *buffer, uint32_t *size_in_out);
 
-DictionaryResult dict_serialize_tuplets_to_buffer_with_iter(const uint8_t tuplets_count, const Tuplet * const tuplets, DictionaryIterator *iter, uint8_t *buffer, uint32_t *size_in_out);
+//! Serializes an array of Tuplets into a dictionary with a given buffer and size.
+//! @param iter The dictionary iterator
+//! @param tuplets The array of tuplets
+//! @param tuplets_count The number of tuplets in the array
+//! @param buffer The buffer in which to write the serialized dictionary
+//! @param [in] size_in_out The available buffer size in bytes
+//! @param [out] size_in_out The number of bytes written
+//! @return \ref DICT_OK, \ref DICT_NOT_ENOUGH_STORAGE or \ref DICT_INVALID_ARGS
+DictionaryResult dict_serialize_tuplets_to_buffer_with_iter(DictionaryIterator *iter, const Tuplet * const tuplets, const uint8_t tuplets_count, uint8_t *buffer, uint32_t *size_in_out);
 
 //! Serializes a Tuplet and writes the resulting Tuple into a dictionary.
 //! @param iter The dictionary iterator
@@ -955,11 +1017,11 @@ DictionaryResult dict_write_tuplet(DictionaryIterator *iter, const Tuplet * cons
 //! Calculates the number of bytes that a dictionary will occupy, given
 //! one or more Tuplets that need to be stored in the dictionary.
 //! @note See \ref dict_calc_buffer_size() for the formula for the calculation.
-//! @param tuplets_count The total number of Tuplets that follow.
 //! @param tuplets An array of Tuplets that need to be stored in the dictionary.
+//! @param tuplets_count The total number of Tuplets that follow.
 //! @return The total number of bytes of storage needed.
 //! @see Tuplet
-uint32_t dict_calc_buffer_size_from_tuplets(const uint8_t tuplets_count, const Tuplet * const tuplets);
+uint32_t dict_calc_buffer_size_from_tuplets(const Tuplet * const tuplets, const uint8_t tuplets_count);
 
 //! Type of the callback used in \ref dict_merge()
 //! @param key The key that is being updated.
@@ -1000,6 +1062,90 @@ Tuple *dict_find(const DictionaryIterator *iter, const uint32_t key);
 //! @} // group Dictionary
 
 //! @addtogroup AppMessage
+//!
+//!
+//!
+//! \brief Bi-directional communication between phone apps and Pebble watchapps
+//!
+//! AppMessage is a bi-directional messaging subsystem that enables communication between phone apps
+//! and Pebble watchapps. This is accomplished by allowing phone and watchapps to exchange arbitrary
+//! sets of key/value pairs. The key/value pairs are stored in the form of a Dictionary, the layout
+//! of which is left for the application developer to define.
+//!
+//! AppMessage implements a push-oriented messaging protocol, enabling your app to call functions and
+//! methods to push messages from Pebble to phone and vice versa. The protocol is symmetric: both Pebble
+//! and the phone can send messages. All messages are acknowledged. In this context, there is no
+//! client-server model, as such.
+//!
+//! During the sending phase, one side initiates the communication by transferring a dictionary over the air.
+//! The other side then receives this message and is given an opportunity to perform actions on that data.
+//! As soon as possible, the other side is expected to reply to the message with a simple acknowledgment
+//! that the message was received successfully.
+//!
+//! PebbleKit JavaScript provides you with a set of standard JavaScript APIs that let your app receive messages
+//! from the watch, make HTTP requests, and send new messages to the watch. AppMessage APIs are used to send and
+//! receive data. A Pebble watchapp can use the resources of the connected phone to fetch information from web services,
+//! send information to web APIs, or store login credentials. On the JavaScript side, you communicate
+//! with Pebble via a Pebble object exposed in the namespace.
+//!
+//! Messages always need to get either ACKnowledged or "NACK'ed," that is, not acknowledged.
+//! If not, messages will result in a time-out failure. The AppMessage subsystem takes care of this implicitly.
+//! In the phone libraries, this step is a bit more explicit.
+//!
+//! The Pebble watch interfaces make a distinction between the Inbox and the Outbox calls. The Inbox
+//! receives messages from the phone on the watch; the Outbox sends messages from the watch to the phone.
+//! These two buffers can be managed separately.
+//!
+//! <h4>Warning</h4>
+//! A critical constraint of AppMessage is that messages are limited in size. An ingoing (outgoing) message
+//! larger than the inbox (outbox) will not be transmitted and will generate an error. You can choose your
+//! inbox and outbox size when you call app_message_open().
+//!
+//! Pebble SDK provides a static minimum guaranteed size (APP_MESSAGE_INBOX_SIZE_MINIMUM and APP_MESSAGE_OUTBOX_SIZE_MINIMUM).
+//! Requesting a buffer of the minimum guaranteed size (or smaller) is always guaranteed to succeed on all
+//! Pebbles in this SDK version or higher, and with every phone.
+//!
+//! In some context, Pebble might be able to provide your application with larger inbox/outbox.
+//! You can call app_message_inbox_size_maximum() and app_message_outbox_size_maximum() in your code to get
+//! the largest possible value you can use.
+//!
+//! To always get the largest buffer available, follow this best practice:
+//!
+//! app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum())
+//!
+//! AppMessage uses your application heap space. That means that the sizes you pick for the AppMessage
+//! inbox and outbox buffers are important in optimizing your app’s performance. The more you use for
+//! AppMessage, the less space you’ll have for the rest of your app.
+//!
+//! To register callbacks, you should call app_message_register_inbox_received(), app_message_register_inbox_received(),
+//! app_message_register_outbox_sent(), app_message_register_outbox_failed().
+//!
+//! Pebble recommends that you call them before app_message_open() to ensure you do not miss a message
+//! arriving between starting AppMessage and registering the callback. You can set a context that will be passed
+//! to all the callbacks with app_message_set_context().
+//!
+//! In circumstances that may not be ideal, when using AppMessage several types of errors may occur.
+//! For example:
+//!
+//! * The send can’t start because the system state won't allow for a success. Several reasons
+//!  you're unable to perform a send: A send() is already occurring (only one is possible at a time) or Bluetooth
+//!  is not enabled or connected.
+//! * The send and receive occur, but the receiver can’t accept the message. For instance, there is no app
+//!   that receives such a message.
+//! * The send occurs, but the receiver either does not actually receive the message or can’t handle it
+//!   in a timely fashion.
+//! * In the case of a dropped message, the phone sends a message to the watchapp, while there is still
+//!   an unprocessed message in the Inbox.
+//!
+//! Other errors are possible and described by AppMessageResult. A client of the AppMessage interface
+//! should use the result codes to be more robust in the face of communication problems either in the field or while debugging.
+//!
+//! Refer to the \htmlinclude app-phone-communication.html for a conceptual overview and code usage.
+//!
+//! For code examples, refer to the SDK Examples that directly use App Message. These include:
+//!   * Examples/todolist-demo
+//!   * Examples/pebblekit-js/quotes
+//!   * Examples/weather-demo
 //! @{
 
 //! AppMessage result codes.
@@ -1040,6 +1186,12 @@ typedef enum {
 
   //! The support library did not have sufficient application memory to perform the requested operation.
   APP_MSG_OUT_OF_MEMORY = 1 << 12,
+
+  //! App message was closed
+  APP_MSG_CLOSED = 1 << 13,
+
+  //! An internal OS error prevented APP_MSG from completing an operation
+  APP_MSG_INTERNAL_ERROR = 1 << 14,
 
 } AppMessageResult;
 
@@ -1084,6 +1236,9 @@ typedef void (*AppMessageInboxReceived)(DictionaryIterator *iterator, void *cont
 //! \param[in] context
 //!   Pointer to application data as specified when registering the callback.
 //!
+//! Note that you can call app_message_outbox_begin() from this handler to prepare a new message.
+//! This will invalidate the previous dictionary iterator; do not use it after calling app_message_outbox_begin().
+//!
 typedef void (*AppMessageInboxDropped)(AppMessageResult reason, void *context);
 
 //! Called after an outbound message has been sent and the reply has been received.
@@ -1112,6 +1267,9 @@ typedef void (*AppMessageOutboxSent)(DictionaryIterator *iterator, void *context
 //!
 //! \param context
 //!   Pointer to application data as specified when registering the callback.
+//!
+//! Note that you can call app_message_outbox_begin() from this handler to prepare a new message.
+//! This will invalidate the previous dictionary iterator; do not use it after calling app_message_outbox_begin().
 //!
 typedef void (*AppMessageOutboxFailed)(DictionaryIterator *iterator, AppMessageResult reason, void *context);
 
@@ -1227,41 +1385,41 @@ AppMessageResult app_message_outbox_send(void);
 //! \sa app_message_inbox_size_maximum()
 //! \sa APP_MESSAGE_OUTBOX_SIZE_MINIMUM
 //!
-#define APP_MESSAGE_INBOX_SIZE_MINIMUM 64
+#define APP_MESSAGE_INBOX_SIZE_MINIMUM 124
 
 //! As long as the firmware maintains its current major version, outboxes of this size or smaller will be allowed.
 //!
 //! \sa app_message_outbox_size_maximum()
 //! \sa APP_MESSAGE_INBOX_SIZE_MINIMUM
 //!
-#define APP_MESSAGE_OUTBOX_SIZE_MINIMUM 64
+#define APP_MESSAGE_OUTBOX_SIZE_MINIMUM 636
 
 //! @} // group AppMessage
 
 //! @addtogroup AppSync
-//! \brief UI Synchronization layer for AppMessage
+//! \brief UI synchronization layer for AppMessage
 //!
-//! AppSync is a thin layer on top of \ref AppMessage, to make it easier to
-//! drive the information displayed in the user interface of a watch app
-//! with messages sent by a phone app.
+//! AppSync is a convenience layer that resides on top of \ref AppMessage, and serves
+//! as a UI synchronization layer for AppMessage. In so doing, AppSync makes it easier
+//! to drive the information displayed in the watchapp UI with messages sent by a phone app.
 //!
-//! <h3>Key Points</h3>
-//! * One callback to update the user interface, that is called whenever
-//! a Tuple changes. See \ref AppSyncTupleChangedCallback.
-//! * Manages storage and book keeping of the current Tuple values:
-//! \ref AppSync copies incoming \ref AppMessage Tuples into this "current"
-//! Dictionary, so that the key/values remain available for the user interface
-//! to use. For example, it is safe to use a C-string value provided by AppSync
-//! and use it directly in a \ref text_layer_set_text() call.
-//! * Your app needs to supply the buffer that AppSync uses for the "current"
-//! Dictionary when initializing AppSync.
+//! AppSync maintains and updates a Dictionary, and provides your app with a callback
+//! (AppSyncTupleChangedCallback) routine that is called whenever the Dictionary changes
+//! and the app's UI is updated. Note that the app UI is not updated automatically.
+//! To update the UI, you need to implement the callback.
 //!
-//! <h3>Activity Diagram</h3>
-//! ![](app_sync.png)
-//! Also see the activity diagram of the underlying \ref AppMessage subsystem.
+//! Pebble OS provides support for data serialization utilities, like Dictionary,
+//! Tuple and Tuplet data structures and their accompanying functions. You use Tuplets to create
+//! a Dictionary with Tuple structures.
 //!
-//! <h3>Example Project</h3>
-//! For a code example, see the sample project `demos/feature_app_messages`.
+//! AppSync manages the storage and bookkeeping chores of the current Tuple values. AppSync copies
+//! incoming AppMessage Tuples into this "current" Dictionary, so that the key/values remain available
+//! for the UI to use. For example, it is safe to use a C-string value provided by AppSync and use it
+//! directly in a text_layer_set_text() call.
+//!
+//! Your app needs to supply the buffer that AppSync uses for the "current" Dictionary when initializing AppSync.
+//!
+//! Refer to the \htmlinclude app-phone-communication.html for a conceptual overview and code usage.
 //! @{
 
 //! Called whenever a Tuple changes. This does not necessarily mean the value in
@@ -1269,7 +1427,7 @@ AppMessageResult app_message_outbox_send(void);
 //! existing Tuples might get shuffled around in the backing buffer, even though
 //! the values stay the same. In this callback, the client code gets the chance
 //! to remove the old reference and start using the new one.
-//! In this callback, you application MUST clean up any references to the
+//! In this callback, your application MUST clean up any references to the
 //! `old_tuple` of a PREVIOUS call to this callback (and replace it with the
 //! `new_tuple` that is passed in with the current call).
 //! @param key The key for which the Tuple was changed.
@@ -1280,7 +1438,7 @@ AppMessageResult app_message_outbox_send(void);
 //! this `new_tuple` can be \ref NULL_TUPLE.
 //! @param old_tuple The values that will be replaced with `new_tuple`. The key,
 //! value and type will be equal to the previous tuple in the old destination
-//! dictionary, however the `old_tuple` points to a stack-allocated copy of the
+//! dictionary; however, the `old_tuple` points to a stack-allocated copy of the
 //! old data. This value will be \ref NULL_TUPLE when the initial values are
 //! being set.
 //! @param context Pointer to application specific data, as set using
@@ -1366,12 +1524,17 @@ const Tuple * app_sync_get(const struct AppSync *s, const uint32_t key);
 //! @} // group AppSync
 
 //! @addtogroup Resources
-//! \brief Loading resources
+//! \brief Managing application resources
 //!
-//! Resources are stored in flash and need to be loaded into RAM in order
-//! to use them. Below are functions that provide the most rudimentary way
-//! of loading resources.
-//! See \htmlinclude UsingResources.html, for information on how to embed
+//! Resources are data files that are bundled with your application binary and can be
+//! loaded at runtime. You use resources to embed images or custom fonts in your app,
+//! but also to embed any data file. Resources are always read-only.
+//!
+//! Resources are stored on Pebble’s flash memory and only loaded in RAM when you load
+//! them. This means that you can have a large number of resources embedded inside your app,
+//! even though Pebble’s RAM memory is very limited.
+//!
+//! See \htmlinclude UsingResources.html for information on how to embed
 //! resources into your app's bundle.
 //!
 //! @{
@@ -1475,6 +1638,11 @@ SniffInterval app_comm_get_sniff_interval(void);
 //! @} // group AppComm
 
 //! @addtogroup Timer Timer
+//! \brief Register timers for callbacks
+//!
+//! The Timer API provides support for calls that let you register a timer for a callback function
+//! that is called at a specified time in the future, as well as cancel an already registered timer
+//! or reschedule an already running timer at a specified time in the future.
 //! @{
 
 //! Waits for a certain amount of milliseconds
@@ -1484,6 +1652,8 @@ void psleep(int millis);
 struct AppTimer;
 typedef struct AppTimer AppTimer;
 
+//! The type of function which can be called when a timer fires.  The argument will be the @p callback_data passed to
+//! @ref app_timer_register().
 typedef void (*AppTimerCallback)(void* data);
 
 //! Registers a timer that ends up in callback being called some specified time in the future.
@@ -1503,7 +1673,27 @@ void app_timer_cancel(AppTimer *timer_handle);
 
 //! @} // group Timer
 
-//! @addtogroup Persistent Storage
+//! @addtogroup Storage
+//! \brief A mechanism to store persistent application data and state
+//!
+//! The Persistent Storage API provides you with a mechanism for performing a variety of tasks,
+//! like saving user settings, caching data from the phone app, or counting high scores for
+//! Pebble watchapp games.
+//!
+//! In Pebble OS, storage is defined by a collection of fields that you can create, modify or delete.
+//! In the API, a field is specified as a key with a corresponding value.
+//!
+//! Using the Storage API, every app is able to get its own persistent storage space. Each value
+//! in that space is associated with a uint32_t key.
+//!
+//! Storage supports saving integers, strings and byte arrays. The maximum size of byte arrays and
+//! strings is defined by PERSIST_DATA_MAX_LENGTH (currently set to 256 bytes). You call the function
+//! persist_exists(key), which returns a boolean indicating if the key exists or not.
+//! The Storage API enables your app to save its state, and when compared to using \ref AppMessage to
+//! retrieve values from the phone, it provides you with a much faster way to restore state.
+//! In addition, it draws less power from the battery.
+//!
+//! Note that the size of all persisted values cannot exceed 4K.
 //! @{
 
 //! The maximum size of a persist value in bytes
@@ -1585,7 +1775,7 @@ int persist_write_string(const uint32_t key, const char *cstring);
 //! @param key The key of the field to delete from.
 status_t persist_delete(const uint32_t key);
 
-//! @} // group Persistent Storage
+//! @} // group Storage
 
 //! @} // group Foundation
 
@@ -1895,28 +2085,25 @@ typedef struct GContext GContext;
 //! @} // group GraphicsTypes
 
 //! @addtogroup GraphicsContext Graphics Context
-//! \brief The graphics context is the "canvas" to draw into
+//! \brief The "canvas" into which an application draws
 //!
-//! The graphics engine of Pebble OS is inspired by several great graphics systems that have been
-//! developed by others, notably Apple’s Quartz 2D and its predecessor QuickDraw. Although Apple’s
-//! documentation is not directly applicable, it can be an informing and interesting to read about
-//! the source of inspiration for Pebble’s graphics system.
+//! The Pebble OS graphics engine, inspired by several notable graphics systems, including
+//! Apple’s Quartz 2D and its predecessor QuickDraw, provides your app with a canvas into
+//! which to draw, namely, the graphics context. A graphics context is the target into which
+//! graphics functions can paint, using Pebble drawing routines (see \ref \ref Drawing,
+//! \ref PathDrawing and \ref TextDrawing).
 //!
-//! <h3>Graphics Context</h3>
-//! The drawing model revolves around the idea of a “graphics context”. The graphics
-//! context is the “target” into which graphics functions can paint using
-//! drawing routines (see \ref Drawing, \ref PathDrawing and \ref TextDrawing). It holds a reference to
-//! the bitmap into which to paint. It also holds the current drawing state, like the current fill
-//! color, stroke color, clipping box, drawing box, compositing mode, etc. The GContext struct is
-//! the type representing the graphics context.
+//! A graphics context holds a reference to the bitmap into which to paint. It also holds the
+//! current drawing state, like the current fill color, stroke color, clipping box, drawing box,
+//! compositing mode, and so on. The \ref GContext struct is the type representing the graphics context.
 //!
-//! <h3>Pebble OS requests your app to render</h3>
-//! You (almost) never need to create a GContext yourself. In most cases, it is provided by Pebble OS
-//! as an argument that is passed into a render callback (the `.update_proc` of a Layer).
-//! It’s important to realize that Pebble OS will request your app to render. Your app cannot call
-//! drawing functions at any given point in time. Most frequently, your app will be calling out to
-//! graphics functions in the `.update_proc` callback of a Layer.
+//! For drawing in your Pebble watchface or watchapp, you won't need to create a \ref GContext
+//! yourself. In most cases, it is provided by Pebble OS as an argument passed into a render
+//! callback (the .update_proc of a Layer).
 //!
+//! Your app can’t call drawing functions at any given point in time: Pebble OS will request your
+//! app to render. Typically, your app will be calling out to graphics functions in
+//! the .update_proc callback of a Layer.
 //! @see \ref Layer
 //! @see \ref Drawing
 //! @see \ref PathDrawing
@@ -1959,7 +2146,7 @@ void graphics_context_set_compositing_mode(GContext* ctx, GCompOp mode);
 //! are documented below.
 //! See \ref GraphicsContext for more information about the graphics context.
 //!
-//! Please refer to \htmlinclude UiFramework.html (chapter "Layers" and "Graphics") for a
+//! Refer to \htmlinclude UiFramework.html (chapter "Layers" and "Graphics") for a
 //! conceptual overview of the drawing system, Layers and relevant code examples.
 //!
 //! Other drawing functions and related documentation:
@@ -1991,7 +2178,7 @@ typedef enum {
   GCornersBottom = GCornerBottomLeft | GCornerBottomRight,
   //! Left corners
   GCornersLeft = GCornerTopLeft | GCornerBottomLeft,
-  // Right corners
+  //! Right corners
   GCornersRight = GCornerTopRight | GCornerBottomRight,
 } GCornerMask;
 
@@ -2215,8 +2402,11 @@ void fonts_unload_custom_font(GFont font);
 //! @see graphics_draw_text
 //! @see text_layer_set_overflow_mode
 typedef enum {
+  //! On overflow, wrap words to a new line below the current one.
   GTextOverflowModeWordWrap,
+  //! On overflow, truncate as needed to fit a trailing ellipsis (...).
   GTextOverflowModeTrailingEllipsis,
+  //! Acts like GTextOverflowModeTrailingEllipsis but isn't limited to a single line. The text will wrap until the vertical space is consumed and then the final word will be truncated with a trailing ellipsis.
   GTextOverflowModeFill
 } GTextOverflowMode;
 
@@ -2238,30 +2428,16 @@ typedef struct TextLayout TextLayout;
 //! Pointer to opaque text layout cache data structure
 typedef TextLayout* GTextLayoutCacheRef;
 
-//! Draw text into the current graphics context, using the context's current text color.
-//! The text will be drawn inside a box with the specified dimensions and
-//! configuration, with clipping occuring automatically.
-//! @param ctx The destination graphics context in which to draw
-//! @param text The zero terminated UTF-8 string to draw
-//! @param font The font in which the text should be set
-//! @param box The bounding box in which to draw the text. The first line of text will be drawn against the top of the box.
-//! @param overflow_mode The overflow behavior, in case the text is larger than what fits inside the box.
-//! @param alignment The horizontal alignment of the text
-//! @param layout Optional layout cache data. Supply `NULL` to ignore the layout caching mechanism.
 void graphics_draw_text(GContext* ctx, const char* text, GFont const font, const GRect box, const GTextOverflowMode overflow_mode, const GTextAlignment alignment, const GTextLayoutCacheRef layout);
 
 //! Obtain the maximum size that a text with given font, overflow mode and alignment occupies within a given rectangular constraint.
-//! @param ctx the current graphics context
 //! @param text The zero terminated UTF-8 string for which to calculate the size
 //! @param font The font in which the text should be set while calculating the size
 //! @param box The bounding box in which the text should be constrained
 //! @param overflow_mode The overflow behavior, in case the text is larger than what fits inside the box.
 //! @param alignment The horizontal alignment of the text
-//! @param layout Optional layout cache data. Supply `NULL` to ignore the layout caching mechanism.
 //! @return The maximum size occupied by the text
-//! @note Because of an implementation detail, it is necessary to pass in the current graphics context,
-//! even though this function does not draw anything.
-GSize graphics_text_layout_get_max_used_size(GContext* ctx, const char* text, GFont const font, const GRect box, const GTextOverflowMode overflow_mode, const GTextAlignment alignment, GTextLayoutCacheRef layout);
+GSize graphics_text_layout_get_content_size(const char* text, GFont const font, const GRect box, const GTextOverflowMode overflow_mode, const GTextAlignment alignment);
 
 //! @} // group TextDrawing
 
@@ -2314,21 +2490,35 @@ ButtonId click_recognizer_get_button_id(ClickRecognizerRef recognizer);
 //! @} // group Clicks
 
 //! @addtogroup Layer Layers
-//! \brief Hierarchical layout system
+//! \brief User interface layers for displaying graphic components
 //!
-//! Layers are “visual objects”. They are the objects that can be displayed on the screen,
-//! for example a box that contains text or a box that contains an image. Each layer stores
-//! the information about its state necessary to (re)draw the object it represents and uses
-//! graphics routines along with this state to draw itself when asked. Multiple layers can
-//! be arranged into a tree. This enables ordering (front to back), layout, hierarchy and
-//! relative positioning.
+//! Layers are objects that can be displayed on a Pebble watchapp window, enabling users to see
+//! visual objects, like text or images. Each layer stores the information about its state
+//! necessary to draw or redraw the object that it represents and uses graphics routines along with
+//! this state to draw itself when asked. Layers can be used to display various graphics.
 //!
-//! Please refer to \htmlinclude UiFramework.html (chapter "Layers") for a conceptual overview
+//! Layers are the basic building blocks for your application UI. Layers can be nested inside each other.
+//! Every window has a root layer which is always the topmost layer.
+//! You provide a function that is called to draw the content of the layer when needed; or
+//! you can use standard layers that are provided by the system, such as text layer, image layer,
+//! menu layer, action bar layer, and so on.
+//!
+//! The Pebble layer hierarchy is the list of things that need to be drawn to the screen.
+//! Multiple layers can be arranged into a hierarchy. This enables ordering (front to back),
+//! layout and hierarchy. Through relative positioning, visual objects that are grouped together by
+//! adding them into the same layer can be moved all at once. This means that the child layers
+//! will move accordingly. If a parent layer has clipping enabled, all the children will be clipped
+//! to the frame of the parent.
+//!
+//! Pebble OS provides convenience layers with built-in logic for displaying different graphic
+//! components, like text and bitmap layers.
+//!
+//! Refer to the \htmlinclude UiFramework.html (chapter "Layers") for a conceptual overview
 //! of Layers and relevant code examples.
 //!
-//! The Modules list contains "subclasses" of Layer. The listed types can be safely
-//! type-casted to `Layer` (or `Layer *` in case of a pointer). Therefore the `layer_...` functions
-//! can be used with the datastructures of these "subclasses".
+//! The Modules listed here contain what can be thought of conceptually as subclasses of Layer. The
+//! listed types can be safely type-casted to `Layer` (or `Layer *` in case of a pointer).
+//! The `layer_...` functions can then be used with the data structures of these subclasses.
 //! <br/>For example, the following is legal:
 //! \code{.c}
 //! TextLayer *text_layer;
@@ -2521,15 +2711,26 @@ void* layer_get_data(const Layer *layer);
 //! @addtogroup Window
 //! \brief The basic building block of the user interface
 //!
-//! Windows are the basic unit of app flow. The person wearing the watch interacts with a window,
-//! using what they see on screen and pressing the buttons of the watch. Thus a window is output,
-//! but takes input as well (see \ref window_set_click_config_provider() and \ref Clicks). When a window is
-//! visible, its root Layer (and all its child layers) will be drawn onto the screen automatically.
-//! The \ref WindowStack is the global manager of what window is presented and makes sure that input events
-//! are forwarded to the top-most window.
+//! Windows are the top-level elements in the UI hierarchy and the basic building blocks for a Pebble
+//! UI. A single window is always displayed at a time on Pebble, with the exception of when animating
+//! from one window to the other, which, in that case, is managed by the window stack. You can stack
+//! windows on top of each other, but only the topmost window will be visible.
 //!
-//! Please refer to \htmlinclude UiFramework.html (chapter "Windows") for a conceptual overview
-//! of \ref Window, the \ref WindowStack and relevant code examples.
+//! Users wearing a Pebble typically interact with the content and media displayed in a window, clicking
+//! and pressing buttons on the watch, depending on what they see and wish to respond to in a window.
+//!
+//! Windows serve to display a hierarchy of layers on the screen and handle user input. When a window is
+//! visible, its root Layer (and all its child layers) are drawn onto the screen automatically.
+//!
+//! You need a window, which always fills the entire screen, to display images, text, and graphics in
+//! your Pebble app. A layer by itself doesn’t display on Pebble; it must be in the current window’s
+//! layer hierarchy to be visible.
+//!
+//! The Window Stack serves as the global manager of what window is presented and makes sure that input
+//! events are forwarded to the topmost window.
+//!
+//! Refer to the \htmlinclude UiFramework.html (chapter "Window") for a conceptual
+//! overview of Window, the Window Stack and relevant code examples.
 //! @{
 
 struct Window;
@@ -2592,7 +2793,7 @@ void window_set_click_config_provider(Window *window, ClickConfigProvider click_
 //! (instead of the window pointer) that will be passed into the ClickHandler click event handlers.
 //! @param window The window for which to set the click config provider
 //! @param click_config_provider The callback that will be called to configure the click recognizers with the window
-//! @param context Pointer to application specific data that will be passed into the ClickHandler click event handlers
+//! @param context Pointer to application specific data that will be passed to the click configuration provider callback.
 //! @see Clicks
 //! @see window_set_click_config_provider
 void window_set_click_config_provider_with_context(Window *window, ClickConfigProvider click_config_provider, void *context);
@@ -2678,6 +2879,7 @@ void window_single_click_subscribe(ButtonId button_id, ClickHandler handler);
 //! Subscribe to single click event, with a repeat interval. A single click is detected every time "repeat_interval_ms" has been reached.
 //! @note Must be called from within the \ref ClickConfigProvider.
 //! @note \ref window_single_click_subscribe() and \ref window_single_repeating_click_subscribe() conflict, and cannot both be used on the same button.
+//! @note The back button cannot be overridden with a repeating click.
 //! @param repeat_interval_ms When holding down, how many milliseconds before the handler is fired again.
 //! @note If there is a long-click handler subscribed on this button, `repeat_interval_ms` will not be used.
 //! @see window_single_click_subscribe
@@ -2695,6 +2897,7 @@ void window_multi_click_subscribe(ButtonId button_id, uint8_t min_clicks, uint8_
 
 //! Subscribe to long click events.
 //! @note Must be called from within the \ref ClickConfigProvider.
+//! @note The back button cannot be overridden with a long click.
 //! @param button_id The button events to subscribe to. @see ButtonId.
 //! @param delay_ms Milliseconds after which "handler" is fired. A value of 0 means to use the system default 500ms.
 //! @param down_handler The \ref ClickHandler to fire as soon as the button has been held for `delay_ms`. This may be NULL to have no down handler.
@@ -2703,6 +2906,7 @@ void window_long_click_subscribe(ButtonId button_id, uint16_t delay_ms, ClickHan
 
 //! Subscribe to raw click events.
 //! @note Must be called from within the \ref ClickConfigProvider.
+//! @note The back button cannot be overridden with a raw click.
 //! @param button_id The button events to subscribe to. @see ButtonId.
 //! @param down_handler The \ref ClickHandler to fire as soon as the button has been pressed. This may be NULL to have no down handler.
 //! @param up_handler The \ref ClickHandler to fire on the release of the button. This may be NULL to have no up handler.
@@ -2718,46 +2922,45 @@ void window_set_click_context(ButtonId button_id, void *context);
 //! @} // group Window
 
 //! @addtogroup WindowStack Window Stack
-//! \brief The default sequence-of-windows, drill-down navigation
+//! \brief The multiple window manager
 //!
-//! The navigation model of Pebble revolves around the concept of a horizontal “stack” of windows.
-//! Each new window is pushed onto the stack to the right of the previous one.
-//! Usually, it makes most sense to use the SELECT button (middle button on the right side of the watch)
-//! as trigger for the user to push a new window onto the window stack. For example, pressing SELECT in
-//! the launcher menu, will push the window of the highlighted app onto the window stack.
-//! ![](window_stack.png)
-//! By default, the BACK button on the left of the watch pops the top-most window off of the “window stack”
-//! and moves left to the previous window that is on the stack.
+//! In Pebble OS, the window stack serves as the global manager of what window is presented,
+//! ensuring that input events are forwarded to the topmost window.
+//! The navigation model of Pebble centers on the concept of a vertical “stack” of windows, similar
+//! to mobile app interactions.
 //!
-//! Note that the direction of the SELECT button aligns with the direction in which the user interface
-//! moves when windows are being pushed (to the right) and the direction of the BACK button aligns with
-//! the direction in which the user interface moves when windows are being popped (to the left).
+//! In working with the Window Stack API, the basic operations include push and pop. When an app wants to
+//! display a new window, it pushes a new window onto the stack. This appears like a window sliding in
+//! from the right. As an app is closed, the window is popped off the stack and disappears.
 //!
-//! Please refer to \htmlinclude UiFramework.html (chapter "Window Stack") for a conceptual overview
+//! For more complicated operations, involving multiple windows, you can determine which windows reside
+//! on the stack, using window_stack_contains_window() and remove any specific window, using window_stack_remove().
+//!
+//! Refer to the \htmlinclude UiFramework.html (chapter "Window Stack") for a conceptual overview
 //! of the window stack and relevant code examples.
 //!
-//! Also see the \ref WindowHandlers of a \ref Window, for the callbacks that can be added to a window
+//! Also see the \ref WindowHandlers of a \ref Window for the callbacks that can be added to a window
 //! in order to act upon window stack transitions.
 //!
 //! @{
 
-//! Pushes given window on the window navigation stack,
-//! on top of the current top-most window of the app.
+//! Pushes the given window on the window navigation stack,
+//! on top of the current topmost window of the app.
 //! @param window The window to push on top
 //! @param animated Pass in `true` to animate the push using a sliding animation,
 //! or `false` to skip the animation.
 void window_stack_push(Window *window, bool animated);
 
-//! Pops the top-most window on the navigation stack
+//! Pops the topmost window on the navigation stack
 //! @param animated See \ref window_stack_remove()
-//! @return The window that is popped, or NULL is there are no windows to pop.
+//! @return The window that is popped, or NULL if there are no windows to pop.
 Window* window_stack_pop(bool animated);
 
 //! Pops all windows.
 //! See \ref window_stack_remove() for a description of the `animated` parameter and notes.
 void window_stack_pop_all(const bool animated);
 
-//! Removes a given window from the window stack,
+//! Removes a given window from the window stack
 //! that belongs to the app task.
 //! @note If there are no windows for the app left on the stack, the app
 //! will be killed by the system, shortly. To avoid this, make sure
@@ -2771,8 +2974,8 @@ void window_stack_pop_all(const bool animated);
 //! @return True if window was successfully removed, false otherwise.
 bool window_stack_remove(Window *window, bool animated);
 
-//! Gets the top-most window on the stack that belongs to the app.
-//! @return The top-most window on the stack that belongs to the app or
+//! Gets the topmost window on the stack that belongs to the app.
+//! @return The topmost window on the stack that belongs to the app or
 //! NULL if no app window could be found.
 Window* window_stack_get_top_window(void);
 
@@ -2784,14 +2987,14 @@ bool window_stack_contains_window(Window *window);
 //! @} // group WindowStack
 
 //! @addtogroup Animation
-//!   \brief Abstract framework to animate anything
+//!   \brief Abstract framework to create arbitrary animations
 //!
-//! The animation framework is an abstract system on top of which concrete animations can be built.
-//! However, it only deals with timing, curves and the life-cycle of an animation (start, repeated updates and end).
-//! Being an abstract base layer, it **does NOT** animate anything visibly.
-//! If you are looking for a quick way to move a Layer around on the screen, check out \ref PropertyAnimation.
+//! The Animation framework provides your Pebble app with an base layer to create arbitrary
+//! animations. The simplest way to work with animations is to use the layer frame
+//! \ref PropertyAnimation, which enables you to move a Layer around on the screen.
+//! Using animation_set_implementation(), you can implement a custom animation.
 //!
-//! Also refer to \htmlinclude UiFramework.html (chapter "Animation") for a conceptual overview
+//! Refer to the \htmlinclude UiFramework.html (chapter "Animation") for a conceptual overview
 //! of the animation framework and on how to write custom animations.
 //! @{
 
@@ -3632,7 +3835,6 @@ Layer* inverter_layer_get_layer(InverterLayer *inverter_layer);
 //! For short, static list menus, consider using \ref SimpleMenuLayer.
 //! @{
 
-//! Cell drawing function to draw a basic menu cell layout with title, subtitle
 //! and icon on the left of the cell. Call this function inside the `.draw_row`
 //! callback implementation, see \ref MenuLayerCallbacks.
 //! @param ctx The destination graphics context
@@ -3647,6 +3849,7 @@ Layer* inverter_layer_get_layer(InverterLayer *inverter_layer);
 //! subtitle.
 void menu_cell_basic_draw(GContext* ctx, const Layer *cell_layer, const char *title, const char *subtitle, GBitmap *icon);
 
+//! Cell drawing function to draw a basic menu cell layout with title, subtitle
 //! Cell drawing function to draw a menu cell layout with only one big title.
 //! Call this function inside the `.draw_row` callback implementation, see
 //! \ref MenuLayerCallbacks.
@@ -4029,6 +4232,10 @@ int simple_menu_layer_get_selected_index(const SimpleMenuLayer *simple_menu);
 //! to change the selection instantly.
 void simple_menu_layer_set_selected_index(SimpleMenuLayer *simple_menu, int32_t index, bool animated);
 
+//! @param simple_menu The \ref SimpleMenuLayer to get the \ref MenuLayer from.
+//! @return The \ref MenuLayer.
+MenuLayer *simple_menu_layer_get_menu_layer(SimpleMenuLayer *simple_menu);
+
 //! @} // group SimpleMenuLayer
 
 //! @addtogroup ActionBarLayer
@@ -4258,6 +4465,12 @@ void bitmap_layer_destroy(BitmapLayer* bitmap_layer);
 //! @return The "root" Layer of the bitmap layer.
 Layer* bitmap_layer_get_layer(const BitmapLayer *bitmap_layer);
 
+//! Gets the pointer to the bitmap image that the BitmapLayer is using.
+//!
+//! @param bitmap_layer The BitmapLayer for which to get the bitmap image
+//! @return A pointer to the bitmap image that the BitmapLayer is using
+const GBitmap* bitmap_layer_get_bitmap(BitmapLayer *bitmap_layer);
+
 //! Sets the bitmap onto the BitmapLayer. The bitmap is set by reference (no deep
 //! copy), thus the caller of this function has to make sure the bitmap is kept
 //! in memory.
@@ -4415,20 +4628,22 @@ int32_t number_window_get_value(const NumberWindow *numberwindow);
 //! @} // group Window
 
 //! @addtogroup Vibes
-//! \brief Controlling the vibration motor.
+//! \brief Controlling the vibration motor
 //!
-//! The vibration motor can be used as a very visceral way of giving feedback to the user.
-//! It's great to highlight important moments in games, or to draw the attention of the user.
-//! However, developers should use the vibration feature sparingly, as sustained use will rapidly deplete Pebble’s battery,
-//! and vibing too much and too often can get annoying.
-//! @note A note when using the following APIs: if there is an ongoing vibration,
+//! The Vibes API provides calls that let you control Pebble’s vibration motor.
+//!
+//! The vibration motor can be used as a visceral mechanism for giving immediate feedback to the user.
+//! You can use it to highlight important moments in games, or to draw the attention of the user.
+//! However, you should use the vibration feature sparingly, because sustained use will rapidly deplete Pebble’s battery,
+//! and vibrating Pebble too much and too often can become annoying for users.
+//! @note When using these calls, if there is an ongoing vibration,
 //! calling any of the functions to emit (another) vibration will have no effect.
 //! @{
 
 /** Data structure describing a vibration pattern.
  A pattern consists of at least 1 vibe-on duration, optionally followed by
  alternating vibe-off + vibe-on durations. Each segment may have a different duration.
- 
+
  Example code:
  \code{.c}
  // Vibe pattern: ON for 200ms, OFF for 100ms, ON for 400ms:
@@ -4474,7 +4689,13 @@ void vibes_enqueue_custom_pattern(VibePattern pattern);
 
 //! @} // group Vibes
 
-//! @addtogroup Light
+//! @addtogroup Light Light
+//! \brief Controlling Pebble's backlight
+//!
+//! The Light API provides you with functions to turn on Pebble’s backlight or
+//! put it back into automatic control. You can trigger the backlight and schedule a timer
+//! to automatically disable the backlight after a short delay, which is the preferred
+//! method of interacting with the backlight.
 //! @{
 
 //! Trigger the backlight and schedule a timer to automatically disable the backlight
@@ -4494,4 +4715,10 @@ void light_enable(bool enable);
 //!   @} // group Animation
 //! @} // group UI
 typedef int32_t (*AnimationTimingFunction)(uint32_t time_normalized);
+
+//! Returns the current time in Unix Timestamp Format with Milliseconds
+//!     @param tloc if provided receives current Unix Time seconds portion
+//!     @param out_ms if provided receives current Unix Time milliseconds portion
+//!     @return Current Unix Time milliseconds portion
+uint16_t time_ms(time_t *tloc, uint16_t *out_ms);
 

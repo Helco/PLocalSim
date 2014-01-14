@@ -1,10 +1,5 @@
 #ifndef __GLOBALS_H__
 #define __GLOBALS_H__
-#define _TIME_H
-#define _TIME_H_
-#define _TIME_T_DEFINED
-#define __time_t_defined
-
 #include <SDL/SDL.h>
 #include <SDL/SDL_ttf.h>
 #include <SDL/SDL_image.h>
