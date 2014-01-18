@@ -40,7 +40,7 @@ static bool lastLightState=false;
 static bool firstTick=true;
 static char titleBuffer[]="./simdata/screenshots/yyyy-mm-dd-hh-mm.bmp\0\0";
 
-ServiceData serviceData={{0,0},{service_buttons,service_hardware_output,service_animations,service_timers,service_ticks,service_bluetooth,service_battery,service_accel_tap}};
+ServiceData serviceData={{0,0},{service_buttons,service_hardware_output,service_animations,service_timers,service_ticks,service_bluetooth,service_battery,service_accel_tap,service_app_message}};
 
 FILE* logFile=0;
 
@@ -103,6 +103,12 @@ void simulatorRender ();
     if (!initRender(pebbleScreen))
         return -9;
     persistent_storage_load();
+
+    if (!setup_js_app()) {
+        printf("[ERROR] Failed to Initialize Connection to JS app\n");
+        return -10;
+    }
+
     initHardwareOutput ();
     initButtons();
     pbl_main();

@@ -16,6 +16,14 @@ SIM_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 mkdir -p ./build/local/simdata
 cp -r $SIM_DIR/localsim/simdata/* ./build/local/simdata/
 
+# Check for and copy JS
+if [ -e './src/js/pebble-js-app.js' ]
+then
+    cat $SIM_DIR/localsim/header.js > ./build/local/pebble-js-app-local.js
+    cat ./src/js/pebble-js-app.js >> ./build/local/pebble-js-app-local.js
+    cp ./appinfo.json ./build/local/
+fi
+
 #Build
 if [ "$1" == "--debug" ]
 then
@@ -28,7 +36,7 @@ then
 fi
 
 export LIBRARY_PATH=$LIBRARY_PATH':'$SIM_DIR'/localsim/'
-SDL_LIBS='-lSDL -lSDLmain -lSDL_ttf -lSDL_image -lm'
+SDL_LIBS='-lSDL -lSDLmain -lSDL_ttf -lSDL_image -lm -lpthread'
 RT_LIB='-lPebbleLocalSim'
 INCLUDES='-I '$SIM_DIR'/../Pebble/include/ -I ./build/tempLocal/ -I ./build/tempLocal/src/'
 APP_SRC='./src/*.c'

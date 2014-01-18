@@ -25,11 +25,23 @@ do
 	cd ..
 done
 
+if [ -e pebble-js-app-local.js ]
+then
+    eval "(nodejs pebble-js-app-local.js) &"
+    NODE_PID=$!
+    sleep 5
+fi
+
 if [ "$1" == "--debug" ]
 then
 	gdb ./$APP
 else
 	./$APP
+fi
+
+if [ -e pebble-js-app-local.js ]
+then
+    kill $NODE_PID
 fi
 
 cd ../../

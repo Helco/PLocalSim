@@ -55,6 +55,8 @@ bool persistent_storage_load();
 bool persistent_storage_save();
 void persistent_storage_free();
 
+bool setup_js_app();
+
 //SERVICES SERVICES SERVICES SERVICES SERVICES SERVICES SERVICES SERVICES
 typedef void (*ServiceUpdateCallback) (void);
 enum SimServices {
@@ -66,6 +68,7 @@ enum SimServices {
     SIM_SERVICE_BLUETOOTH,
     SIM_SERVICE_BATTERY,
     SIM_SERVICE_ACCEL_TAP,
+    SIM_SERVICE_APP_MESSAGE,
     SIM_SERVICE_COUNT
 };
 typedef struct {
@@ -84,6 +87,8 @@ void service_ticks ();
 void service_bluetooth ();
 void service_battery ();
 void service_accel_tap ();
+void service_app_message();
+void service_app_sync(DictionaryIterator*);
 
 //SIMDATA SIMDATA SIMDATA SIMDATA SIMDATA SIMDATA SIMDATA SIMDATA SIMDATA SIMDATA SIMDATA
 enum SimImages
