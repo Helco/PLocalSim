@@ -100,7 +100,7 @@ MessageParser.prototype.parse = function(buffer) {
                 value.push(buffer.readUInt8(x));
         }
         else if (type == this.TupleTypes.CSTRING) {
-            value = buffer.toString("utf8", i+7, i+length+7);
+            value = buffer.toString("utf8", i+7, i+length+7-1);
         }
         else if (type == this.TupleTypes.UINT) {
             if (length == 1)
@@ -138,7 +138,7 @@ MessageParser.prototype.serializeMsg = function(msg) {
             size += 7;
 
             if (typeof(msg[k]) == "string")
-                size += msg[k].length;
+                size += msg[k].length+1;
             else if (typeof(msg[k]) == "number")
                 size += 4; // assume 32-bit
             else if (typeof(msg[k]) == "array")
@@ -164,9 +164,10 @@ MessageParser.prototype.serializeMsg = function(msg) {
             var dataSize = 0
             if (typeof(msg[k]) == "string") {
                 buffer.writeUInt8(this.TupleTypes.CSTRING, offset+4);
-                dataSize = msg[k].length;
+                dataSize = msg[k].length+1;
                 buffer.writeUInt16LE(dataSize, offset+5);
-                buffer.write(msg[k], offset+7, dataSize);
+                buffer.write(msg[k], offset+7, dataSize-1);
+                buffer.writeUInt8(0, offset+7+dataSize-1);
             }
             else if (typeof(msg[k]) == "number") {
                 buffer.writeUInt8(this.TupleTypes.INT, offset+4); // assume signed

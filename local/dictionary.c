@@ -68,7 +68,7 @@ DictionaryResult dict_write_cstring(DictionaryIterator *iter,
                                     const uint32_t key,
                                     const char * const cstring) {
 
-    return dict_write_data_helper(iter, key, TUPLE_CSTRING, cstring, strlen(cstring));
+    return dict_write_data_helper(iter, key, TUPLE_CSTRING, cstring, strlen(cstring)+1);
 }
 
 DictionaryResult dict_write_int(DictionaryIterator *iter,
