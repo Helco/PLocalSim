@@ -1,6 +1,6 @@
 #include "globals.h"
 
-#define LONG_CLICK_STD_DELAY 750 //no sdk value for this...
+#define LONG_CLICK_STD_DELAY 500  // as per documentation
 
 typedef struct ClickRecognizer
 {
