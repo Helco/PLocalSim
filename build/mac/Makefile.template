@@ -3,7 +3,7 @@ APP_SRCS = $(wildcard ../src/*.c)
 
 INCS = -Iinclude -Ibuild/tempLocal -I. -I../src
 
-CFLAGS = -std=c11 -arch i386
+CFLAGS = -std=c11 -arch i386 -g
 
 all: run_resCompiler PebbleSim
 

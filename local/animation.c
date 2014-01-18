@@ -24,6 +24,8 @@ struct Animation* animation_create() {
 }
 
 void animation_destroy (struct Animation* animation) {
+    if (animation_is_scheduled(animation))
+        animation_unschedule(animation);
     if (animation)
         free(animation);
 }
@@ -152,6 +154,7 @@ struct PropertyAnimation* property_animation_create(const struct PropertyAnimati
         printf ("[ERROR] Memory allocation failed!\n");
         return 0;
     }
+    memset(animation, 0, sizeof(PropertyAnimation));
     animation->animation.implementation=(AnimationImplementation*)implementation;
     animation->subject=subject;
     if (implementation->base.update==(AnimationUpdateImplementation)property_animation_update_int16) {
@@ -190,6 +193,8 @@ struct PropertyAnimation* property_animation_create(const struct PropertyAnimati
 }
 
 void property_animation_destroy (struct PropertyAnimation* animation) {
+    if (animation_is_scheduled(animation))
+        animation_unschedule(animation);
     if (animation)
         free(animation);
 }

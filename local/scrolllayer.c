@@ -3,6 +3,10 @@
 #define SCROLL_LAYER_GET Layer* scroll_layer=(Layer*)l
 #define SCROLL_GET SCROLL_LAYER_GET;ScrollLayerData* scroll=(ScrollLayerData*)layer_get_data(scroll_layer)
 
+Layer* scroll_layer_get_layer (const ScrollLayer* l) {
+    return l;
+}
+
 GRect scroll_layer_get_new_content_rect (ScrollLayer* l,GPoint offset) {
     SCROLL_LAYER_GET;
     GRect to={{0,0},scroll_layer_get_content_size(l)};

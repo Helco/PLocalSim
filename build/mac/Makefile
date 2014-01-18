@@ -33,12 +33,12 @@ INCS = \
 	-I../../SDL_gfx \
 	-I../../local/dummy
 
-CFLAGS = -std=c11 -arch i386
+CFLAGS = -std=c11 -arch i386 -g
 
 %.o: %.c
 	cc $(CFLAGS) $(INCS) -c $< -o $@
 
-all: resCompiler PebbleLocalSim.a make_sim_dir
+all: resCompiler PebbleLocalSim.a make_sim_dir make_sim_zip
 
 resCompiler: $(RSRC_SRC)
 	cp $(RSRC_SRC) $@
@@ -55,6 +55,10 @@ make_sim_dir:
 	cp -r simdata sim
 	cp -r ../../include sim
 	cp Makefile.template sim/Makefile
+
+make_sim_zip:
+	rm -f sim.zip
+	zip -r sim.zip sim
 
 clean:
 	rm -fr $(SIM_SRCS:.c=.o) *.o *~
