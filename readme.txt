@@ -7,3 +7,5 @@ You must have NodeJS installed for the JavaScript API.  I have only added suppor
 I have also used https://github.com/driverdan/node-XMLHttpRequest/blob/master/lib/XMLHttpRequest.js.
 
 Testing of my changes have been very minimal.  I was basically waiting for my Pebble watch (on backorder) to be delivered and was too excited to wait before getting started.
+
+The weather and quotes example faces should work well.
