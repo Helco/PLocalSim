@@ -26,27 +26,36 @@ struct SystemFont {
     const char* key;
     const char* file;
     int psize;
+    int lsize;
 };
 struct SystemFont systemFonts [SYSTEM_FONT_COUNT]= {
-    {0,FONT_KEY_GOTHIC_14,"./simdata/systemFonts/gothic.ttf",14},
-    {0,FONT_KEY_GOTHIC_14_BOLD,"./simdata/systemFonts/gothic-bold.ttf",14},
-    {0,FONT_KEY_GOTHIC_18,"./simdata/systemFonts/gothic.ttf",18},
-    {0,FONT_KEY_GOTHIC_18_BOLD,"./simdata/systemFonts/gothic-bold.ttf",18},
-    {0,FONT_KEY_GOTHIC_24,"./simdata/systemFonts/gothic.ttf",24},
-    {0,FONT_KEY_GOTHIC_24_BOLD,"./simdata/systemFonts/gothic-bold.ttf",24},
-    {0,FONT_KEY_GOTHIC_28,"./simdata/systemFonts/gothic.ttf",28},
-    {0,FONT_KEY_GOTHIC_28_BOLD,"./simdata/systemFonts/gothic-bold.ttf",28},
-    {0,FONT_KEY_BITHAM_30_BLACK,"./simdata/systemFonts/bitham-black.ttf",30},
-    {0,FONT_KEY_BITHAM_42_BOLD,"./simdata/systemFonts/bitham-bold.ttf",42},
-    {0,FONT_KEY_BITHAM_42_LIGHT,"./simdata/systemFonts/bitham-light.ttf",42},
-    {0,FONT_KEY_BITHAM_42_MEDIUM_NUMBERS,"./simdata/systemFonts/bitham-medium-numbers.ttf",42},
-    {0,FONT_KEY_BITHAM_34_MEDIUM_NUMBERS,"./simdata/systemFonts/bitham-medium-numbers.ttf",34},
-    {0,FONT_KEY_BITHAM_34_LIGHT_SUBSET,"./simdata/systemFonts/bitham-light-subset.ttf",34},
-    {0,FONT_KEY_BITHAM_18_LIGHT_SUBSET,"./simdata/systemFonts/bitham-light-subset.ttf",18},
-    {0,FONT_KEY_ROBOTO_CONDENSED_21,"./simdata/systemFonts/roboto-condensed.ttf",21},
-    {0,FONT_KEY_ROBOTO_BOLD_SUBSET_49,"./simdata/systemFonts/roboto-bold.ttf",49},
-    {0,FONT_KEY_DROID_SERIF_28_BOLD,"./simdata/systemFonts/droid-serif-bold.ttf",28},
+    {0,FONT_KEY_GOTHIC_14,"./simdata/systemFonts/gothic.ttf",8,14},
+    {0,FONT_KEY_GOTHIC_14_BOLD,"./simdata/systemFonts/gothic-bold.ttf",8,14}, // 1 bold
+    {0,FONT_KEY_GOTHIC_18,"./simdata/systemFonts/gothic.ttf",10,18},
+    {0,FONT_KEY_GOTHIC_18_BOLD,"./simdata/systemFonts/gothic-bold.ttf",10,18}, // 3 bold
+    {0,FONT_KEY_GOTHIC_24,"./simdata/systemFonts/gothic.ttf",14,24},
+    {0,FONT_KEY_GOTHIC_24_BOLD,"./simdata/systemFonts/gothic-bold.ttf",14,24}, // 5 bold
+    {0,FONT_KEY_GOTHIC_28,"./simdata/systemFonts/gothic.ttf",18,28},
+    {0,FONT_KEY_GOTHIC_28_BOLD,"./simdata/systemFonts/gothic-bold.ttf",18,28}, // 7 bold
+    {0,FONT_KEY_BITHAM_30_BLACK,"./simdata/systemFonts/bitham-black.ttf",30,30},
+    {0,FONT_KEY_BITHAM_42_BOLD,"./simdata/systemFonts/bitham-bold.ttf",42,42}, // 9 bold
+    {0,FONT_KEY_BITHAM_42_LIGHT,"./simdata/systemFonts/bitham-light.ttf",42,42},
+    {0,FONT_KEY_BITHAM_42_MEDIUM_NUMBERS,"./simdata/systemFonts/bitham-medium-numbers.ttf",42,42},
+    {0,FONT_KEY_BITHAM_34_MEDIUM_NUMBERS,"./simdata/systemFonts/bitham-medium-numbers.ttf",34,34},
+    {0,FONT_KEY_BITHAM_34_LIGHT_SUBSET,"./simdata/systemFonts/bitham-light-subset.ttf",34,34},
+    {0,FONT_KEY_BITHAM_18_LIGHT_SUBSET,"./simdata/systemFonts/bitham-light-subset.ttf",18,18},
+    {0,FONT_KEY_ROBOTO_CONDENSED_21,"./simdata/systemFonts/roboto-condensed.ttf",21,21},
+    {0,FONT_KEY_ROBOTO_BOLD_SUBSET_49,"./simdata/systemFonts/roboto-bold.ttf",49,49},
+    {0,FONT_KEY_DROID_SERIF_28_BOLD,"./simdata/systemFonts/droid-serif-bold.ttf",28,28},
 };
+
+int lineHeightFromFont(GFont font) {
+  for (int i=0; i<SYSTEM_FONT_COUNT; i++) {
+    if (systemFonts[i].font == font) 
+      return systemFonts[i].lsize;
+  }
+  return 18;
+}
 
 void unloadSystemFonts() {
     int i=0;
@@ -62,10 +71,22 @@ GFont fonts_get_system_font(const char *font_key) {
     int i;
     for (i=0; i<SYSTEM_FONT_COUNT; i++) {
         if (strcmp(font_key,systemFonts[i].key)==0) {
-            if (systemFonts[i].font==0)
+            if (systemFonts[i].font==0) {
                 systemFonts[i].font=TTF_OpenFont (systemFonts[i].file,systemFonts[i].psize);
-            if (systemFonts[i].font==0)
-                printf ("[WARN] Didn't found system font: %s\n",systemFonts[i].file);
+                if (systemFonts[i].font==0) {
+                    printf ("[WARN] Didn't found system font: %s\n",systemFonts[i].file);
+                } else {
+                    switch (i) {
+                    case 1:
+                    case 3:
+                    case 5:
+                    case 7:
+                    case 9:
+                        TTF_SetFontStyle(systemFonts[i].font, TTF_STYLE_BOLD);
+                        break;
+                    }
+                }
+            }
             return (GFont)systemFonts[i].font;
         }
     }
@@ -181,4 +202,12 @@ void text_layer_set_size(TextLayer *l, const GSize max_size) {
 
 Layer* text_layer_get_layer (TextLayer* l) {
     return (Layer*)l;
+}
+
+GSize text_layer_get_content_size(TextLayer *l) {
+    TEXT_GET;
+    Layer *ll = (Layer*)l;
+    GRect rect=GRect(0,0,ll->frame.size.w,ll->frame.size.h);
+    GSize s = _graphics_draw_text (NULL,text->text,text->font,rect,text->overflow_mode,text->text_alignment,0,1);
+    return s;
 }

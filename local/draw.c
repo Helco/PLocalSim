@@ -244,20 +244,21 @@ typedef _WrapResult (*TextWrapper)(const char* line,const int maxWidth,const GFo
 _WrapResult wrap_words (const char* line,const int maxWidth,const GFont font);
 _WrapResult wrap_points (const char* line,const int maxWidth,const GFont font);
 
-void graphics_draw_text(GContext *ctx, const char *text, const GFont font, const GRect box, const GTextOverflowMode overflow_mode, const GTextAlignment alignment, const GTextLayoutCacheRef layout) {
-    char buffer [256]; //SHIT!! I need to mark the end of the string but I can't use the original parameter...
+GSize _graphics_draw_text(GContext *ctx, const char *text, const GFont font, const GRect box, const GTextOverflowMode overflow_mode, const GTextAlignment alignment, const GTextLayoutCacheRef layout, int getSizeOnly) {
+    GSize s = { 0, 0 };
+    char *buffer = strdup(text); //SHIT!! I need to mark the end of the string but I can't use the original parameter...
     TextWrapper textWrapper=(overflow_mode==GTextOverflowModeWordWrap?wrap_words:wrap_points);
-    int lineHeight=0,usedHeight=0;
+    int lineHeight=0,usedHeight=5;
     SDL_Surface* lineSurface,*lineSurfaceTemp;
     SDL_Surface* textSurface=SDL_CreateRGBSurface (SDL_SWSURFACE|SDL_SRCALPHA,box.size.w,box.size.h,32,0xff000000,0x00ff0000,0x0000ff00,0x000000ff);
     SDL_FillRect (textSurface,0,0);
     SDL_Surface* pointsSurface=0; //this will only be initalised when it's needed
     SDL_Rect dstRect,srcRect;
-    SDL_Color color=getColor(ctx->text_color);
+    SDL_Color color=  getColor(getSizeOnly ? 0 : ctx->text_color);
     GPoint topOffset=getTopOffset ();
     _WrapResult wrap;
     if (text==0)
-        return;
+        return s;
     while (*text!=0&&usedHeight<box.size.h) {
         wrap=textWrapper (text,box.size.w,font);
         memcpy(buffer,text,wrap.lineLen);
@@ -270,12 +271,13 @@ void graphics_draw_text(GContext *ctx, const char *text, const GFont font, const
         lineSurfaceTemp=TTF_RenderUTF8_Solid ((TTF_Font*)font,buffer,color);
         if (lineSurfaceTemp==0) {
             printf("[WARN] TTF_RenderUTF8_Solid: %s\n",TTF_GetError ());
-            return;
+            free(buffer);
+            return s;
         }
         lineSurface=SDL_ConvertSurface(lineSurfaceTemp,textSurface->format,SDL_SWSURFACE|SDL_SRCALPHA);
         SDL_FreeSurface(lineSurfaceTemp);
         if (lineHeight==0)
-            lineHeight=lineSurface->h;
+            lineHeight=lineHeightFromFont(font);
         //prepare blitting
         srcRect=((SDL_Rect) {
             0,0,lineSurface->w,lineSurface->h
@@ -292,21 +294,24 @@ void graphics_draw_text(GContext *ctx, const char *text, const GFont font, const
         //else
         //  srcRect.x=0;
         //blit line to text
-        SDL_gfxBlitRGBA(lineSurface,&srcRect,textSurface,&dstRect);
+        if (!getSizeOnly)
+            SDL_gfxBlitRGBA(lineSurface,&srcRect,textSurface,&dstRect);
         SDL_FreeSurface(lineSurface);
         if (wrap.addPoints>0) {
             if (pointsSurface==0) {
                 pointsSurface=TTF_RenderUTF8_Solid ((TTF_Font*)font,"...",color);
                 if (pointsSurface==0) {
                     printf("[WARN] TTF_RenderUTF8_Solid: %s\n",TTF_GetError ());
-                    return;
+                    free(buffer);
+                    return s;
                 }
             }
             srcRect.x=0;
             srcRect.w=pointsSurface->w;
             dstRect.x+=dstRect.w;
             dstRect.w=pointsSurface->w;
-            SDL_BlitSurface(pointsSurface,&srcRect,textSurface,&dstRect);
+            if (!getSizeOnly)
+                SDL_BlitSurface(pointsSurface,&srcRect,textSurface,&dstRect);
         }
         usedHeight+=lineHeight;
     }
@@ -316,10 +321,19 @@ void graphics_draw_text(GContext *ctx, const char *text, const GFont font, const
     dstRect=((SDL_Rect) {
         box.origin.x+topOffset.x,box.origin.y+topOffset.y,box.size.w,box.size.h
     });
-    SDL_gfxBlitRGBA(textSurface,&srcRect,getTopScreen(),&dstRect);
+    if (!getSizeOnly)
+        SDL_gfxBlitRGBA(textSurface,&srcRect,getTopScreen(),&dstRect);
     SDL_FreeSurface(textSurface);
     if (pointsSurface!=0)
         SDL_FreeSurface(pointsSurface);
+    free(buffer);
+    s.w = box.size.w;
+    s.h = usedHeight;
+    return s;
+}
+
+void graphics_draw_text(GContext *ctx, const char *text, const GFont font, const GRect box, const GTextOverflowMode overflow_mode, const GTextAlignment alignment, const GTextLayoutCacheRef layout) {
+    _graphics_draw_text(ctx, text, font, box, overflow_mode, alignment, layout, 0);
 }
 
 GSize _wrap_getStringSize (const char* start,const char* end,const GFont font) {

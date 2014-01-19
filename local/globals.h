@@ -134,6 +134,9 @@ void graphics_draw_bitmap_in_rect_to(GContext* ctx,const GBitmap* bitmap,GRect,S
 void graphics_draw_surface_in_rect (GContext* ctx,SDL_Surface* sur,GRect rect);
 void graphics_draw_surface_in_rect_to (GContext* ctx,SDL_Surface* sur,GRect rect,SDL_Surface* to);
 GContext *app_get_current_graphics_context(void);
+// Used to either draw or calculate size
+GSize _graphics_draw_text(GContext *ctx, const char *text, const GFont font, const GRect box, const GTextOverflowMode overflow_mode, const GTextAlignment alignment, const GTextLayoutCacheRef layout, int getSizeOnly);
+int lineHeightFromFont(GFont font);
 
 //BUTTONS BUTTONS BUTTONS BUTTONS BUTTONS BUTTONS BUTTONS BUTTONS BUTTONS BUTTONS
 void onButtonDown (ButtonId id);
