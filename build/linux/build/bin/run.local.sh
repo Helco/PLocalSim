@@ -27,9 +27,9 @@ done
 
 if [ -e pebble-js-app-local.js ]
 then
-    eval "(nodejs pebble-js-app-local.js) &"
+    eval "(node pebble-js-app-local.js) &"
     NODE_PID=$!
-    sleep 5
+    sleep 3
 fi
 
 if [ "$1" == "--debug" ]
