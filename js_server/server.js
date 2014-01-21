@@ -297,17 +297,3 @@ module.exports.geolocation = {
         });
     }
 };
-
-// mock localStorage API
-module.exports.localStorage = {
-    storage: {
-    },
-
-    setItem: function(key, val) {
-        this.storage[key] = val;
-    },
-
-    getItem: function(key) {
-        return this.storage[key];
-    }
-};

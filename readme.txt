@@ -4,7 +4,9 @@ I have added support for the Dictionary, AppMessage, and AppSync APIs, along wit
 
 You must have NodeJS installed for the JavaScript API.  I have only added support for Linux.  Adding support for other platforms should be straightforward.
 
-I have also used https://github.com/driverdan/node-XMLHttpRequest/blob/master/lib/XMLHttpRequest.js.
+I make use fo the following:
+* https://github.com/driverdan/node-XMLHttpRequest/blob/master/lib/XMLHttpRequest.js.
+* https://github.com/ae-code/node-localStorage
 
 Testing of my changes have been very minimal.  I was basically waiting for my Pebble watch (on backorder) to be delivered and was too excited to wait before getting started.
 

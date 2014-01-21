@@ -7,7 +7,7 @@ var window = window || {};
 window.navigator = { };
 window.navigator.geolocation = Pebble.geolocation;
 
-var localStorage = Pebble.localStorage;
+var localStorage = new (require('./simdata/localStorage').Storage)("localStorage.dat");
 
 var XMLHttpRequest = require('./simdata/XMLHttpRequest').XMLHttpRequest;
 
