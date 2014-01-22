@@ -30,15 +30,11 @@ The simulator has several key commands you can use:
 ## Non-implemented features
 
 There are some things that are not implemented yet:
-
-*  __Dictionary__ - Because this seems to be used only for mobile phone communication
-*  __AppMessage__ - Because this is hard to implement into a simulator, I would like to ask you, how this should be implemented
-*  __AppSync__	  
+ 
 *  __MenuLayer__			
 *  __SimpleMenuLayer__
 *  __NumberWindow__
 *  __Accelerosensor__ (accel_tap_* is supported)
-*  __JavaScript API__
 
 Except from these,  all other features should be implemented
 
@@ -212,6 +208,7 @@ Note that you need MinGW (see [Installation]) to build this project
 
 ### Many many thanks to:
 
+*  [ae-code](https://github.com/ae-code) - for the Javascript, Dictionary, AppSync and AppMesage API
 *  [David Konsumer](https://github.com/konsumer) - for the new README
 *  [robhh](https://github.com/robhh) - for their AppTimer implementation
 *  [Otto Greenslade (Chaotic)](http://dribbble.com/chaotic) - for their pebble pictures
@@ -221,8 +218,10 @@ Note that you need MinGW (see [Installation]) to build this project
 *  [Shirk](https://github.com/Shirk) - for creating the python based resCompiler for unix systems
 *  [The Pebble Team](https://developer.getpebble.com/) - for the amazing watch, the SDK and their long shipping procedure, which was the motivation to build this
 
-### Libraries that I used:
+### Libraries/Code that are used:
 
+*  [node-XMLHttpRequest](https://github.com/driverdan/node-XMLHttpRequest/blob/master/lib/XMLHttpRequest.js)
+*  [node-localStorage](https://github.com/ae-code/node-localStorage)
 *  [SDL 1.2](www.libsdl.org)
 *  [SDL_ttf](http://www.libsdl.org/projects/SDL_ttf/)
 *  [SDL_image](http://www.libsdl.org/projects/SDL_image/)

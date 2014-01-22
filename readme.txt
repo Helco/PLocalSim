@@ -29,15 +29,11 @@ The simulator has several key commands you can use:
 ## Non-implemented features
 
 There are some things that are not implemented yet:
-
-* Dictionary - Because this seems to be used only for mobile phone communication
-* AppMessage - Because this is hard to implement into a simulator, I would like to ask you, how this should be implemented
-* AppSync	  
+	  
 * MenuLayer			
 * SimpleMenuLayer
 * NumberWindow
 * Accelerosensor (accel_tap_* is supported)
-* JavaScript API
 
 Except from these,  all other features should be implemented
 
@@ -224,6 +220,7 @@ Note that you need MinGW (see [Installation]) to build this project
 
 ### Many many thanks to:
 
+* ae-code (https://github.com/ae-code) - for the Javascript, Dictionary, AppSync and AppMesage API
 * David Konsumer (https://github.com/konsumer) - for the new README
 * robhh (https://github.com/robhh) - for their AppTimer implementation
 * Otto Greenslade (Chaotic) (http://dribbble.com/chaotic) - for their pebble pictures
@@ -235,8 +232,10 @@ Note that you need MinGW (see [Installation]) to build this project
 
 ### Libraries that I used:
 
-* [SDL 1.2](www.libsdl.org)
-* [SDL_ttf](http://www.libsdl.org/projects/SDL_ttf/)
-* [SDL_image](http://www.libsdl.org/projects/SDL_image/)
-* [SDL_gfx](http://www.ferzkopp.net/joomla/content/view/19/14/)
-* [JSMN](https://bitbucket.org/zserge/jsmn)
+* node-XMLHttpRequest (https://github.com/driverdan/node-XMLHttpRequest/blob/master/lib/XMLHttpRequest.js)
+* node-localStorage (https://github.com/ae-code/node-localStorage)
+* SDL 1.2 (www.libsdl.org)
+* SDL_ttf (http://www.libsdl.org/projects/SDL_ttf/)
+* SDL_image (http://www.libsdl.org/projects/SDL_image/)
+* SDL_gfx (http://www.ferzkopp.net/joomla/content/view/19/14/)
+* JSMN (https://bitbucket.org/zserge/jsmn)
