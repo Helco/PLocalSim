@@ -34,6 +34,7 @@ Layer* layer_create_with_data (GRect frame,size_t size) {
 
 void layer_destroy (Layer* layer) {
     if (layer) {
+        layer_remove_from_parent(layer);
         if (layer->extra_data)
             free(layer->extra_data);
         free(layer);
@@ -135,7 +136,9 @@ void layer_remove_child_layers(Layer *parent) {
     Layer *cursor = parent->first_child;
     while(cursor != NULL) {
         cursor->parent = NULL;
-        cursor = cursor->next_sibling;
+        Layer* const next = cursor->next_sibling;
+        cursor->next_sibling = NULL;
+        cursor = next;
     }
     parent->first_child = NULL;
     layer_mark_dirty (parent);

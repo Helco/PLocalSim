@@ -84,6 +84,9 @@ void popWindow () {
     windowStackSize--;
     if (w->window_handlers.disappear)
         w->window_handlers.disappear(w);
+    w->is_loaded = false;
+    if (w->window_handlers.unload)
+        w->window_handlers.unload(w);
     windowStack[windowStackSize]=0;
     if (windowStackSize>0) {
         w=windowStack[windowStackSize-1];

@@ -373,7 +373,7 @@ int _wrap_maxLineLength (const char* string,const int maxWidth,const GFont font)
     while (*stringPtr!='\n'&&*stringPtr!=0) {
         usedWidth=_wrap_getStringWidth(string,stringPtr+1,font);
         if (usedWidth>=maxWidth)
-            return len;
+            return len ? len: 1;
         stringPtr++;
         len++;
     }
