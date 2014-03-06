@@ -13,7 +13,7 @@ Window* window_create (void) {
     }
     window->is_fullscreen=true; //TODO: copy appinfo.json to output and read if app is watchface or watchapp
     window->is_loaded=false;
-    window->background_color=GColorBlack;
+    window->background_color=GColorWhite;
     window->user_data=0;
     window->click_config_context=0;
     window->status_bar_icon=0;
