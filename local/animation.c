@@ -193,8 +193,8 @@ struct PropertyAnimation* property_animation_create(const struct PropertyAnimati
 }
 
 void property_animation_destroy (struct PropertyAnimation* animation) {
-    if (animation_is_scheduled(animation))
-        animation_unschedule(animation);
+    if (animation_is_scheduled((Animation*)animation))
+        animation_unschedule((Animation*)animation);
     if (animation)
         free(animation);
 }

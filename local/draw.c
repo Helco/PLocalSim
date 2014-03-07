@@ -244,9 +244,20 @@ typedef _WrapResult (*TextWrapper)(const char* line,const int maxWidth,const GFo
 _WrapResult wrap_words (const char* line,const int maxWidth,const GFont font);
 _WrapResult wrap_points (const char* line,const int maxWidth,const GFont font);
 
+char* _duplicate_string (const char* text) {
+	uint32_t len=strlen(text)+1;
+	char* buffer=malloc(len);
+	if (!buffer) {
+		printf("[ERR] Couldn't duplicate string with length %u",len);
+		exit(-1);
+	}
+	memcpy(buffer,text,len);
+	return buffer;
+}
+
 GSize _graphics_draw_text(GContext *ctx, const char *text, const GFont font, const GRect box, const GTextOverflowMode overflow_mode, const GTextAlignment alignment, const GTextLayoutCacheRef layout, int getSizeOnly) {
     GSize s = { 0, 0 };
-    char *buffer = strdup(text); //SHIT!! I need to mark the end of the string but I can't use the original parameter...
+    char *buffer = _duplicate_string(text);
     TextWrapper textWrapper=(overflow_mode==GTextOverflowModeWordWrap?wrap_words:wrap_points);
     int lineHeight=0,usedHeight=5;
     SDL_Surface* lineSurface,*lineSurfaceTemp;

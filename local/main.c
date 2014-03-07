@@ -40,7 +40,12 @@ static bool lastLightState=false;
 static bool firstTick=true;
 static char titleBuffer[]="./simdata/screenshots/yyyy-mm-dd-hh-mm.bmp\0\0";
 
-ServiceData serviceData={{0,0},{service_buttons,service_hardware_output,service_animations,service_timers,service_ticks,service_bluetooth,service_battery,service_accel_tap,service_app_message}};
+ServiceData serviceData={{0,0},{service_buttons,service_hardware_output,service_animations,service_timers,service_ticks,service_bluetooth,service_battery,service_accel_tap,
+#ifndef WIN32
+	service_app_message}};
+#else 
+	0}};
+#endif
 
 FILE* logFile=0;
 
@@ -103,11 +108,12 @@ void simulatorRender ();
     if (!initRender(pebbleScreen))
         return -9;
     persistent_storage_load();
-
+#ifndef WIN32
     if (!setup_js_app()) {
         printf("[ERROR] Failed to Initialize Connection to JS app\n");
         return -10;
-    }
+	}
+#endif
 
     initHardwareOutput ();
     initButtons();
@@ -339,8 +345,10 @@ void app_event_loop() {
             }
         }
 
-		for (i=0;i<SIM_SERVICE_COUNT;i++)
-            (serviceData.services[i]) ();
+		for (i=0;i<SIM_SERVICE_COUNT;i++) {
+			if (serviceData.services[i])
+				(serviceData.services[i]) ();
+		}
         if (lastVibeState!=getVibeState()) {
             bodyRender=true;
             lastVibeState=getVibeState();

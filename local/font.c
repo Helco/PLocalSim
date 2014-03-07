@@ -204,7 +204,7 @@ Layer* text_layer_get_layer (TextLayer* l) {
     return (Layer*)l;
 }
 
-GSize text_layer_get_content_size(TextLayer *l) {
+GSize text_layer_get_content_size (TextLayer *l) {
     TEXT_GET;
     Layer *ll = (Layer*)l;
     GRect rect=GRect(0,0,ll->frame.size.w,ll->frame.size.h);

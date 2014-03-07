@@ -1,5 +1,24 @@
 #include "globals.h"
 
+typedef struct TupletData {
+  TupleType type;
+  uint32_t key;
+  union {
+    struct {
+      const uint8_t *data;
+      const uint16_t length;
+    } bytes;
+    struct {
+      const char *data;
+      const uint16_t length;
+    } cstring;
+    struct {
+      uint32_t storage;
+      const uint16_t width;
+    } integer;
+  } data; //without this MinGW can not access the union :(
+} TupletData;
+
 uint32_t dict_calc_buffer_size(const uint8_t tuple_count, ...) {
     uint32_t uiSize = 1 + (tuple_count * 7);
 
@@ -161,10 +180,10 @@ Tuple * dict_read_first(DictionaryIterator *iter) {
 
 DictionaryResult dict_serialize_tuplets(DictionarySerializeCallback callback,
                                         void *context,
-                                        const uint8_t tuplets_count,
-                                        const Tuplet * const tuplets) {
+										const Tuplet * const tuplets,
+                                        const uint8_t tuplets_count){
 
-    const uint32_t size = dict_calc_buffer_size_from_tuplets(tuplets_count, tuplets);
+    const uint32_t size = dict_calc_buffer_size_from_tuplets(tuplets, tuplets_count);
     uint8_t* buffer = (uint8_t*) malloc(size);
 
     DictionaryIterator iter;
@@ -183,22 +202,22 @@ DictionaryResult dict_serialize_tuplets(DictionarySerializeCallback callback,
     return DICT_OK;
 }
 
-DictionaryResult dict_serialize_tuplets_to_buffer(const uint8_t tuplets_count,
-                                                  const Tuplet * const tuplets,
+DictionaryResult dict_serialize_tuplets_to_buffer(const Tuplet * const tuplets,
+												  const uint8_t tuplets_count,                                                  
                                                   uint8_t *buffer,
                                                   uint32_t *size_in_out) {
 
     DictionaryIterator iter;
-    return dict_serialize_tuplets_to_buffer_with_iter(tuplets_count, tuplets, &iter, buffer, size_in_out);
+    return dict_serialize_tuplets_to_buffer_with_iter(&iter, tuplets, tuplets_count, buffer, size_in_out);
 }
 
-DictionaryResult dict_serialize_tuplets_to_buffer_with_iter(const uint8_t tuplets_count,
+DictionaryResult dict_serialize_tuplets_to_buffer_with_iter(DictionaryIterator *iter,
                                                             const Tuplet * const tuplets,
-                                                            DictionaryIterator *iter,
+                                                            const uint8_t tuplets_count,
                                                             uint8_t *buffer,
                                                             uint32_t *size_in_out) {
 
-    const uint32_t size = dict_calc_buffer_size_from_tuplets(tuplets_count, tuplets);
+    const uint32_t size = dict_calc_buffer_size_from_tuplets(tuplets, tuplets_count);
     if (size > *size_in_out)
         return DICT_NOT_ENOUGH_STORAGE;
     *size_in_out = size;
@@ -216,35 +235,37 @@ DictionaryResult dict_serialize_tuplets_to_buffer_with_iter(const uint8_t tuplet
     return DICT_OK;
 }
 
-DictionaryResult dict_write_tuplet(DictionaryIterator *iter, const Tuplet * const tuplet) {
+DictionaryResult dict_write_tuplet(DictionaryIterator *iter, const Tuplet * const tup) {
+	const TupletData* const tuplet=(const TupletData* const) tup;
     switch (tuplet->type) {
     case TUPLE_BYTE_ARRAY:
-        return dict_write_data(iter, tuplet->key, tuplet->bytes.data, tuplet->bytes.length);
+        return dict_write_data(iter, tuplet->key, tuplet->data.bytes.data, tuplet->data.bytes.length);
     case TUPLE_CSTRING:
-        return dict_write_cstring(iter, tuplet->key, tuplet->cstring.data);
+        return dict_write_cstring(iter, tuplet->key, tuplet->data.cstring.data);
     case TUPLE_INT:
-        return dict_write_int(iter, tuplet->key, &(tuplet->integer.storage), tuplet->integer.width, true);
+        return dict_write_int(iter, tuplet->key, &(tuplet->data.integer.storage), tuplet->data.integer.width, true);
     case TUPLE_UINT:
-        return dict_write_int(iter, tuplet->key, &(tuplet->integer.storage), tuplet->integer.width, false);
+        return dict_write_int(iter, tuplet->key, &(tuplet->data.integer.storage), tuplet->data.integer.width, false);
     }
 
     return DICT_INVALID_ARGS;
 }
 
-uint32_t dict_calc_buffer_size_from_tuplets(const uint8_t tuplets_count, const Tuplet * const tuplets) {
+uint32_t dict_calc_buffer_size_from_tuplets(const Tuplet * const tups, const uint8_t tuplets_count) {
     uint32_t uiSize = 1 + (tuplets_count * 7);
+	const TupletData* const tuplets=(const TupletData* const) tups;
 
     for (int i = 0; i < tuplets_count; ++i) {
         switch(tuplets[i].type) {
         case TUPLE_BYTE_ARRAY:
-            uiSize += tuplets[i].bytes.length;
+            uiSize += tuplets[i].data.bytes.length;
             break;
         case TUPLE_CSTRING:
-            uiSize += tuplets[i].cstring.length;
+            uiSize += tuplets[i].data.cstring.length;
             break;
         case TUPLE_INT:
         case TUPLE_UINT:
-            uiSize += tuplets[i].integer.width;
+            uiSize += tuplets[i].data.integer.width;
             break;
         }
     }

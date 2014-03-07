@@ -1,3 +1,4 @@
+#ifndef WIN32
 #include "globals.h"
 #include <pthread.h>
 
@@ -124,3 +125,4 @@ void service_app_sync(DictionaryIterator* iter) {
 
     pthread_mutex_unlock(&g_mxAppSyncList);
 }
+#endif

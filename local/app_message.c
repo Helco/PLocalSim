@@ -1,3 +1,4 @@
+#ifndef WIN32
 #include "globals.h"
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -371,3 +372,4 @@ void service_app_message() {
         g_fInboxReceived(&g_dictIn, g_pContext);
 
 }
+#endif
