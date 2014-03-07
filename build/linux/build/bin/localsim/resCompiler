@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 # encoding: utf-8
 
 # This is free and unencumbered software released into the public domain.
@@ -33,25 +33,23 @@ import json
 import errno
 import struct
 import logging
+from distutils.spawn import find_executable
 
 __author__    = 'René Köcher <shirk@bitspin.org>'
 __copyright__ = 'Placed in the public domain with the hope that it will be useful.'
 __doc__       = 'resCompiler replacement for PebbleLocalSim written in pure python.'
 
 try:
-	# locate PebbleSDK so we can profit from their code :)
-	for path in os.getenv('PATH', '').split(':'):
-		if os.path.exists(os.path.join(path, 'pebble')):
-			sdk_tools_path = os.path.join(path, '..', 'Pebble', 'tools')
-			if os.path.exists(os.path.join(sdk_tools_path, 'bitmapgen.py')):
-				sys.path.append(sdk_tools_path)
-				break
-
-	import bitmapgen # safest way to convert bitmap resources..
+    # locate PebbleSDK so we can profit from their code :)
+    path=os.path.dirname(find_executable('pebble'))
+    sdk_tools_path = os.path.join(path, '..', 'Pebble', 'tools')
+    if os.path.exists(os.path.join(sdk_tools_path, 'bitmapgen.py')):
+        sys.path.append(sdk_tools_path)
+    import bitmapgen # safest way to convert bitmap resources..
 except ImportError as e:
-	logging.basicConfig(format='[%(levelname)-8s] %(message)s', level=logging.INFO)
-	logging.fatal('Unable to detect PebbleSDK, make sure it is in your PATH!')
-	sys.exit(1)
+    logging.basicConfig(format='[%(levelname)-8s] %(message)s', level=logging.INFO)
+    logging.fatal('Unable to detect PebbleSDK, make sure it is in your PATH!')
+    sys.exit(1)
 
 class ResourceCompiler(object):
 	VERSION_DEF_MAXLEN      = 63

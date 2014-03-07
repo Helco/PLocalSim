@@ -1,84 +1,31 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Release" />
-	<File name="../../../local/main.c" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1445" topLine="33" />
-		</Cursor>
+	<File name="../../../include/pebble.h" open="0" top="0" tabpos="1">
+		<Cursor position="0" topLine="0" />
 	</File>
-	<File name="../../../local/pebble_os.c" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="0" topLine="63" />
-		</Cursor>
+	<File name="../../../local/bitmap.c" open="0" top="0" tabpos="2">
+		<Cursor position="0" topLine="0" />
 	</File>
-	<File name="../../../local/math.c" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="0" topLine="0" />
-		</Cursor>
+	<File name="../../../local/draw.c" open="0" top="0" tabpos="1">
+		<Cursor position="0" topLine="0" />
 	</File>
-	<File name="../../../js_server/server.js" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="8717" topLine="288" />
-		</Cursor>
+	<File name="../../../local/globals.h" open="0" top="0" tabpos="2">
+		<Cursor position="0" topLine="0" />
 	</File>
-	<File name="../../../local/render.c" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="0" topLine="0" />
-		</Cursor>
+	<File name="../../../local/impl_pebble.h" open="0" top="0" tabpos="3">
+		<Cursor position="0" topLine="0" />
 	</File>
-	<File name="../../../local/impl_pebble.h" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="0" topLine="0" />
-		</Cursor>
+	<File name="../../../local/main.c" open="0" top="0" tabpos="1">
+		<Cursor position="0" topLine="0" />
 	</File>
-	<File name="../../../local/globals.h" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="2312" topLine="82" />
-		</Cursor>
+	<File name="../../../local/math.c" open="0" top="0" tabpos="7">
+		<Cursor position="0" topLine="0" />
 	</File>
-	<File name="../../../local/bitmap.c" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="0" topLine="0" />
-		</Cursor>
+	<File name="../../../local/pebble_os.c" open="0" top="0" tabpos="4">
+		<Cursor position="0" topLine="0" />
 	</File>
-	<File name="../../../include/pebble.h" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="26101" topLine="1274" />
-		</Cursor>
-	</File>
-	<File name="../build/bin/run.local.sh" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="468" topLine="22" />
-		</Cursor>
-	</File>
-	<File name="../../../local/dictionary.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="8617" topLine="259" />
-		</Cursor>
-	</File>
-	<File name="../build/bin/build.local.sh" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="450" topLine="8" />
-		</Cursor>
-	</File>
-	<File name="../../../local/draw.c" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="0" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="../../../js_server/header.js" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="283" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="../../../local/app_sync.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="3482" topLine="86" />
-		</Cursor>
-	</File>
-	<File name="../../../local/app_message.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="10175" topLine="290" />
-		</Cursor>
+	<File name="../../../local/render.c" open="0" top="0" tabpos="5">
+		<Cursor position="0" topLine="0" />
 	</File>
 </CodeBlocks_layout_file>

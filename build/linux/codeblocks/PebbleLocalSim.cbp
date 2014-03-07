@@ -32,7 +32,7 @@
 				</Linker>
 			</Target>
 			<Target title="Release">
-				<Option output="../build/bin/localsim/PebbleLocalSim" prefix_auto="1" extension_auto="1" />
+				<Option output="../build/bin/localsim/libPebbleLocalSim" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
 				<Option object_output="obj/Release" />
 				<Option type="2" />
@@ -79,6 +79,8 @@
 			<Option compiler="gcc" use="1" buildCommand="$compiler $options $includes -c $file -o $object -w" />
 		</Unit>
 		<Unit filename="../../../SDL_gfx/SDL_rotozoom.h" />
+		<Unit filename="../build/bin/build.local.sh" />
+		<Unit filename="../build/bin/run.local.sh" />
 		<Unit filename="../../../include/pebble.h" />
 		<Unit filename="../../../include/pebble_app_info.h" />
 		<Unit filename="../../../include/pebble_fonts.h" />
@@ -166,8 +168,6 @@
 			<Option compilerVar="CC" />
 			<Option target="Debug" />
 		</Unit>
-		<Unit filename="../build/bin/build.local.sh" />
-		<Unit filename="../build/bin/run.local.sh" />
 		<Extensions>
 			<code_completion />
 			<envvars />
