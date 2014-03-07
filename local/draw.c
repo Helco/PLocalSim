@@ -349,8 +349,8 @@ void graphics_draw_text(GContext *ctx, const char *text, const GFont font, const
 
 GSize _wrap_getStringSize (const char* start,const char* end,const GFont font) {
     int sx,ex,sy;
-    TTF_SizeText (font,start,&sx,&sy);
-    TTF_SizeText (font,end,&ex,0);
+    TTF_SizeUTF8 (font,start,&sx,&sy);
+    TTF_SizeUTF8 (font,end,&ex,0);
     return GSize(sx-ex,sy);
 }
 

@@ -4,7 +4,7 @@
 	"SDL_gfxBlitFunc.h"
 	"SDL_gfxBlitFunc.h"
 
-1381756514 itFunc.h"
+1388396827 itFunc.h"
 
 1381756514 /home/helco/github/PebbleLocalSim/SDL_gfx/SDL_gfxBlitFunc.h
 	<stdio.h>
@@ -20,7 +20,7 @@
 	<SDL/SDL.h>
 	<SDL/SDL_video.h>
 
-1381756514 ideo.h>
+1388396827 ideo.h>
 
 1381756514 source:/home/helco/github/PebbleLocalSim/SDL_gfx/SDL_gfxPrimitives.c
 	<stdio.h>
@@ -54,7 +54,7 @@
 	<emmintrin.h>
 	<armintr.h>
 
-1381756514 >
+1390008947 >
 
 1381756514 /home/helco/github/PebbleLocalSim/SDL_gfx/SDL_gfxPrimitives.h
 	<math.h>
@@ -88,14 +88,14 @@
 	<string.h>
 	"SDL_rotozoom.h"
 
-1381756514 oom.h"
+1388396827 oom.h"
 
 1384361021 source:/home/helco/github/PebbleLocalSim/local/actionbar.c
 	"globals.h"
 	"globals.h"
 	"globals.h"
 
-1381928108 "
+1388396827 "
 
 1384877728 /home/helco/github/PebbleLocalSim/local/globals.h
 	"pebble_os.h"
@@ -138,6 +138,8 @@
 	<stdio.h>
 	<stdarg.h>
 
+1388396827 
+
 1381934334 mage.h>
 
 1384448800 source:/home/helco/github/PebbleLocalSim/local/animation.c
@@ -177,8 +179,6 @@
 	"jsmn.h"
 	<stdlib.h>
 	"jsmn.h"
-
-1371324802 
 
 1381756514 /home/helco/github/PebbleLocalSim/local/jsmn.h
 
@@ -287,6 +287,8 @@
 1384877729 /home/helco/github/PebbleLocalSim/local/impl_pebble.h
 	"pebble.h"
 	"pebble_app_info.h"
+
+1388396827 p_info.h"
 
 1384603849 source:/home/helco/github/PebbleLocalSim/test/src/classio.c
 	"pebble.h"
@@ -447,4 +449,140 @@
 1390008947 source:/home/albert/projects/PebbleLocalSim/local/app_sync.c
 	"globals.h"
 	<pthread.h>
+
+1381756514 source:/home/helco/github/PebbleLocalSim/SDL_gfx/SDL_gfxBlitFunc.c
+	"SDL_gfxBlitFunc.h"
+
+1381756514 /home/helco/github/PebbleLocalSim/SDL_gfx/SDL_gfxBlitFunc.h
+	<stdio.h>
+	<stdlib.h>
+	<SDL/SDL.h>
+	<SDL/SDL_video.h>
+
+1381756514 source:/home/helco/github/PebbleLocalSim/SDL_gfx/SDL_gfxPrimitives.c
+	<stdio.h>
+	<stdlib.h>
+	<math.h>
+	<string.h>
+	"SDL_gfxPrimitives.h"
+	"SDL_rotozoom.h"
+	"SDL_gfxPrimitives_font.h"
+	"SDL_gfxBlitFunc.h"
+	<emmintrin.h>
+	<armintr.h>
+
+1381756514 /home/helco/github/PebbleLocalSim/SDL_gfx/SDL_gfxPrimitives.h
+	<math.h>
+	<SDL/SDL.h>
+
+1381756514 /home/helco/github/PebbleLocalSim/SDL_gfx/SDL_rotozoom.h
+	<math.h>
+	<SDL/SDL.h>
+
+1381756514 /home/helco/github/PebbleLocalSim/SDL_gfx/SDL_gfxPrimitives_font.h
+
+1381756514 source:/home/helco/github/PebbleLocalSim/SDL_gfx/SDL_rotozoom.c
+	<windows.h>
+	<stdlib.h>
+	<string.h>
+	"SDL_rotozoom.h"
+
+1384361021 source:/home/helco/github/PebbleLocalSim/local/actionbar.c
+	"globals.h"
+
+1390371688 /home/helco/github/PebbleLocalSim/local/globals.h
+	<SDL/SDL.h>
+	<SDL/SDL_ttf.h>
+	<SDL/SDL_image.h>
+	"impl_pebble.h"
+	"SDL_gfxPrimitives.h"
+	"SDL_gfxBlitFunc.h"
+	"SDL_rotozoom.h"
+	<windows.h>
+	<math.h>
+	<stdio.h>
+	<stdarg.h>
+
+1384877729 /home/helco/github/PebbleLocalSim/local/impl_pebble.h
+	"pebble.h"
+	"pebble_app_info.h"
+
+1384876378 source:/home/helco/github/PebbleLocalSim/local/bitmap.c
+	"globals.h"
+
+1384453652 source:/home/helco/github/PebbleLocalSim/local/hardwareOutput.c
+	"globals.h"
+
+1381756514 source:/home/helco/github/PebbleLocalSim/local/jsmn.c
+	<stdlib.h>
+	"jsmn.h"
+
+1381756514 /home/helco/github/PebbleLocalSim/local/jsmn.h
+
+1384868936 source:/home/helco/github/PebbleLocalSim/local/math.c
+	"globals.h"
+
+1389713266 source:/home/helco/github/PebbleLocalSim/local/accel_tap.c
+	"globals.h"
+
+1394203012 source:/home/helco/github/PebbleLocalSim/local/animation.c
+	"globals.h"
+
+1394202945 source:/home/helco/github/PebbleLocalSim/local/app_message.c
+	"globals.h"
+	<sys/socket.h>
+	<netinet/in.h>
+	<arpa/inet.h>
+	<unistd.h>
+	<pthread.h>
+
+1394202953 source:/home/helco/github/PebbleLocalSim/local/app_sync.c
+	"globals.h"
+	<pthread.h>
+
+1388396827 source:/home/helco/github/PebbleLocalSim/local/battery.c
+	"globals.h"
+
+1388396827 source:/home/helco/github/PebbleLocalSim/local/bluetooth.c
+	"globals.h"
+
+1390371688 source:/home/helco/github/PebbleLocalSim/local/buttons.c
+	"globals.h"
+
+1394202600 source:/home/helco/github/PebbleLocalSim/local/dictionary.c
+	"globals.h"
+
+1394204188 source:/home/helco/github/PebbleLocalSim/local/draw.c
+	"globals.h"
+
+1394124335 source:/home/helco/github/PebbleLocalSim/local/font.c
+	"globals.h"
+
+1390371688 source:/home/helco/github/PebbleLocalSim/local/layer.c
+	"globals.h"
+
+1394203224 source:/home/helco/github/PebbleLocalSim/local/main.c
+	"globals.h"
+
+1389713326 source:/home/helco/github/PebbleLocalSim/local/pebble_os.c
+	"globals.h"
+
+1389713337 source:/home/helco/github/PebbleLocalSim/local/persistent_storage.c
+	"globals.h"
+	<stdio.h>
+
+1390371688 source:/home/helco/github/PebbleLocalSim/local/render.c
+	"globals.h"
+
+1394202641 source:/home/helco/github/PebbleLocalSim/local/scrolllayer.c
+	"globals.h"
+
+1388396827 source:/home/helco/github/PebbleLocalSim/local/simdata.c
+	"globals.h"
+
+1388396827 source:/home/helco/github/PebbleLocalSim/local/timer.c
+	"globals.h"
+
+1394200966 source:/home/helco/github/PebbleLocalSim/local/window.c
+	"globals.h"
 
