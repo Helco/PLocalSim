@@ -26,6 +26,9 @@ SIM_SRCS = \
 	../../local/battery.c \
 	../../local/accel_tap.c \
 	../../local/persistent_storage.c \
+	../../local/app_message.c \
+	../../local/app_sync.c \
+	../../local/dictionary.c
 
 INCS = \
 	-I../../include \
