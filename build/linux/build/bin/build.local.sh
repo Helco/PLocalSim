@@ -45,8 +45,14 @@ CWD=`pwd`
 APP=`basename $CWD`
 OUTPUT='./build/local/'$APP
 
+# Run the resource compiler, but use the virtual environment
+# from the original pebble tool to provide all necessary python libs
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+SCRIPT_DIR=$SCRIPT_DIR'/../.env/bin/activate'
+source $SCRIPT_DIR
 RUN_RESCOMPILER=$SIM_DIR'/localsim/resCompiler'
 $RUN_RESCOMPILER
+deactivate
 
 if [ $? -eq 0 ]
 then
