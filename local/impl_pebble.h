@@ -1,6 +1,7 @@
 #ifndef __IMPL_PEBBLE_H__
 #define __IMPL_PEBBLE_H__
 #include "pebble.h"
+#undef tzname
 #include "pebble_app_info.h"
 
 //these structure are based from the ones in pebbleSDK 1.2 and modified to fit the new pebbleSDK

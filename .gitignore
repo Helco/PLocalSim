@@ -1,6 +1,8 @@
 build/windows/MinGW/
+build/windows/SDL/
+build/windows/SDL2/
 build/windows/obj/
-build/windows/pipboy/
+build/windows/test2/
 build/linux/codeblocks/obj/
 build/linux/codeblocks/bin/
 test/

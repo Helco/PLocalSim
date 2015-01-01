@@ -1,6 +1,14 @@
+/*
+ * this file stands under Public Domain (is part of MinGW I suppose)
+ * I took this file to replace the one provided with the MinGW version I use
+ * it is not changed except for this comment and the rename (per macro)
+ * of tzname as it is defined in time.h
+ */
 #include <windows.h>
 #include <stdio.h>
 #include <time.h>
+
+#define tzname _my_tzname
 
 /* strftime() - taken from OpenBSD.  */
 
