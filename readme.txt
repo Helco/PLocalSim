@@ -1,4 +1,4 @@
-| PebbleLocalSimulator|
+| PLocalSimulator|
 +---------------------+
 
 Version: 0.2 BETA
@@ -6,6 +6,7 @@ Version: 0.2 BETA
 ## Overview
 
 This project is an extension to the PebbleSDK2.0 Beta2 which allows you to build and run your pebble applications on your computer.
+This project was renamed due to the new naming guidelines from Pebble Technlogoy Inc.
 
 ## Usage
 
@@ -103,7 +104,7 @@ I want YOU! to find:
 *  feedback
 *  questions
 
-and [tell them to me](https://github.com/Helco/PebbleLocalSim/issues). I will try to answer them all.
+and [tell them to me](https://github.com/Helco/PLocalSim/issues). I will try to answer them all.
 
 ## Installation
 
