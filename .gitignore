@@ -6,6 +6,10 @@ build/windows/test2/
 build/linux/codeblocks/obj/
 build/linux/codeblocks/bin/
 test/
-
-*.goutput*
-*~
+*MinGW*
+SDL/
+testsdk/
+obj/
+bin/
+include/pe*
+backups/
