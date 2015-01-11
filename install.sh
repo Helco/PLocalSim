@@ -11,8 +11,10 @@ source $PLS_MY_DIR'/envvars.sh'
 # Check if the sdk is built already
 PLS_SIM_LIB=$PLS_MY_DIR'/bin/libPLocalSim.a'
 PLS_RSC_EXE=$PLS_MY_DIR'/bin/resCompiler'
+PLS_OS_NAME='unix'
 if [ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ]; then
   PLS_RSC_EXE=$PLS_RSC_EXE'.exe'
+  PLS_OS_NAME='windows'
 fi
 
 if [ ! -e $PLS_SIM_LIB ] ; then
@@ -37,8 +39,9 @@ fi
 
 # Find target path
 PLS_TARGET_PATH=$1
+PLS_COPY_HEADERS='true'
 if [ -z "$PLS_TARGET_PATH" ] ; then
-  if [ -z "$1" ] ; then
+  if [ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ] ; then
     echo "[FAIL] PLocalSim does need a specific directory on windows"
     exit 1
   else
@@ -46,6 +49,7 @@ if [ -z "$PLS_TARGET_PATH" ] ; then
     PLS_PATH_PEBBLE=`type -t pebble`
     if [ $? -eq 0 ] ; then
       PLS_TARGET_PATH=`dirname $PLS_PATH_PEBBLE`
+      PLS_COPY_HEADERS='false'
     else
       echo "[FAIL] PLocalSim could not locate the pebble sdk"
       exit 1
@@ -66,15 +70,12 @@ cp -f -r $PLS_MY_DIR/bin/*                  $PLS_TARGET_PATH'/PLocalSim/'
 cp -f -r $PLS_MY_DIR/sdkdata/common/*       $PLS_TARGET_PATH'/'
 cp -f -r $PLS_MY_DIR/simdata/common/*       $PLS_TARGET_PATH'/PLocalSim/simdata/'
 
-echo "[INFO] Copy OS specific data"
-PLS_OS_NAME="unix"
-if [ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ]; then
-  echo "[INFO] May take a few minutes"
-  PLS_OS_NAME="windows"
-  
-  # Copy include directory
+echo "[INFO] Copy OS specific data (may take a few minutes)"
+cp -f -r $PLS_MY_DIR/sdkdata/$PLS_OS_NAME/* $PLS_TARGET_PATH'/'
+cp -f -r $PLS_MY_DIR/simdata/$PLS_OS_NAME/* $PLS_TARGET_PATH'/PLocalSim/simdata/'
+
+if [ "$PLS_COPY_HEADERS" == 'true' ]; then
+  echo "[INFO] Copy headers"
   mkdir -p $PLS_TARGET_PATH'/PLocalSim/include'
   cp -f -r $PLS_MY_DIR/include/*            $PLS_TARGET_PATH'/PLocalSim/include/' 
 fi
-cp -f -r $PLS_MY_DIR/sdkdata/$PLS_OS_NAME/* $PLS_TARGET_PATH'/'
-cp -f -r $PLS_MY_DIR/simdata/$PLS_OS_NAME/* $PLS_TARGET_PATH'/PLocalSim/simdata/'

@@ -1,58 +1,33 @@
-# PebbleLocalSimulator
-
-### Version: 0.2 BETA
+# PLocalSim
 
 ## Overview
 
-This project is an extension to the PebbleSDK2.0 Beta2 which allows you to build and run your pebble applications on your computer.
+This project seeks to give developers a authentic build environment, which can be used to write, test and debug Pebble watchfaces/apps across the big operating systems Linux, Microsoft Windows and Apple Mac OS X. Instead of the emulator approach (which is currently done by the official developers of Pebble) this is mainly an implementation of the Pebble SDK.
+> The last big update for this project changed a lot of the old structures to be easier to handle.  In the events of this update, I had to cut the support for Mac OS X for a moment. But stay tuned, it will return in one of the next updates.
 
-## Usage
+<sup>Due to the new naming guidelines from Pebble Technology Inc. this project was renamed to PLocalSim</sup>
 
-The simulator has several key commands you can use:
+## Compatibility
 
-```
-[Arrow up]	 Pebble button: Up
-[Arrow down] Pebble button: Down
-[Enter]		 Pebble button: Select
-[Backspace]	 Pebble button: Back
-[+]		     Add 10% charge to the battery
-[-]		     Drain 10% charge from the battery
-[x][y][z]	 Simulate an accelerometer tap on the X/Y/Z axis with +1 direction
-[X][Y][Z]	 Simulate an accelerometer tap on the X/Y/Z axis with -1 direction
-[F1]		 Changes the color of the drawn pebble
-[F2]		 Toggles the lens effect 
-[F3]		 Switches between 24H and 12H mode
-[F4]		 Toggles bluetooth on / off
-[F5]		 Toggle charger plugged / not plugged
-[F12]		 Saves a screenshot in <simulator>\simdata\screenshots\
-```
+The most important feature for this simulator is compability. I tested this simulator with the official examples ([here are the results](#ExampleCompatibility)) You should be able to leave your source code like it is for your watch, but there are a few problems:
 
-## Non-implemented features
+*  __Non-implemented features__. Very simple. I will try to implement all features left as soon and as authentic as possible. Understandable there are some features which are more difficult to implement than others, for example the watch <-> phone connection. These features may come very late or worse. For a list of non-implemented features look [here](#NotImplemented)
 
-There are some things that are not implemented yet:
+*  __Bugs__. This simulator has lots of code and there are probably lots of little bugs crawling inside of it. I can not find all bugs but with your help the search will be much easier.
+
+*  __Documentation__. Even though there is much more documentation for the official SDK than I expected, I can not make sure that all functions behave like their original ones. If you find any differences, please tell them to me.
+
+*  __Fonts__. The fonts that are most common on the pebble are Bitham (renamed from Gotham) and Gothic. I presume that they are commercial fonts which could be extracted from the firmware, but this would be illegal. In the case that you have these fonts (as TrueTypeFont) you can replace them, as I filled the missing fonts up with Droid Serif and Roboto which have a free license (you can find the fonts and their license text in the directory `simdata/common/systemFonts`). The problem with these fonts are, that they are wider than the original ones, so some watchapps may have graphical bugs. In the most sample watches, where this was a problem, it could be solved with extending the layer frame width and reducing the margin.
+
+## Non-implemented features<a name="NotImplemented"></a>
+Please consider that this list may not complete as new features are added. This list was created with the Pebble SDK 2.8.1
  
 *  __MenuLayer__			
 *  __SimpleMenuLayer__
 *  __NumberWindow__
 *  __Accelerosensor__ (accel_tap_* is supported)
 
-Except from these,  all other features should be implemented
-
-## Compatibility
-
-The most important feature for this simulator is compability. You should be able to leave your source code like it is for your watch, but there are a few problems:
-
-*  __Non-implemented features__. Very simple. I try to implement all features left as soon as possible. At the moment this simulator is my only possibility to actual code for pebble, so it is in my own interest to work as quick and as best as I can.
-
-*  __Bugs__. This simulator has lots of code, lots of unverified or not enough verified code and there are probably lots of little bugs crawling inside of it. This is an important reason why I release it now. I can not find all bugs but with your help the search will be much easier.
-
-*  __Documentation__. Even though there is much more than I expected, I can not make sure that all functions behave like their original ones. If you find any differences, please tell them to me.
-
-*  __Fonts__. The fonts that are most common on the pebble are Bitham (renamed from Gotham) and Gothic. I presume that they are commercial fonts which could be extracted from the firmware, but I think this would be illegal. In the case that you have these fonts (as TrueTypeFont) you can replace them, as I filled the missing fonts up with Droid Serif and Roboto which have a free license (you can find the fonts and their license text in the directory `local/simdata/systemFonts`). The problem with these fonts are, that they are wider than the original ones, so some applications have graphical bugs because of this. In the most sample watches, where this was a problem, it could be solved with extending the layer frame with and reducing the margin.
-
-
-## Watch Apps from SDK
-
+## Watch Apps from SDK <a name="ExampleCompatibility"></a>
 I tested the sample watches from the SDK to detect these problems:
 
 ### Totally work
@@ -77,7 +52,7 @@ These work, with minor font/layout issues:
 *  classio-battery-connection
 *  onthebutton
 
-### No worky
+### No working
 
 These do not work:
 
@@ -86,144 +61,96 @@ These do not work:
 
 Pretty good result, isn't it :)
 
-## Compatibility between different operating systems
-
-
-__I want YOU!__ to find:
-
-*  bugs
-*  suggestions
-*  feedback
-*  questions
-
-and [tell them to me](https://github.com/Helco/PebbleLocalSim/issues). I will try to answer them all.
-
 ## Installation
+Since the first release of this project, I restructured the whole installation/building process to be easier and equal across the operating systems. Please read the whole section before trying anything of this out.
 
-### Linux
+#### Common
+1. Download this whole repository and the Pebble SDK archive 
+2. Copy the headers from the Pebble SDK archive (PebbleSDK-X.X.X/Pebble/include/*.h) into the `include` folder of this repository. <sup>Due to copyright reasons I may not distribute these files.</sup>
+3. Navigate in a bash shell to the extracted main folder
+4. Run `install.sh` (optional you can specify a path where to install the sdk) 
 
-1. Copy the content of the directory `./build/linux/build/` into your pebble sdk directory (e.g. `/home/helco/pebble/PebbleSDK-2.0/`) It will not overwrite any original files. 
-2. It may be that you have to install some SDL libraries if you haven't done this before. On ubuntu this requires one simple command: `sudo apt-get install libsdl1.2-dev libsdl-image1.2-dev libsdl-ttf2.0-dev`
+#### Windows
+On windows you can obviously not build projects for the actual pebble watch, but you can use the simulator without the official Pebble SDK. You have to specify a path to `install.sh` and create projects with `create.project.sh <path_to_project>`.
+Besides that you need to provide the SDK with a recent version of MinGW, MSYS and SDL2. Of course you can use pre-installed versions of that, but to make everything work you would have to modify these files:
 
-To build your app, switch (in the terminal) to your project's main directory and run `build.local.sh`
+* openShell.bat
+* envvars.sh
+* sdkdata/windows/openShell.bat
+* sdkdata/windows/envvars.sh
 
-This will build your application, compile your resources and put all files necessary to run
-your application in the directory `<project>/build/local/`. You can run it from there or simply type: `run.local.sh` which will run it for you.
+As alternative I have prepared two archives you can extract right in the main folder of this repository to have MinGW, MSYS and SDL2 pre-installed and pre-configured. These files will be copied into the installed SDK-folder, so this should work right out-of-the-box when you use this method. Here are the links:
+> TODO: Actually entering the links would be very helpful, don't you think? - Helco
 
-#### Debugging
+Of course these preparations have to be made before you even try to run `openShell.bat` which by the way just opens a bash shell in the current directory.
 
-If you see the need you can add the flag `--debug` to build.local.sh or `run.local.sh` to build your project with debugging symbols and run it in gdb.
+#### Linux
+Before you run `install.sh` you should make sure that you have the right packages installed. <sup>32/64 Bit problems like earlier should not happen anymore.</sup>
+On Ubuntu based distributions you can do this check by running this command in a shell:
+`sudo apt-get install libsdl1.2-dev libsdl-image1.2-dev libsdl-ttf2.0-dev`
+If you don't specify a path to `install.sh`, the script tries to find your pebble sdk path (by searching the pebble executable) and installs itself into the very path. If you don't specify a path, this project installs itself like the windows SDK: You can create projects with `create.project.sh <path_to_project>`. To be able to use these projects with the official Pebble SDK you would have to write/copy at least the `wscript` from another project.
+> TODO: Helco don't leave this as it is before release!!!
+> Make sure that we copy the headers and provide a create.project.sh, just do it
 
-#### Build the project on your own
+#### Mac OS X
+Unfortunately I had to drop the support for Mac OS X for the moment, but one of the next updates should reactivate this.
 
-To build the project on your own, there are two codeblocks projects in the directory `build/linux/codeblocks`
+## Usage
+The usage for building watchfaces/apps are very simple. Just run `build.local.sh` in any project folder to build the project as local simulator and then run `run.local.sh` to start the simulator.
+If you want to debug with GDB you can run these scripts with the parameter `--debug`.
+If you want to help me with the development of the simulator you can use the `build.library.sh` and the `build.resCompiler.sh` script to build the various parts of the simulator.
 
+## Simulator keyboard usage
 
-### Mac
+The simulator has several key commands you can use:
 
-Install SDL, SDL_ttf, SDL_image with homebrew, use `--universal` to get 32 bit support.
-`brew install SDL SDL_ttf SDL_image --universal`
+| Key          | Action                                              |
+| :----------- | :-------------------------------------------------- |
+| [Arrow up]   | Pebble button: Up                                   |
+| [Arrow down] | Pebble button: Down                                 |
+| [Enter]      | Pebble button: Select                               |
+| [Backspace]  | Pebble button: Back                                 |
+| [+]          | Add 10% charge to the battery                       |
+| [-]          | Drain 10% charge from the battery                   |
+| [x][y][z]    | Accelerometer tap on the +X/+Y/+Z axis              |
+| [X][Y][Z]    | Accelerometer tap on the -X/-Y/-Z axis              |
+| [F1]         | Changes the color of the drawn pebble               |
+| [F2]         | Toggles the lens effect                             |
+| [F3]         | Switches between 24H and 12H mode                   |
+| [F4]         | Toggles bluetooth on / off                          |
+| [F5]         | Toggle charger plugged / not plugged                |
+| [F12]        | Saves a screenshot in <simulator>\screenshots\      |
 
-In build/mac there is a pre-built `sim.zip` package ready to be used.
-
-Unzip and place the sim directory in your pebble project. 
-
-Open Terminal.app and cd into it
-
-`make`
-
-It should compile all `.c` files in src.
-
-Hopefully you will get a PebbleSim binary you can run from the terminal with
-
-`./PebbleSim`
-
-Good luck!
-
-#### Debugging
-
-Follow the steps for normal use but build and run with the following commands:
-
-`make debug`
-
-It should compile all `.c` files in src with debugging enabled.
-
-Run the debug simulator in gdb:
-
-`gdb ./PebbleSim.debug`
-
-#### Build the project on your own
-
-Open Terminal.app and cd into `build/mac`
-
-`make`
-
-Hopefully you now have a sim directory ready to be used as described above.
-
-
-### Windows
-
-You can use the the directory `.\build\windows\` as a windows sdk but if you like to have it somewhere else (probably easier to access) you can follow these instructions:
-
-1. Switch to your chosen directory and type `<original_sdk>/build/windows/install.bat`
-2. This projects requires MinGW. You have to set the bin path of it in the `<sdk>/envvars.bat` file or you can leave it at default and extract the archives listed below into the folder `<sdk>\MinGW\`
-
-Note: If you do these changes before you use install.bat your installed sdk will have your
-changes too.
-
-#### MinGW Archives:
-
-*  [gcc-core](http://prdownloads.sf.net/mingw/gcc-core-3.4.5-20060117-1.tar.gz)
-*  [gcc-g++](http://prdownloads.sf.net/mingw/gcc-g++-3.4.5-20060117-1.tar.gz)
-*  [mingw-runtime](http://prdownloads.sf.net/mingw/mingw-runtime-3.9.tar.gz)
-*  [mingw-utils](http://prdownloads.sf.net/mingw/mingw-utils-0.3.tar.gz)
-*  [w32api](http://prdownloads.sf.net/mingw/w32api-3.6.tar.gz)
-*  [binutils](http://prdownloads.sf.net/mingw/binutils-2.17.50-20060824-1.tar.gz)
-*  [mingw32-make](http://prdownloads.sf.net/mingw/mingw32-make-3.81-1.tar.gz)
-
-Unlike on other operating systems, the pebble team has no sdk for windows yet, that is why you have to create a project with a tool provided by this sdk. To create a project switch  to the directory you want your projects folder in and run the command: `create.project.bat <project_name>`
-
-This will create a sample project for you to start coding. To build your project run: `.\tools\build.local.bat` from your projects main folder. To run it you can switch to the directory `<project>\build\local\` or you can run: `.\tools\run.local.bat` also from your projects main folder.
-
-#### Build the project on your own
-
-To build an installation of this pebble simulator sdk switch to the directory `.\build\windows`.
-
-There you have two commands:
-*  `build.library.bat` to build the library used to create the simulator
-*  `build.resCompiler.bat` to build the resource compiler
-
-Note that you need MinGW (see [Installation]) to build this project
-
-## License
+## Disclaimer and Licenses
 
 *  The fonts are copyright by Google Inc. under Apache License, Version 2.0
-*  The pebble pictures are copyright by Chaotic
-*  The used libraries (see __Credits__) are copyright by their copyright holder (not me)
-*  The actual simulator and the custom resource compiler (C version) are licensed by Helco (me) under GNU GPL v3
+*  The [pebble pictures](https://github.com/pebble/PebbleUI) are (now) by Pebble Technology Inc. under [CC BY-SA 4.0](http://creativecommons.org/licenses/by-sa/4.0/deed.en_US)
+*  The [used libraries](#UsedLibraries) are copyright by their copyright holder (not me)
 *  The python based resource compiler was placed in the public domain by Shirk
 *  `additionalSource/strftime.c` stands under Public Domain (is part of MinGW I suppose)
+* PLocalSim (this repository minus all otherwise stated parts) is licensed by Helco (me) under [GNU GPL v3](http://www.gnu.org/copyleft/gpl.html)
+* PLocalSim is an independent software and has not been authorized, sponsored, or otherwise approved by Pebble Technology Corp.
 
 ## Credits
 
 ### Many many thanks to:
 
 *  [ae-code](https://github.com/ae-code) - for the Javascript, Dictionary, AppSync and AppMesage API
-*  [David Konsumer](https://github.com/konsumer) - for the new README
-*  [robhh](https://github.com/robhh) - for their AppTimer implementation
-*  [Otto Greenslade (Chaotic)](http://dribbble.com/chaotic) - for their pebble pictures
-*  [abl](https://github.com/abl) - for their empebble (which was original the basecode of this simulator, now nearly all code is rewritten)
-*  [AmandaCameron](https://github.com/AmandaCameron) - for their metadata support implementation (in PebbleSDK 1.2)
-*  [epatel](https://github.com/epatel) - for their mac support
-*  [Shirk](https://github.com/Shirk) - for creating the python based resCompiler for unix systems
-*  [The Pebble Team](https://developer.getpebble.com/) - for the amazing watch, the SDK and their long shipping procedure, which was the motivation to build this
+*  [David Konsumer](https://github.com/konsumer) - for a new README (with beatiful Markdown)
+*  [robhh](https://github.com/robhh) - for the AppTimer implementation
+*  [abl](https://github.com/abl) - for empebble (which was original the basecode of this simulator, now all code is rewritten)
+*  [AmandaCameron](https://github.com/AmandaCameron) - for the metadata support implementation (in PebbleSDK 1.2)
+*  [epatel](https://github.com/epatel) - for the earlier mac support
+*  [Shirk](https://github.com/Shirk) - for the python based resCompiler for unix systems
+*  [Pebble Technology Inc.](https://developer.getpebble.com/) - for the amazing watch, the SDK and their long shipping procedure, which was the motivation to build this :)
+* Everyone who provided me with bug reports, ideas and feedback
 
-### Libraries/Code that are used:
+### Used libraries/code <a name="UsedLibraries"></a>
 
 *  [node-XMLHttpRequest](https://github.com/driverdan/node-XMLHttpRequest/blob/master/lib/XMLHttpRequest.js)
 *  [node-localStorage](https://github.com/ae-code/node-localStorage)
-*  [SDL 1.2](www.libsdl.org)
-*  [SDL_ttf](http://www.libsdl.org/projects/SDL_ttf/)
-*  [SDL_image](http://www.libsdl.org/projects/SDL_image/)
-*  [SDL_gfx](http://www.ferzkopp.net/joomla/content/view/19/14/)
+*  [SDL2](www.libsdl.org)
+*  [SDL2_ttf](http://www.libsdl.org/projects/SDL_ttf/)
+*  [SDL2_image](http://www.libsdl.org/projects/SDL_image/)
+*  [SDL_gfx](http://cms.ferzkopp.net/index.php/software/13-sdl-gfx)
 *  [JSMN](https://bitbucket.org/zserge/jsmn)

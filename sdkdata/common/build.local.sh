@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Check if we have access to gcc
-PLS_SDK_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-PLS_SDK_DIR=$PLS_SDK_DIR'/PLocalSim'
+PLS_SDK_ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+PLS_SDK_DIR=$PLS_SDK_ROOT_DIR'/PLocalSim'
 
 if [ ! -e $PLS_SDK_DIR'/envvars.sh' ] ; then
   echo "[FAIL] Could not load envvars.sh"
@@ -10,8 +10,12 @@ if [ ! -e $PLS_SDK_DIR'/envvars.sh' ] ; then
 fi
 source $PLS_SDK_DIR'/envvars.sh'
 
+PLS_COMPILE_MODE='release'
+if [ "$1" == "--debug" ] ; then
+  PLS_COMPILE_MODE='debug'
+fi
 if hash $PLS_SDK_DIR$PLS_GCC 2>/dev/null; then
-  echo "[INFO] Compile app as local simulator"
+  echo "[INFO] Compile app as "$PLS_COMPILE_MODE
 else
   echo "[FAIL] Could not find required program gcc"
   exit 1
@@ -74,22 +78,25 @@ PLS_APP_ARGS='-c -x c -O2 -Wall -std=c99 -DLOCALSIM'
 PLS_APP_PATH=`pwd`
 PLS_APP_NAME=`basename $PLS_APP_PATH`
 PLS_APP_OUT='./build/local/'$PLS_APP_NAME
+PLS_SDK_HEADERS=$PLS_SDK_DIR'/include'
 
 # Special values
 if [ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ]; then
   # Windows/MinGW
   PLS_APP_INCLUDES=$PLS_APP_INCLUDES' -I '$PLS_SDK_DIR$PLS_DIR_SDL'/include '
-  PLS_APP_INCLUDES=$PLS_APP_INCLUDES' -DNO_STDIO_REDIRECT '
-  PLS_APP_INCLUDES=$PLS_APP_INCLUDES' -isystem '$PLS_SDK_DIR'/include'
   PLS_APP_LIB_INCLUDES=$PLS_APP_LIB_INCLUDES' -L '$PLS_SDK_DIR$PLS_DIR_SDL'/lib'
   PLS_APP_LIBS='-lmingw32 '$PLS_APP_LIBS
   PLS_APP_ARGS=$PLS_APP_ARGS' -mconsole -DWIN32 -D_WIN32'
   PLS_APP_OUT=$PLS_APP_OUT'.exe'
 else
   # Unix
-  PLS_APP_INCLUDES=$PLS_APP_INCLUDES' -isystem '$PLS_SDK_DIR'/../Pebble/include/'
   PLS_APP_LIBS=$PLS_APP_LIBS' -lSDLmain'
+
+  if [ -e $PLS_SDK_ROOT_DIR/pebble ] ; then
+    PLS_SDK_HEADERS=$PLS_SDK_DIR'/../Pebble/include'
+  fi
 fi
+PLS_APP_INCLUDES=$PLS_APP_INCLUDES' -isystem '$PLS_SDK_HEADERS
 
 # Debug flag
 if [ "$1" == "--debug" ] ; then

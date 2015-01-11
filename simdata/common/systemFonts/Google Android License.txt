@@ -19,6 +19,8 @@ under the Apache 2 license.
 
 ##########
 
+A note from Helco:
+
 All other fonts whose names begin with "gothic" or "bitham" are
 "droidserif-regular.ttf" or "droidserif-bold.ttf". This has to be done
 because gothic and bitham (gotham?) are commercial fonts and therefore

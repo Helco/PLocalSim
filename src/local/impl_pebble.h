@@ -4,7 +4,7 @@
 #include "pls_unwarn_unsupported_functions.h"
 #undef tzname
 
-//these structure are based from the ones in pebbleSDK 1.2 and modified to fit the new pebbleSDK
+//these structure are based from the ones in pebble SDK 1.2 and modified to fit the new pebble SDK
 typedef struct ClickConfig {
     void *context;
     struct click {
