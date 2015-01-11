@@ -6,5 +6,3 @@ obj/
 bin/
 backups/
 include/pebble*
-include/pebble.h
-include/pebble_fonts.h
