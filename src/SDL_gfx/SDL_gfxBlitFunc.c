@@ -3,6 +3,7 @@
 SDL_gfxBlitFunc.c: custom blitters
 
 Copyright (C) 2001-2012  Andreas Schiffler
+Copyright (C)            Helco
 
 This software is provided 'as-is', without any express or implied
 warranty. In no event will the authors be held liable for any damages
@@ -24,6 +25,7 @@ misrepresented as being the original software.
 distribution.
 
 Andreas Schiffler -- aschiffler at ferzkopp dot net
+Helco
 
 */
 
@@ -364,7 +366,10 @@ int _SDL_gfxBlitRGBACall(SDL_Surface * src, SDL_Rect * srcrect, SDL_Surface * ds
 		/*
 		* Set up the blit information 
 		*/
-#if (SDL_MINOR_VERSION == 3)
+		/*
+		 * Helco: SDL2 surfaces also have no offset member
+		*/
+#if (SDL_MINOR_VERSION == 3) || (SDL_MAJOR_VERSION == 2)
 		info.s_pixels = (Uint8 *) src->pixels               + (Uint16) srcrect->y * src->pitch + (Uint16) srcrect->x * src->format->BytesPerPixel;
 #else
 		info.s_pixels = (Uint8 *) src->pixels + src->offset + (Uint16) srcrect->y * src->pitch + (Uint16) srcrect->x * src->format->BytesPerPixel;
@@ -372,7 +377,7 @@ int _SDL_gfxBlitRGBACall(SDL_Surface * src, SDL_Rect * srcrect, SDL_Surface * ds
 		info.s_width = srcrect->w;
 		info.s_height = srcrect->h;
 		info.s_skip = (int)(src->pitch - info.s_width * src->format->BytesPerPixel);
-#if (SDL_MINOR_VERSION == 3)
+#if (SDL_MINOR_VERSION == 3) || (SDL_MAJOR_VERSION == 2)
 		info.d_pixels = (Uint8 *) dst->pixels               + (Uint16) dstrect->y * dst->pitch + (Uint16) dstrect->x * dst->format->BytesPerPixel;
 #else
 		info.d_pixels = (Uint8 *) dst->pixels + dst->offset + (Uint16) dstrect->y * dst->pitch + (Uint16) dstrect->x * dst->format->BytesPerPixel;

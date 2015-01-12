@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <SDL/SDL.h>
-#include <SDL/SDL_image.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 #include "jsmn.h"
 #ifdef WIN32
 #include <windows.h>
@@ -29,7 +29,9 @@ int compileResourceMap (FILE* f);
 int generateResourceHeader ();
 
 int main(int argc,char* argv[]) {
-    if (SDL_Init(SDL_INIT_VIDEO)<0||IMG_Init(IMG_INIT_PNG)<0) RET_ERROR ("Couldn't initate SDL and SDL_image!",-1)
+    if (SDL_Init(SDL_INIT_VIDEO) < 0 ||
+		IMG_Init(IMG_INIT_PNG) < 0)
+		RET_ERROR ("Couldn't initate SDL and SDL_image!",-1)
     int i;
     FILE* f=fopen ("appinfo.json","rb");
     if (!f) RET_ERROR("Please execute the local simulator resource compiler in the project main folder!\n",-1)
@@ -188,17 +190,6 @@ int handleRawResource (char* fileBuf,int index) {
 #define LOCK(X) if(SDL_MUSTLOCK(X)) SDL_LockSurface(X)
 #define UNLOCK(X) if(SDL_MUSTLOCK(X)) SDL_UnlockSurface(X)
 
-static SDL_PixelFormat pixelFormat= {
-    .palette=0,
-    .BitsPerPixel=32,
-    .BytesPerPixel=32,
-    .Rloss=0,.Gloss=0,.Bloss=0,.Aloss=0,
-    .Rshift=24,.Gshift=16,.Bshift=8,.Ashift=0,
-    .Rmask=0xff000000,.Gmask=0x00ff0000,.Bmask=0x0000ff00,.Amask=0x000000ff,
-    .colorkey=0,
-    .alpha=255
-};
-
 typedef struct __attribute__((__packed__)) {
     uint16_t pitch;
     uint16_t unknown; //default: 4096
@@ -212,7 +203,7 @@ int handlePngResource (char* fileBuf,int index) {
     sprintf (fileBuffer,"./resources/%s",fileBuf);
     SDL_Surface* sur=IMG_Load (fileBuffer);
     if  (!sur) RET_ERROR ("Couldn't load png input file\n",-30)
-        SDL_Surface* img=SDL_ConvertSurface (sur,&pixelFormat,SDL_SWSURFACE|SDL_SRCALPHA);
+		SDL_Surface* img = SDL_ConvertSurfaceFormat(sur, SDL_PIXELFORMAT_RGBA8888, 0);
     if (!img) RET_ERROR ("Couldn't convert surface\n",-31)
         SDL_FreeSurface(sur);
 
@@ -265,7 +256,7 @@ int handlePngTransResource (char* fileBuf,int index) {
     sprintf (fileBuffer,"./resources/%s",fileBuf);
     SDL_Surface* sur=IMG_Load (fileBuffer);
     if  (!sur) RET_ERROR ("Couldn't load png-trans input file\n",-34)
-        SDL_Surface* img=SDL_ConvertSurface (sur,&pixelFormat,SDL_SWSURFACE|SDL_SRCALPHA);
+		SDL_Surface* img = SDL_ConvertSurfaceFormat(sur, SDL_PIXELFORMAT_RGBA8888, 0);
     if (!img) RET_ERROR ("Couldn't convert surface\n",-35)
         SDL_FreeSurface(sur);
 

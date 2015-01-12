@@ -3,6 +3,7 @@
 SDL_gfxPrimitives.c: graphics primitives for SDL surfaces
 
 Copyright (C) 2001-2012  Andreas Schiffler
+Copyright (C)            Helco
 
 This software is provided 'as-is', without any express or implied
 warranty. In no event will the authors be held liable for any damages
@@ -24,6 +25,7 @@ misrepresented as being the original software.
 distribution.
 
 Andreas Schiffler -- aschiffler at ferzkopp dot net
+Helco
 
 */
 
@@ -2591,7 +2593,7 @@ int _aalineColor(SDL_Surface * dst, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, 
 	Sint32 xx0, yy0, xx1, yy1;
 	int result;
 	Uint32 intshift, erracc, erradj;
-	Uint32 erracctmp, wgt, wgtcompmask;
+	Uint32 erracctmp, wgt; // , wgtcompmask; //Helco: wgtcompmask is not used
 	int dx, dy, tmp, xdir, y0p1, x0pxdir;
 
 	/*
@@ -2659,7 +2661,7 @@ int _aalineColor(SDL_Surface * dst, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, 
 		{
 			return (hlineColor(dst, x1, x2, y1, color));
 		} else {
-			if (dx>0) {
+			if (dx!=0) {
 				return (hlineColor(dst, xx0, xx0+dx, y1, color));
 			} else {
 				return (pixelColor(dst, x1, y1, color));
@@ -2700,7 +2702,8 @@ int _aalineColor(SDL_Surface * dst, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, 
 	/*
 	* Mask used to flip all bits in an intensity weighting 
 	*/
-	wgtcompmask = AAlevels - 1;
+	//Helco: wgtcompmask is not used
+	//wgtcompmask = AAlevels - 1;
 
 	/* Lock surface */
 	if (SDL_MUSTLOCK(dst)) {
@@ -3177,18 +3180,20 @@ int arcColor(SDL_Surface * dst, Sint16 x, Sint16 y, Sint16 rad, Sint16 start, Si
 		return(0);
 	}  
 
-	// Octant labelling
-	//      
-	//  \ 5 | 6 /
-	//   \  |  /
-	//  4 \ | / 7
-	//     \|/
-	//------+------ +x
-	//     /|\
-	//  3 / | \ 0
-	//   /  |  \
-	//  / 2 | 1 \
-	//      +y
+	/* Helco: use multi-line comment to keep gcc quiet
+	   Octant labelling
+	      
+	    \ 5 | 6 /
+	     \  |  /
+	    4 \ | / 7
+	       \|/
+	  ------+------ +x
+	       /|\ 
+	    3 / | \ 0
+	     /  |  \ 
+	    / 2 | 1 \ 
+	        +y
+	*/
 
 	// Initially reset bitmask to 0x00000000
 	// the set whether or not to keep drawing a given octant.
@@ -5980,7 +5985,8 @@ int characterColor(SDL_Surface * dst, Sint16 x, Sint16 y, char c, Uint32 color)
 	*/
 	if (gfxPrimitivesFont[ci] == NULL) {
 		gfxPrimitivesFont[ci] =
-			SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_HWSURFACE | SDL_SRCALPHA,
+			//Helco: SDL2 does not use the first parameter of SDL_CreateRGBSurface
+			SDL_CreateRGBSurface(0,
 			charWidth, charHeight, 32,
 			0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF);
 		/*
@@ -6004,7 +6010,8 @@ int characterColor(SDL_Surface * dst, Sint16 x, Sint16 y, char c, Uint32 color)
 		/*
 		* Redraw character 
 		*/
-		SDL_SetAlpha(gfxPrimitivesFont[ci], SDL_SRCALPHA, 255);
+		//Helco: Migration guide recommends this as a replace of SDL_SetAlpha
+		SDL_SetSurfaceAlphaMod(gfxPrimitivesFont[ci],  255);
 		gfxPrimitivesFontColor[ci] = color;
 
 		/* Lock font-surface */
@@ -6588,7 +6595,8 @@ void _murphyIteration(SDL_gfxMurphyIterator *m, Uint8 miter,
 			py[1] = m2y;
 			py[2] = ml1by;
 			py[3] = ml2by;			
-			polygonColor(m->dst, px, py, 4, m->color);						
+			//Helco: Let's hope we won't get any overflows...
+			polygonColor(m->dst, (Sint16*)px, (Sint16*)py, 4, m->color);						
 		}
 	}
 
@@ -6624,7 +6632,8 @@ void _murphyWideline(SDL_gfxMurphyIterator *m, Sint16 x1, Sint16 y1, Sint16 x2, 
 	float offset = (float)width / 2.f;
 
 	Sint16 temp;
-	Sint16 ptx, pty, ptxx, ptxy, ml1x, ml1y, ml2x, ml2y, ml1bx, ml1by, ml2bx, ml2by;
+	//Helco: ptxx and ptxy are not used, further more these variables should have a value that does no damage
+	Sint16 ptx, pty, /*ptxx, ptxy,*/ ml1x=0, ml1y=0, ml2x=0, ml2y=0, ml1bx=0, ml1by=0, ml2bx=0, ml2by=0;
 
 	int d0, d1;		/* difference terms d0=perpendicular to line, d1=along line */
 
@@ -6709,8 +6718,8 @@ void _murphyWideline(SDL_gfxMurphyIterator *m, Sint16 x1, Sint16 y1, Sint16 x2, 
 		m->last2x = -32768;
 		m->last2y = -32768;
 	}
-	ptxx = ptx;
-	ptxy = pty;
+	//ptxx = ptx;
+	//ptxy = pty;
 
 	for (q = 0; dd <= tk; q++) {	/* outer loop, stepping perpendicular to line */
 

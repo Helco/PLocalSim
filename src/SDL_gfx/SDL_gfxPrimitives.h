@@ -1,4 +1,4 @@
-/*
+/* 
 
 SDL_gfxPrimitives.h: graphics primitives for SDL
 
@@ -35,7 +35,7 @@ Andreas Schiffler -- aschiffler at ferzkopp dot net
 #define M_PI	3.1415926535897932384626433832795
 #endif
 
-#include <SDL/SDL.h>
+#include "SDL.h"
 
 /* Set up for C function definitions, even when using C++ */
 #ifdef __cplusplus
@@ -46,7 +46,7 @@ extern "C" {
 
 #define SDL_GFXPRIMITIVES_MAJOR	2
 #define SDL_GFXPRIMITIVES_MINOR	0
-#define SDL_GFXPRIMITIVES_MICRO	24
+#define SDL_GFXPRIMITIVES_MICRO	25
 
 
 	/* ---- Function Prototypes */
@@ -118,9 +118,9 @@ extern "C" {
 		Sint16 x2, Sint16 y2, Uint8 r, Uint8 g, Uint8 b, Uint8 a);
 
 	/* Thick Line */
-	SDL_GFXPRIMITIVES_SCOPE int thickLineColor(SDL_Surface * dst, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2,
+	SDL_GFXPRIMITIVES_SCOPE int thickLineColor(SDL_Surface * dst, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, 
 		Uint8 width, Uint32 color);
-	SDL_GFXPRIMITIVES_SCOPE int thickLineRGBA(SDL_Surface * dst, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2,
+	SDL_GFXPRIMITIVES_SCOPE int thickLineRGBA(SDL_Surface * dst, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, 
 		Uint8 width, Uint8 r, Uint8 g, Uint8 b, Uint8 a);
 
 	/* Circle */
@@ -131,7 +131,7 @@ extern "C" {
 	/* Arc */
 
 	SDL_GFXPRIMITIVES_SCOPE int arcColor(SDL_Surface * dst, Sint16 x, Sint16 y, Sint16 rad, Sint16 start, Sint16 end, Uint32 color);
-	SDL_GFXPRIMITIVES_SCOPE int arcRGBA(SDL_Surface * dst, Sint16 x, Sint16 y, Sint16 rad, Sint16 start, Sint16 end,
+	SDL_GFXPRIMITIVES_SCOPE int arcRGBA(SDL_Surface * dst, Sint16 x, Sint16 y, Sint16 rad, Sint16 start, Sint16 end, 
 		Uint8 r, Uint8 g, Uint8 b, Uint8 a);
 
 	/* AA Circle */

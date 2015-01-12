@@ -29,6 +29,9 @@ const SDL_Rect vibeBaseRect= {0,0,60,BODY_HEIGHT};
 const SDL_Rect lightRect= {0,0,SCREEN_WIDTH,SCREEN_HEIGHT};
 
 static struct tm _then={0};
+static SDL_Window* window = 0;
+static SDL_Renderer* renderer = 0;
+static SDL_Texture* screenTexture = 0;
 static SDL_Surface* pebbleScreen=0,* screen=0,* bodyImg,* shadowImg,* vibeImg,* lightImg;
 static float elapsed=0.0f;
 static int bodyID=1;
@@ -55,16 +58,7 @@ float getTimeElapsed () {
 
 void simulatorRender ();
 
-#ifdef WIN32
-	int SDL_main (int argc,char* argv[]) {
-#elif __APPLE__
-	int SDL_main (int argc,char* argv[]) {
-#else
-	#ifdef main
-	#undef main
-	#endif
-	int main(int argc,char* argv[]) {
-#endif
+int SDL_main(int argc, char* argv[]) {
 
     printf("[INFO] Entering main\n");
 
@@ -75,16 +69,37 @@ void simulatorRender ();
 #ifdef __MACH__
 	flags = SDL_INIT_EVERYTHING;
 #endif
-    if (SDL_Init(flags)==-1) {
+    if (SDL_Init(flags) == -1) {
         printf("SDL_Init: %s\n", SDL_GetError ());
         return -1;
     }
-    screen=SDL_SetVideoMode(SCREEN_WIDTH,SCREEN_HEIGHT, 32, SDL_SWSURFACE);
+
+	window = SDL_CreateWindow("PLocalSim - 24H Style",
+							  SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+							  SCREEN_WIDTH, SCREEN_HEIGHT, 0);
+	if (!window) {
+		printf("SDL_CreateWindow: %s\n", SDL_GetError());
+		return -2;
+	}
+
+	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
+	if (!renderer) {
+		printf("SDL_CreateRenderer: %s\n", SDL_GetError());
+		return -2;
+	}
+
+	screenTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING,
+									  SCREEN_WIDTH, SCREEN_HEIGHT);
+	if (!screenTexture) {
+		printf("SDL_CreateTexture: %s\n", SDL_GetError());
+		return -2;
+	}
+
+    screen = createSurface(SCREEN_WIDTH, SCREEN_HEIGHT);
     if(screen == NULL) {
-        printf("SDL_SetVideoMode failed!\n");
+        printf("SDL_CreateRGBSurface failed!\n");
         return -2;
     }
-    SDL_WM_SetCaption ("PLocalSim - 24H Style",0);
     pebbleScreen = createScreen;
 
     if(TTF_Init()==-1) {
@@ -126,6 +141,8 @@ void simulatorRender ();
         fclose(logFile);
 
     freeSimulatorImages();
+	SDL_DestroyRenderer(renderer);
+	SDL_DestroyWindow(window);
     IMG_Quit ();
     TTF_Quit ();
     SDL_Quit ();
@@ -208,9 +225,9 @@ void app_event_loop() {
                 case(SDLK_F3): {
                     toggle_24h_style();
                     if (clock_is_24h_style ())
-                        SDL_WM_SetCaption("PLocalSim - 24H Style",0);
+                        SDL_SetWindowTitle(window, "PLocalSim - 24H Style");
                     else
-                        SDL_WM_SetCaption("PLocalSim - 12H Style",0);
+                        SDL_SetWindowTitle(window, "PLocalSim - 12H Style");
                 }
                 break;
                 case(SDLK_F4): {
@@ -419,6 +436,11 @@ void simulatorRender() {
         dst=lightRect;
         SDL_BlitSurface(lightImg,&src,screen,&dst);
     }
-    SDL_Flip (screen);
+    //flip the screen
+	SDL_UpdateTexture(screenTexture, 0, screen->pixels, screen->pitch);
+	SDL_RenderClear(renderer);
+	SDL_RenderCopy(renderer, screenTexture, 0, 0);
+	SDL_RenderPresent(renderer);
+
     bodyRender=false;
 }

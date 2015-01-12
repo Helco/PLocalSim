@@ -1,0 +1,12 @@
+These source files are based of the SDL_gfx library written by Andreas Schiffler and 
+originally stand under the license text you find in every source file.
+To be compatible with SDL2 (and still using surfaces instead of renderer/texture )
+I modified following files:
+
+1. SDL_gfxBlitFunc.c
+2. SDL_rotozoom.c
+3. SDL_gfxPrimitives.c
+
+All changes should have been marked with a comment starting with "Helco"
+To achieve a full compatibility this modified version of SDL_gfx stands under the same
+license as its base

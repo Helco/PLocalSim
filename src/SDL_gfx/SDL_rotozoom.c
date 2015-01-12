@@ -3,6 +3,7 @@
 SDL_rotozoom.c: rotozoomer, zoomer and shrinker for 32bit or 8bit surfaces
 
 Copyright (C) 2001-2012  Andreas Schiffler
+Copyright (C)            Helco
 
 This software is provided 'as-is', without any express or implied
 warranty. In no event will the authors be held liable for any damages
@@ -24,6 +25,7 @@ misrepresented as being the original software.
 distribution.
 
 Andreas Schiffler -- aschiffler at ferzkopp dot net
+Helco
 
 */
 
@@ -83,7 +85,8 @@ to a situation where the program can segfault.
 Uint32 _colorkey(SDL_Surface *src)
 {
 	Uint32 key = 0; 
-#if (SDL_MINOR_VERSION == 3)
+	//Helco: SDL2 also uses SDL_GetColorKey
+#if (SDL_MINOR_VERSION == 3) || (SDL_MAJOR_VERSION == 2)
 	SDL_GetColorKey(src, &key);
 #else
 	if (src) 
@@ -112,7 +115,8 @@ Assumes dst surface was allocated with the correct dimensions.
 */
 int _shrinkSurfaceRGBA(SDL_Surface * src, SDL_Surface * dst, int factorx, int factory)
 {
-	int x, y, dx, dy, sgap, dgap, ra, ga, ba, aa;
+	//Helco: sgap is not used
+	int x, y, dx, dy, /*sgap,*/ dgap, ra, ga, ba, aa;
 	int n_average;
 	tColorRGBA *sp, *osp, *oosp;
 	tColorRGBA *dp;
@@ -128,7 +132,8 @@ int _shrinkSurfaceRGBA(SDL_Surface * src, SDL_Surface * dst, int factorx, int fa
 	* Scan destination
 	*/
 	sp = (tColorRGBA *) src->pixels;
-	sgap = src->pitch - src->w * 4;
+	//Helco: sgap is not used
+	//sgap = src->pitch - src->w * 4;
 
 	dp = (tColorRGBA *) dst->pixels;
 	dgap = dst->pitch - dst->w * 4;
@@ -201,7 +206,8 @@ Assumes dst surface was allocated with the correct dimensions.
 */
 int _shrinkSurfaceY(SDL_Surface * src, SDL_Surface * dst, int factorx, int factory)
 {
-	int x, y, dx, dy, sgap, dgap, a;
+	//Helco: sgap is not used
+	int x, y, dx, dy, /*sgap,*/ dgap, a;
 	int n_average;
 	Uint8 *sp, *osp, *oosp;
 	Uint8 *dp;
@@ -217,7 +223,8 @@ int _shrinkSurfaceY(SDL_Surface * src, SDL_Surface * dst, int factorx, int facto
 	* Scan destination
 	*/
 	sp = (Uint8 *) src->pixels;
-	sgap = src->pitch - src->w;
+	//Helco: sgap is not used
+	//sgap = src->pitch - src->w;
 
 	dp = (Uint8 *) dst->pixels;
 	dgap = dst->pitch - dst->w;
@@ -754,7 +761,8 @@ Assumes dst surface was allocated with the correct dimensions.
 */
 void transformSurfaceY(SDL_Surface * src, SDL_Surface * dst, int cx, int cy, int isin, int icos, int flipx, int flipy)
 {
-	int x, y, dx, dy, xd, yd, sdx, sdy, ax, ay, sw, sh;
+	//Helco: sw and sh are not used
+	int x, y, dx, dy, xd, yd, sdx, sdy, ax, ay; // , sw, sh;
 	tColorY *pc, *sp;
 	int gap;
 
@@ -765,8 +773,9 @@ void transformSurfaceY(SDL_Surface * src, SDL_Surface * dst, int cx, int cy, int
 	yd = ((src->h - dst->h) << 15);
 	ax = (cx << 16) - (icos * cx);
 	ay = (cy << 16) - (isin * cx);
-	sw = src->w - 1;
-	sh = src->h - 1;
+	//sw and sh are not used
+	//sw = src->w - 1;
+	//sh = src->h - 1;
 	pc = (tColorY*) dst->pixels;
 	gap = dst->pitch - dst->w;
 	/*
@@ -1068,12 +1077,13 @@ SDL_Surface *rotozoomSurfaceXY(SDL_Surface * src, double angle, double zoomx, do
 	if (src == NULL)
 		return (NULL);
 
-	if (src->flags & SDL_SRCCOLORKEY)
-	{
-		colorkey = _colorkey(src);
+	//Helco: use the return value of SDL_GetColorKey instead of the internal flags
+	if (SDL_GetColorKey(src, &colorkey) == 0) {
 		SDL_GetRGB(colorkey, src->format, &r, &g, &b);
 		colorKeyAvailable = 1;
 	}
+	else
+		colorkey = 0;
 	/*
 	* Determine if source surface is 32bit or 8bit 
 	*/
@@ -1101,8 +1111,8 @@ SDL_Surface *rotozoomSurfaceXY(SDL_Surface * src, double angle, double zoomx, do
 
 		SDL_BlitSurface(src, NULL, rz_src, NULL);
 
-		if(colorKeyAvailable)
-			SDL_SetColorKey(src, SDL_SRCCOLORKEY, colorkey);
+		if(colorKeyAvailable) //Helco: Use the new SDL_SetColorKey correctly
+			SDL_SetColorKey(src, SDL_TRUE, colorkey);
 		src_converted = 1;
 		is32bit = 1;
 	}
@@ -1198,8 +1208,11 @@ SDL_Surface *rotozoomSurfaceXY(SDL_Surface * src, double angle, double zoomx, do
 			/*
 			* Turn on source-alpha support 
 			*/
-			SDL_SetAlpha(rz_dst, SDL_SRCALPHA, 255);
-			SDL_SetColorKey(rz_dst, SDL_SRCCOLORKEY | SDL_RLEACCEL, _colorkey(rz_src));
+			//Helco: use SDL_SetSurfaceAlphaMod as replacement of SDL_SetAlpha
+			SDL_SetSurfaceAlphaMod(rz_dst, 255);
+			//Helco: use SDL_SetColorKey and SDL_SetSurfaceRLE correctly
+			SDL_SetColorKey(rz_dst, SDL_TRUE, _colorkey(rz_src));
+			SDL_SetSurfaceRLE(rz_dst, 1);
 		} else {
 			/*
 			* Copy palette and colorkey info 
@@ -1214,7 +1227,9 @@ SDL_Surface *rotozoomSurfaceXY(SDL_Surface * src, double angle, double zoomx, do
 			transformSurfaceY(rz_src, rz_dst, dstwidthhalf, dstheighthalf,
 				(int) (sanglezoominv), (int) (canglezoominv),
 				flipx, flipy);
-			SDL_SetColorKey(rz_dst, SDL_SRCCOLORKEY | SDL_RLEACCEL, _colorkey(rz_src));
+			//Helco: use SDL_SetColorKey and SDL_SetSurfaceRLE correctly
+			SDL_SetColorKey(rz_dst, SDL_TRUE, _colorkey(rz_src));
+			SDL_SetSurfaceRLE(rz_dst, 1);
 		}
 		/*
 		* Unlock source surface 
@@ -1288,8 +1303,11 @@ SDL_Surface *rotozoomSurfaceXY(SDL_Surface * src, double angle, double zoomx, do
 			/*
 			* Turn on source-alpha support 
 			*/
-			SDL_SetAlpha(rz_dst, SDL_SRCALPHA, 255);
-			SDL_SetColorKey(rz_dst, SDL_SRCCOLORKEY | SDL_RLEACCEL, _colorkey(rz_src));
+			//Helco: use SDL_SetSurfaceAlphaMod as replacement of SDL_SetAlpha
+			SDL_SetSurfaceAlphaMod(rz_dst, 255);
+			//Helco: use SDL_SetColorKey and SDL_SetSurfaceRLE correctly
+			SDL_SetColorKey(rz_dst, SDL_TRUE, _colorkey(rz_src));
+			SDL_SetSurfaceRLE(rz_dst, 1);
 		} else {
 			/*
 			* Copy palette and colorkey info 
@@ -1303,7 +1321,9 @@ SDL_Surface *rotozoomSurfaceXY(SDL_Surface * src, double angle, double zoomx, do
 			* Call the 8bit transformation routine to do the zooming 
 			*/
 			_zoomSurfaceY(rz_src, rz_dst, flipx, flipy);
-			SDL_SetColorKey(rz_dst, SDL_SRCCOLORKEY | SDL_RLEACCEL, _colorkey(rz_src));
+			//Helco: use SDL_SetColorKey and SDL_SetSurfaceRLE correctly
+			SDL_SetColorKey(rz_dst, SDL_TRUE, _colorkey(rz_src));
+			SDL_SetSurfaceRLE(rz_dst, 1);
 		}
 
 		/*
@@ -1493,7 +1513,8 @@ SDL_Surface *zoomSurface(SDL_Surface * src, double zoomx, double zoomy, int smoo
 		/*
 		* Turn on source-alpha support 
 		*/
-		SDL_SetAlpha(rz_dst, SDL_SRCALPHA, 255);
+		//Helco: Use SDL_SetSurfaceAlphaMod instead of SDL_SetAlpha
+		SDL_SetSurfaceAlphaMod(rz_dst, 255);
 	} else {
 		/*
 		* Copy palette and colorkey info 
@@ -1506,7 +1527,11 @@ SDL_Surface *zoomSurface(SDL_Surface * src, double zoomx, double zoomy, int smoo
 		* Call the 8bit transformation routine to do the zooming 
 		*/
 		_zoomSurfaceY(rz_src, rz_dst, flipx, flipy);
-		SDL_SetColorKey(rz_dst, SDL_SRCCOLORKEY | SDL_RLEACCEL, _colorkey(rz_src));
+		//Helco: use SDL_SetSurfaceAlphaMod as replacement of SDL_SetAlpha
+		SDL_SetSurfaceAlphaMod(rz_dst, 255);
+		//Helco: use SDL_SetColorKey and SDL_SetSurfaceRLE correctly
+		SDL_SetColorKey(rz_dst, SDL_TRUE, _colorkey(rz_src));
+		SDL_SetSurfaceRLE(rz_dst, 1);
 	}
 	/*
 	* Unlock source surface 
@@ -1653,7 +1678,8 @@ SDL_Surface *shrinkSurface(SDL_Surface *src, int factorx, int factory)
 		/*
 		* Turn on source-alpha support 
 		*/
-		result = SDL_SetAlpha(rz_dst, SDL_SRCALPHA, 255);
+		//Helco: Use SDL_SetSurfaceAlphaMod instead of SDL_SetAlpha
+		result = SDL_SetSurfaceAlphaMod(rz_dst, 255);
 		if (result!=0) {
 			haveError = 1;
 			goto exitShrinkSurface;
@@ -1678,7 +1704,10 @@ SDL_Surface *shrinkSurface(SDL_Surface *src, int factorx, int factory)
 		/*
 		* Set colorkey on target
 		*/
-		result = SDL_SetColorKey(rz_dst, SDL_SRCCOLORKEY | SDL_RLEACCEL, _colorkey(rz_src));
+		//Helco: use SDL_SetColorKey and SDL_SetSurfaceRLE correctly
+		result = SDL_SetColorKey(rz_dst, SDL_TRUE, _colorkey(rz_src));
+		if (result == 0)
+			result = SDL_SetSurfaceRLE(rz_dst, 1);
 		if (result!=0) {
 			haveError = 1;
 			goto exitShrinkSurface;

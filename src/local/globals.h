@@ -1,8 +1,8 @@
 #ifndef __GLOBALS_H__
 #define __GLOBALS_H__
-#include <SDL/SDL.h>
-#include <SDL/SDL_ttf.h>
-#include <SDL/SDL_image.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_image.h>
 
 #include "impl_pebble.h"
 
@@ -117,11 +117,6 @@ struct GContext
 	GCompOp compositing_mode;
 };
 
-typedef struct SDL_Point
-{
-    int32_t x,y;
-} SDL_Point;
-
 static const uint32_t r_white = 0xffffffff;
 static const uint32_t r_black = 0x000000ff;
 static const uint32_t r_clear = 0x00000000;
@@ -167,7 +162,7 @@ void initHardwareOutput ();
 #define MIN_SCREEN_POOL 4
 #define MAX_RENDER_LIST 12
 
-#define createSurface(w,h) (SDL_CreateRGBSurface (SDL_SWSURFACE|SDL_SRCALPHA,w,h,32,0xff000000,0x00ff0000,0x0000ff00,0x000000ff))
+#define createSurface(w,h) (SDL_CreateRGBSurface (0,w,h,32,0xff000000,0x00ff0000,0x0000ff00,0x000000ff))
 #define createScreen createSurface(PBL_SCREEN_WIDTH,PBL_SCREEN_HEIGHT)
 
 bool initRender (SDL_Surface* screen);

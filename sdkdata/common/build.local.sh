@@ -73,7 +73,7 @@ fi
 # Prepare compile variables
 PLS_APP_INCLUDES='-I ./build/tempLocal/ -I ./build/tempLocal/src/'
 PLS_APP_LIB_INCLUDES='-L '$PLS_SDK_DIR
-PLS_APP_LIBS='-lSDL -lSDL_ttf -lSDL_image -lm -lpthread -lPLocalSim'
+PLS_APP_LIBS='-lSDL2main -lSDL2 -lSDL2_ttf -lSDL2_image -lm -lpthread -lPLocalSim'
 PLS_APP_ARGS='-c -x c -O2 -Wall -std=c99 -DLOCALSIM'
 PLS_APP_PATH=`pwd`
 PLS_APP_NAME=`basename $PLS_APP_PATH`
@@ -83,7 +83,8 @@ PLS_SDK_HEADERS=$PLS_SDK_DIR'/include'
 # Special values
 if [ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ]; then
   # Windows/MinGW
-  PLS_APP_INCLUDES=$PLS_APP_INCLUDES' -I '$PLS_SDK_DIR$PLS_DIR_SDL'/include '
+  # ' -I '$PLS_SDK_DIR$PLS_DIR_SDL'/include '
+  PLS_APP_INCLUDES=$PLS_APP_INCLUDES
   PLS_APP_LIB_INCLUDES=$PLS_APP_LIB_INCLUDES' -L '$PLS_SDK_DIR$PLS_DIR_SDL'/lib'
   PLS_APP_LIBS='-lmingw32 '$PLS_APP_LIBS
   PLS_APP_ARGS=$PLS_APP_ARGS' -mconsole -DWIN32 -D_WIN32'

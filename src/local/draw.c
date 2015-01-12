@@ -1,4 +1,5 @@
 #include "globals.h"
+#include <ctype.h>
 
 static GContext current_graphics_context={
     .fill_color=GColorBlack,
@@ -22,9 +23,9 @@ uint32_t getRawColor(uint8_t color) {
     }
 }
 
-SDL_Color s_white = {255, 255, 255, SDL_ALPHA_OPAQUE};
-SDL_Color s_black = {0, 0, 0, SDL_ALPHA_OPAQUE};
-SDL_Color s_clear = {255, 255, 255, SDL_ALPHA_TRANSPARENT};
+SDL_Color s_white = {255, 255, 255, 255};
+SDL_Color s_black = {0, 0, 0, 255};
+SDL_Color s_clear = {255, 255, 255, 0};
 
 SDL_Color getColor(uint8_t color) {
     switch(color) {
@@ -261,7 +262,7 @@ GSize _graphics_draw_text(GContext *ctx, const char *text, const GFont font, con
     TextWrapper textWrapper=(overflow_mode==GTextOverflowModeWordWrap?wrap_words:wrap_points);
     int lineHeight=0,usedHeight=5;
     SDL_Surface* lineSurface,*lineSurfaceTemp;
-    SDL_Surface* textSurface=SDL_CreateRGBSurface (SDL_SWSURFACE|SDL_SRCALPHA,box.size.w,box.size.h,32,0xff000000,0x00ff0000,0x0000ff00,0x000000ff);
+    SDL_Surface* textSurface=createSurface (box.size.w,box.size.h);
     SDL_FillRect (textSurface,0,0);
     SDL_Surface* pointsSurface=0; //this will only be initalised when it's needed
     SDL_Rect dstRect,srcRect;
@@ -285,7 +286,7 @@ GSize _graphics_draw_text(GContext *ctx, const char *text, const GFont font, con
             free(buffer);
             return s;
         }
-        lineSurface=SDL_ConvertSurface(lineSurfaceTemp,textSurface->format,SDL_SWSURFACE|SDL_SRCALPHA);
+        lineSurface=SDL_ConvertSurface(lineSurfaceTemp,textSurface->format,0);
         SDL_FreeSurface(lineSurfaceTemp);
         if (lineHeight==0)
             lineHeight=lineHeightFromFont(font);
@@ -399,7 +400,7 @@ _WrapResult wrap_words (const char* string,const int maxWidth,const GFont font) 
     const char* backString,* backStringPtr;
     result.lineLen=_wrap_maxLineLength (string,maxWidth,font);
     result.addPoints=0;
-    if (isalpha(string[result.lineLen])!=0&&isalpha(string[result.lineLen-1])!=0) {
+    if (isalpha(string[result.lineLen]) && isalpha(string[result.lineLen-1])) {
         //get wordStart
         for (wordStart=result.lineLen-1; wordStart>=0; wordStart--) {
             if (isalpha(string[wordStart])==0)

@@ -22,7 +22,7 @@ if hash $PLS_GCC 2>/dev/null; then
     # MinGW specific values
     if [ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ]; then
       PLS_SIM_GCC_ARGS='-DWIN32 -D_WIN32 -mconsole '$PLS_SIM_GCC_ARGS
-      PLS_SIM_INCLUDES='-I '$PLS_DIR_SDL'/include -I '$PLS_DIR_SDL'/include/SDL/ '$PLS_SIM_INCLUDES
+      PLS_SIM_INCLUDES='-I '$PLS_DIR_SDL'/include -isystem '$PLS_DIR_SDL'/include/SDL2 '$PLS_SIM_INCLUDES
     fi
 
     # create directories and delete old object files
@@ -65,8 +65,8 @@ if hash $PLS_GCC 2>/dev/null; then
     # Compile the library
     compileDirectory ./src/local 'no' '-Wall -Wno-format'
 
-    echo Compiling SDL_gfx
-    compileDirectory './src/SDL_gfx' 'silent' '-w'
+    echo Compiling SDL_gfx 
+    compileDirectory './src/SDL_gfx' 'silent' '-Wall'
     
     echo Compiling jsmn
     compileDirectory './src/jsmn' 'silent' '-w'
@@ -74,7 +74,6 @@ if hash $PLS_GCC 2>/dev/null; then
     if [ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ]; then
       echo Compiling additional source
       compileDirectory './src/additional' 'silent' '-w'
-      compileDirectory $PLS_DIR_SDL'/source' 'silent' '-w -DNO_STDIO_REDIRECT'
     fi
 
     exit 0

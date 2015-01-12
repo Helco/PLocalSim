@@ -152,5 +152,5 @@ The simulator has several key commands you can use:
 *  [SDL2](www.libsdl.org)
 *  [SDL2_ttf](http://www.libsdl.org/projects/SDL_ttf/)
 *  [SDL2_image](http://www.libsdl.org/projects/SDL_image/)
-*  [SDL_gfx](http://cms.ferzkopp.net/index.php/software/13-sdl-gfx)
+*  A modified [SDL_gfx](http://cms.ferzkopp.net/index.php/software/13-sdl-gfx) (see src/SDL_gfx/disclaimer.txt)
 *  [JSMN](https://bitbucket.org/zserge/jsmn)
