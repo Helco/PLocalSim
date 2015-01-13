@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PLS_GCC='/MinGW/bin/gcc.exe'
-PLS_AR='/MinGW/bin/ar.exe'
-PLS_GDB='/MinGW/bin/gdb.exe'
-PLS_DIR_SDL='/SDL2'
+PLS_GCC=$PLS_SDK_DIR'/MinGW/bin/gcc.exe'
+PLS_AR=$PLS_SDK_DIR'/MinGW/bin/ar.exe'
+PLS_GDB=$PLS_SDK_DIR'/MinGW/bin/gdb.exe'
+PLS_DIR_SDL=$PLS_SDK_DIR'/SDL2'

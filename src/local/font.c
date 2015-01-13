@@ -96,7 +96,7 @@ GFont fonts_get_system_font(const char *font_key) {
 
 GFont fonts_load_custom_font(ResHandle res) {
     char name[MAX_RESOURCE_NAME];
-    copyResName(name,(int)res);
+    copyResName(name, res);
     FILE* f=fopen (name,"rb");
     if (!f) {
         printf ("[WARN] Couldn't load custom font!\n");

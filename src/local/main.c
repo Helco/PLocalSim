@@ -58,18 +58,19 @@ float getTimeElapsed () {
 
 void simulatorRender ();
 
-int SDL_main(int argc, char* argv[]) {
+#undef main
+#ifdef WIN32
+#  define main SDL_main
+#endif
+
+int main(int argc, char* argv[]) {
 
     printf("[INFO] Entering main\n");
-
-    uint32_t flags=SDL_INIT_VIDEO;
 #ifndef WIN32
-    flags|=SDL_INIT_EVENTTHREAD;
+    SDL_SetMainReady();
 #endif
-#ifdef __MACH__
-	flags = SDL_INIT_EVERYTHING;
-#endif
-    if (SDL_Init(flags) == -1) {
+
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_EVENTS) == -1) {
         printf("SDL_Init: %s\n", SDL_GetError ());
         return -1;
     }

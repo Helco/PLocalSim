@@ -10,7 +10,7 @@ if [ ! -e $PLS_SDK_DIR'/envvars.sh' ] ; then
 fi
 source $PLS_SDK_DIR'/envvars.sh'
 
-if hash $PLS_SDK_DIR$PLS_GDB 2>/dev/null; then
+if hash $PLS_GDB 2>/dev/null; then
   echo "[INFO] Compile app as local simulator"
 else
   echo "[FAIL] Could not find required program gdb"
@@ -38,7 +38,7 @@ if [ -e "$PLS_APP_EXEC" ] ; then
   cd build/local
 
   if [ "$1" == "--debug" ] ; then
-    $PLS_SDK_DIR$PLS_GDB ./$PLS_APP_NAME
+    $PLS_GDB ./$PLS_APP_NAME
   else
     ./$PLS_APP_NAME
   fi

@@ -57,18 +57,23 @@ void app_log(uint8_t log_level, const char *src_filename, int src_line_number, c
     }
 }
 
-void copyResName(char* name,int id) {
+void copyResName(char* name,ResHandle h) {
+#ifdef __x86_64__
+    const int32_t id = (uint32_t)(uint64_t)(h);
+#else
+    const int32_t id = (uint32_t)(h);
+#endif
     memset(name,0,MAX_RESOURCE_NAME);
     sprintf (name,RESOURCE_NAME_BASE,id);
 }
 
 ResHandle resource_get_handle(uint32_t file_id) {
-    return (ResHandle)file_id;
+    return RES_ID_TO_HANDLE(file_id);
 }
 
 size_t resource_load(ResHandle h, uint8_t *buffer, size_t max_length) {
     char name[MAX_RESOURCE_NAME];
-    copyResName(name,(int)h);
+    copyResName(name, h);
     FILE* f=fopen (name,"rb");
     if (f==0) {
         printf ("[WARN] Couldn't load raw resource\n");
@@ -81,7 +86,7 @@ size_t resource_load(ResHandle h, uint8_t *buffer, size_t max_length) {
 
 size_t resource_load_byte_range(ResHandle h, uint32_t start_bytes, uint8_t *data, size_t num_bytes) {
     char name[MAX_RESOURCE_NAME];
-    copyResName(name,(int)h);
+    copyResName(name, h);
     FILE* f=fopen(name,"rb");
     if (f==0) {
         printf ("[WARN] Couldn't load raw resource\n");
@@ -96,7 +101,7 @@ size_t resource_load_byte_range(ResHandle h, uint32_t start_bytes, uint8_t *data
 size_t resource_size(ResHandle h) {
     size_t len;
     char name[MAX_RESOURCE_NAME];
-    copyResName(name,(int)h);
+    copyResName(name, h);
     FILE* f=fopen (name,"rb");
     if (f==0) {
         printf ("[WARN] Couldn't load raw resource\n");

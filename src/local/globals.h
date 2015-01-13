@@ -191,7 +191,12 @@ void freeTimers();
 //RESHELPER RESHELPER RESHELPER RESHELPER RESHELPER RESHELPER RESHELPER
 #define MAX_RESOURCE_NAME 32
 #define RESOURCE_NAME_BASE "./resources/%d"
-void copyResName (char* name,int id);
+#ifdef __x86_64__
+#  define RES_ID_TO_HANDLE(id) ((ResHandle)(uint64_t)(uint32_t)(id))
+#else
+#  define RES_ID_TO_HANDLE(id) ((ResHandle)(uint32_t)(id))
+#endif
+void copyResName (char* name,ResHandle h);
 
 //ADDITIONAL PEBBLE OS ADDITIONAL PEBBLE OS ADDITIONAL PEBBLE OS
 //functions, the original pebble API might have but doesn't

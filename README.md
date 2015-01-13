@@ -87,7 +87,7 @@ Of course these preparations have to be made before you even try to run `openShe
 #### Linux
 Before you run `install.sh` you should make sure that you have the right packages installed. <sup>32/64 Bit problems like earlier should not happen anymore.</sup>
 On Ubuntu based distributions you can do this check by running this command in a shell:
-`sudo apt-get install libsdl1.2-dev libsdl-image1.2-dev libsdl-ttf2.0-dev`
+`sudo apt-get install libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev`
 If you don't specify a path to `install.sh`, the script tries to find your pebble sdk path (by searching the pebble executable) and installs itself into the very path. If you don't specify a path, this project installs itself like the windows SDK: You can create projects with `create.project.sh <path_to_project>`. To be able to use these projects with the official Pebble SDK you would have to write/copy at least the `wscript` from another project.
 > TODO: Helco don't leave this as it is before release!!!
 > Make sure that we copy the headers and provide a create.project.sh, just do it

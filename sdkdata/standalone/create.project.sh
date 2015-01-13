@@ -25,7 +25,10 @@ fi
 # Copy project template
 cp -f -r $PLS_SDK_DIR/projectTemplate/* $PLS_TARGET_PATH'/'
 
+PLS_EOL='\n'
 if [ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ]; then
+  PLS_EOL='\r\n'
+
   # Get the sdk path in windows style
   PLS_DIR_BACKUP=`pwd`
   cd $PLS_SDK_ROOT_DIR
@@ -38,9 +41,9 @@ if [ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ]; then
 fi
 
 # Generate build.local.bat
-echo -e "#!/bin/bash\r\n"                    > $PLS_TARGET_PATH'/build.local.sh'
+echo -e "#!/bin/bash$PLS_EOL"                    > $PLS_TARGET_PATH'/build.local.sh'
 echo '"'$PLS_SDK_ROOT_DIR'/build.local.sh" $@' >> $PLS_TARGET_PATH'/build.local.sh'
 
 # Generate run.local.bat
-echo -e "#!/bin/bash\r\n"                    > $PLS_TARGET_PATH'/run.local.sh'
+echo -e "#!/bin/bash$PLS_EOL"                    > $PLS_TARGET_PATH'/run.local.sh'
 echo '"'$PLS_SDK_ROOT_DIR'/run.local.sh" $@'   >> $PLS_TARGET_PATH'/run.local.sh'

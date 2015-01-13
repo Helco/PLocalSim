@@ -71,7 +71,7 @@ GBitmap* gbitmap_create_with_data (const uint8_t* data) {
 GBitmap* gbitmap_create_with_resource (uint32_t resource_id) {
     printf ("[DEBUG] Load resource ID:%d as image\n",resource_id);
     char name[MAX_RESOURCE_NAME];
-    copyResName(name,resource_id);
+    copyResName(name, RES_ID_TO_HANDLE(resource_id));
     FILE* f=fopen(name,"rb");
     if (!f) {
         printf("[ERROR] Couldn't load \"%s\"(%s)!\n",name,SDL_GetError());

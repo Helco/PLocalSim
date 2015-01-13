@@ -35,7 +35,8 @@ Andreas Schiffler -- aschiffler at ferzkopp dot net
 #define M_PI	3.1415926535897932384626433832795
 #endif
 
-#include "SDL.h"
+//Helco: use the new headers
+#include <SDL2/SDL.h>
 
 /* Set up for C function definitions, even when using C++ */
 #ifdef __cplusplus

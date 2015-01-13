@@ -38,8 +38,9 @@ extern    "C" {
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "SDL.h"
-#include "SDL_video.h"
+//Helco: Use the new headers
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_video.h>
 
 
 	extern const unsigned int GFX_ALPHA_ADJUST_ARRAY[256];
