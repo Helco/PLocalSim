@@ -1,4 +1,5 @@
 #include "globals.h"
+#include <stdio.h>
 
 #define LONG_CLICK_STD_DELAY 500  // as per documentation
 
@@ -49,8 +50,10 @@ void onButtonDown (ButtonId id)
     ClickRecognizer* rec;
     ClickConfig* conf;
     bool handled=false;
-    rec=clickRecognizer+id;
-    conf=&(clickConfig[id]);
+    rec = clickRecognizer + id;
+	conf = clickConfig + id;
+	if (rec->isDown)
+		return;
     rec->clickCount++;
     rec->lastDown=SDL_GetTicks();
     rec->isDown=true;
@@ -100,8 +103,9 @@ void service_buttons ()
                 rec->lastDown=SDL_GetTicks();
                 rec->clickCount++;
             }
-            if (conf->long_click.delay_ms>0&&!rec->longClick&&SDL_GetTicks()-rec->lastDown>=conf->long_click.delay_ms) {
-                if (conf->long_click.handler!=0)
+            if (conf->long_click.delay_ms>0 && SDL_GetTicks()-rec->lastDown>=conf->long_click.delay_ms &&
+				(conf->long_click.handler || conf->long_click.release_handler) && !rec->longClick) {
+                if (conf->long_click.handler)
                     conf->long_click.handler(rec,conf->context);
                 rec->longClick=true;
             }
@@ -143,7 +147,7 @@ void window_multi_click_subscribe(ButtonId button_id,uint8_t min_clicks,uint8_t 
 }
 
 void window_long_click_subscribe(ButtonId button_id,uint16_t delay_ms,ClickHandler down_handler,ClickHandler up_handler) {
-    clickConfig[button_id].long_click.delay_ms=(delay_ms<=0?LONG_CLICK_STD_DELAY:delay_ms);
+    clickConfig[button_id].long_click.delay_ms=(delay_ms == 0 ? LONG_CLICK_STD_DELAY : delay_ms);
     clickConfig[button_id].long_click.handler=down_handler;
     clickConfig[button_id].long_click.release_handler=up_handler;
 }
