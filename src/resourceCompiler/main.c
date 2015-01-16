@@ -337,11 +337,14 @@ int handleFontResource (char* fileBuf,int index) {
     fclose (in);
     fclose (out);
 
-    char* sizePointer=resourceNames[index]+strlen(resourceNames[index-1])-1;
-    while (sizePointer!=resourceNames[index]&&*sizePointer>='0'&&*sizePointer<='9')
+	const char* namePointer = resourceNames[index - 1];
+    const char* sizePointer=namePointer + strlen(namePointer)-1;
+    while (sizePointer!=namePointer && *sizePointer>='0' && *sizePointer<='9')
         sizePointer--;
-    if (sizePointer==resourceNames[index]+strlen(resourceNames[index])-1||sizePointer==resourceNames[index]) RET_ERROR ("Font definition name is invalid (Size has to stated at the end)\n",-42)
-        sizePointer++;
+    if (sizePointer==namePointer+strlen(namePointer)-1 ||
+		sizePointer==namePointer)
+		RET_ERROR ("Font definition name is invalid (Size has to stated at the end)\n",-42)
+    sizePointer++;
     int height=atoi(sizePointer);
     sprintf (fileBuffer,"./build/local/resources/%d",index);
     out=fopen (fileBuffer,"wb");
