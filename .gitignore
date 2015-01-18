@@ -1,9 +1,10 @@
-build/windows/MinGW/
-build/windows/obj/
-build/windows/pipboy/
-build/linux/codeblocks/obj/
-build/linux/codeblocks/bin/
+sdkdata/windows/PLocalSim/MinGW/
+sdkdata/windows/PLocalSim/SDL2/
 test/
-
-*.goutput*
+testsdk/
+obj/
+bin/
+backups/
+include/pebble*
 *~
+*.zip
