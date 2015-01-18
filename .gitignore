@@ -7,3 +7,4 @@ bin/
 backups/
 include/pebble*
 *~
+*.zip

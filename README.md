@@ -5,7 +5,7 @@
 This project seeks to give developers a authentic build environment, which can be used to write, test and debug Pebble watchfaces/apps across the big operating systems Linux, Microsoft Windows and Apple Mac OS X. Instead of the emulator approach (which is currently done by the official developers of Pebble) this is mainly an implementation of the Pebble SDK.
 > The last big update for this project changed a lot of the old structures to be easier to handle.  In the events of this update, I had to cut the support for Mac OS X for a moment. But stay tuned, it will return in one of the next updates.
 
-<sup>Due to the new naming guidelines from Pebble Technology Inc. this project was renamed to PLocalSim</sup>
+<sup>Due to the new naming guidelines from Pebble Technology Inc. the original name changed to PLocalSim</sup>
 
 ## Compatibility
 
@@ -22,42 +22,59 @@ The most important feature for this simulator is compability. I tested this simu
 ## Non-implemented features<a name="NotImplemented"></a>
 Please consider that this list may not complete as new features are added. This list was created with the Pebble SDK 2.8.1
  
-*  __MenuLayer__			
-*  __SimpleMenuLayer__
-*  __NumberWindow__
-*  __Accelerosensor__ (accel_tap_* is supported)
+* __SniffInterval__
+* __AppMessage__ (Windows have linker errors / Linux does not receive or send)
+* __AppSync__ (depends from AppMessage, support through Node.js will return soon)
+* __AppWorker__
+* __DataLogging__
+* __UUID__
+* __AccelerometerService__ (accel_tap_service is supported)
+* __AppFocusService__
+* __CompassService__
+* __Internationalization__ / __setlocale__
+* __Launch Reason__
+* __atan2_lookup__
+* __heap_bytes_free__ / __heap_bytes_used__
+* __Wakeup__
+* __lock_is_timezone_set__ / __clock_to_timestamp__
+* __WatchInfo__
+* __Graphics framebuffer capture__
+* __Rounded rectangle corners__
+* __gbitmap_create_blank__
+* __grect_center_point__
+* __AnimationCurve__ (custom curve does not compile, everything else is linear)
+* __MenuLayer__
+* __SimpleMenuLayer__
+* __NumberWindow__
+* __worker_event_loop__ / __worker_launch_app__
+* __Javascript app__
+* __Pebble.js__
 
-## Watch Apps from SDK <a name="ExampleCompatibility"></a>
-I tested the sample watches from the SDK to detect these problems:
+## Watch faces from SDK <a name="ExampleCompatibility"></a>
+I tested the sample watch faces from the SDK for a compatibility measurement:
 
-### Totally work
+### Totally working
 
 These work, without issues:
 
 *  big_time
-*  drop_zone
+*  classio
+*  classio-battery-connection
 *  fuzzy_time
 *  just_a_bit
+*  ninety_one_dub
 *  rumbletime
 *  segment_six
 *  simple_analog
 *  simplicity
 *  tic_tock_toe
+*  drop_zone
 
-### Minor font issues
-
-These work, with minor font/layout issues:
-
-*  classio
-*  classio-battery-connection
-*  onthebutton
-
-### No working
+### Not working
 
 These do not work:
 
-*  ninety_one_dub - (Probably invalid? day_name_layer is being used without initialising)
-
+*  feature_compass (no compass service implemented)
 
 Pretty good result, isn't it :)
 
@@ -79,18 +96,18 @@ Besides that you need to provide the SDK with a recent version of MinGW, MSYS an
 * sdkdata/windows/openShell.bat
 * sdkdata/windows/envvars.sh
 
-As alternative I have prepared two archives you can extract right in the main folder of this repository to have MinGW, MSYS and SDL2 pre-installed and pre-configured. These files will be copied into the installed SDK-folder, so this should work right out-of-the-box when you use this method. Here are the links:
-> TODO: Actually entering the links would be very helpful, don't you think? - Helco
+As alternative I have prepared two archives you can extract right in the main folder of this repository to have MinGW, MSYS and SDL2 pre-installed and pre-configured. These files will also be copied into a SDK-installation, so this should work right out-of-the-box when you use this method. Here are the links:
+
+* [MinGW and MSYS](https://www.dropbox.com/s/bff5uysqusz9d2g/MinGW%20for%20PLocalSim.zip?dl=0)
+* [SDL2](https://www.dropbox.com/s/zg9zqyrqrkvim9l/SDL2.zip?dl=0)
 
 Of course these preparations have to be made before you even try to run `openShell.bat` which by the way just opens a bash shell in the current directory.
 
 #### Linux
-Before you run `install.sh` you should make sure that you have the right packages installed. <sup>32/64 Bit problems like earlier should not happen anymore.</sup>
+Before you run `install.sh` you should make sure that you have the right packages installed. <sup>32/64 Bit problems like earlier should not happen anymore, so :i386 is not required anymore.</sup>
 On Ubuntu based distributions you can do this check by running this command in a shell:
 `sudo apt-get install libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev`
 If you don't specify a path to `install.sh`, the script tries to find your pebble sdk path (by searching the pebble executable) and installs itself into the very path. If you don't specify a path, this project installs itself like the windows SDK: You can create projects with `create.project.sh <path_to_project>`. To be able to use these projects with the official Pebble SDK you would have to write/copy at least the `wscript` from another project.
-> TODO: Helco don't leave this as it is before release!!!
-> Make sure that we copy the headers and provide a create.project.sh, just do it
 
 #### Mac OS X
 Unfortunately I had to drop the support for Mac OS X for the moment, but one of the next updates should reactivate this.
@@ -125,10 +142,10 @@ The simulator has several key commands you can use:
 
 *  The fonts are copyright by Google Inc. under Apache License, Version 2.0
 *  The [pebble pictures](https://github.com/pebble/PebbleUI) are (now) by Pebble Technology Inc. under [CC BY-SA 4.0](http://creativecommons.org/licenses/by-sa/4.0/deed.en_US)
-*  The [used libraries](#UsedLibraries) are copyright by their copyright holder (not me)
+*  The [used libraries or softwares](#UsedLibraries) are copyright by their copyright holder (not me)
 *  The python based resource compiler was placed in the public domain by Shirk
 *  `additionalSource/strftime.c` stands under Public Domain (is part of MinGW I suppose)
-* PLocalSim (this repository minus all otherwise stated parts) is licensed by Helco (me) under [GNU GPL v3](http://www.gnu.org/copyleft/gpl.html)
+* PLocalSim (this repository except for otherwise marked parts) is licensed by Helco (me) under [GNU GPL v3](http://www.gnu.org/copyleft/gpl.html)
 * PLocalSim is an independent software and has not been authorized, sponsored, or otherwise approved by Pebble Technology Corp.
 
 ## Credits
@@ -145,7 +162,7 @@ The simulator has several key commands you can use:
 *  [Pebble Technology Inc.](https://developer.getpebble.com/) - for the amazing watch, the SDK and their long shipping procedure, which was the motivation to build this :)
 * Everyone who provided me with bug reports, ideas and feedback
 
-### Used libraries/code <a name="UsedLibraries"></a>
+### Used libraries/code/software <a name="UsedLibraries"></a>
 
 *  [node-XMLHttpRequest](https://github.com/driverdan/node-XMLHttpRequest/blob/master/lib/XMLHttpRequest.js)
 *  [node-localStorage](https://github.com/ae-code/node-localStorage)
@@ -154,3 +171,4 @@ The simulator has several key commands you can use:
 *  [SDL2_image](http://www.libsdl.org/projects/SDL_image/)
 *  A modified [SDL_gfx](http://cms.ferzkopp.net/index.php/software/13-sdl-gfx) (see src/SDL_gfx/disclaimer.txt)
 *  [JSMN](https://bitbucket.org/zserge/jsmn)
+*  [MinGW and MSYS](http://www.mingw.org) ([license](http://www.mingw.org/license))
