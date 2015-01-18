@@ -1,50 +1,9 @@
-<<<<<<< HEAD
-# PLocalSimulator
-
-### Version: 0.2 BETA
-
-## Overview
-
-This project is an extension to the PebbleSDK2.0 Beta2 which allows you to build and run your pebble applications on your computer.
-This project was renamed due to the new naming guidelines from Pebble Technology Inc.
-
-## Usage
-
-The simulator has several key commands you can use:
-
-```
-[Arrow up]	 Pebble button: Up
-[Arrow down] Pebble button: Down
-[Enter]		 Pebble button: Select
-[Backspace]	 Pebble button: Back
-[+]		     Add 10% charge to the battery
-[-]		     Drain 10% charge from the battery
-[x][y][z]	 Simulate an accelerometer tap on the X/Y/Z axis with +1 direction
-[X][Y][Z]	 Simulate an accelerometer tap on the X/Y/Z axis with -1 direction
-[F1]		 Changes the color of the drawn pebble
-[F2]		 Toggles the lens effect 
-[F3]		 Switches between 24H and 12H mode
-[F4]		 Toggles bluetooth on / off
-[F5]		 Toggle charger plugged / not plugged
-[F12]		 Saves a screenshot in <simulator>\simdata\screenshots\
-```
-
-## Non-implemented features
-
-There are some things that are not implemented yet:
- 
-*  __MenuLayer__			
-*  __SimpleMenuLayer__
-*  __NumberWindow__
-*  __Accelerosensor__ (accel_tap_* is supported)
-=======
 # PLocalSim
 
 ## Overview
 
 This project seeks to give developers a authentic build environment, which can be used to write, test and debug Pebble watchfaces/apps across the big operating systems Linux, Microsoft Windows and Apple Mac OS X. Instead of the emulator approach (which is currently done by the official developers of Pebble) this is mainly an implementation of the Pebble SDK.
 > The last big update for this project changed a lot of the old structures to be easier to handle.  In the events of this update, I had to cut the support for Mac OS X for a moment. But stay tuned, it will return in one of the next updates.
->>>>>>> coming_up
 
 <sup>Due to the new naming guidelines from Pebble Technology Inc. the original name changed to PLocalSim</sup>
 
@@ -119,21 +78,6 @@ These do not work:
 
 Pretty good result, isn't it :)
 
-<<<<<<< HEAD
-## Compatibility between different operating systems
-
-
-__I want YOU!__ to find:
-
-*  bugs
-*  suggestions
-*  feedback
-*  questions
-
-and [tell them to me](https://github.com/Helco/PLocalSim/issues). I will try to answer them all.
-
-=======
->>>>>>> coming_up
 ## Installation
 Since the first release of this project, I restructured the whole installation/building process to be easier and equal across the operating systems. Please read the whole section before trying anything of this out.
 
