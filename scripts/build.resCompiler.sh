@@ -37,7 +37,7 @@ if [ "$PLS_USE_C" == "true" ]; then
       PLS_RSC_LIBS='-lmingw32 '$PLS_RSC_LIBS
       PLS_RSC_OUTPUT=$PLS_RSC_OUTPUT'.exe'
 
-      cp -f -r $PLS_DIR_SDL/bin/* ./bin/
+      cp -u -r $PLS_DIR_SDL/bin/* ./bin/
     fi
 
     # Compile the resource compiler

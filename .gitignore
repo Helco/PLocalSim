@@ -1,5 +1,6 @@
 sdkdata/windows/PLocalSim/MinGW/
 sdkdata/windows/PLocalSim/SDL2/
+devhelp/build/
 test/
 testsdk/
 obj/

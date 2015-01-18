@@ -1,6 +1,7 @@
 #!/bin/bash
 
 PLS_MY_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+PLS_LIB_CACHE=$2
 
 if [ ! -e $PLS_MY_DIR'/envvars.sh' ] ; then
   echo "[FAIL] Could not load envvars.sh"
@@ -18,6 +19,10 @@ if hash $PLS_GCC 2>/dev/null; then
     PLS_SIM_OUTPUT='./bin/libPLocalSim.a'
     PLS_SIM_TMP_OUT='./obj'
     PLS_SIM_GCC_ARGS='-c -O2 -std=c99 '
+
+    if [ "$1" == "--debug" ]; then
+      PLS_SIM_GCC_ARGS=$PLS_SIM_GCC_ARGS' -ggdb'
+    fi
     
     # MinGW specific values
     if [ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ]; then
@@ -29,7 +34,6 @@ if hash $PLS_GCC 2>/dev/null; then
     mkdir -p ./bin
     mkdir -p $PLS_SIM_TMP_OUT
     filelist=$PLS_SIM_TMP_OUT'/*.o'
-    rm -f $filelist
     
     # how to compile a directory, params:
     #   directory to compile
@@ -40,15 +44,46 @@ if hash $PLS_GCC 2>/dev/null; then
       for file in `ls $filelist` ; do
         filename=${file##*/} # without the directory
         objectFile=$PLS_SIM_TMP_OUT'/'${filename%.*}'.o'
-        
-        if [ ! 'silent' = "$2" ] ; then
-          echo Compiling $filename
-        fi
-        
+        hashFile=$PLS_LIB_CACHE'/'${filename%.*}'.md5' 
+
+        dobuildfile='true'
         error='true'
-        if $PLS_GCC $PLS_SIM_GCC_ARGS $3 $PLS_SIM_INCLUDES $file -o $objectFile ; then
-          if $PLS_AR rcs $PLS_SIM_OUTPUT $objectFile ; then
-             error='false'
+
+        # Check cache
+        if [ ! -z "$PLS_LIB_CACHE" ] ; then
+          if [ -e "$objectFile" ] ; then 
+            if [ -e "$hashFile" ] ; then
+              savedhash=$(<$hashFile)
+              calcedhash=`date -r $file +%s``date -r $objectFile +%s`
+              if [ "$savedhash" == "$calcedhash" ] ; then
+                dobuildfile='false'
+                if [ ! 'silent' = "$2" ] ; then
+                  echo Using cached $filename 
+                fi
+                if $PLS_AR rcs $PLS_SIM_OUTPUT $objectFile ; then
+                  error='false'
+                fi
+              fi
+            fi
+          fi
+        fi       
+
+        # Compile file
+        if [ "$dobuildfile" == "true" ]; then   
+          if [ ! 'silent' = "$2" ] ; then
+            echo Compiling $filename
+          fi    
+          if $PLS_GCC $PLS_SIM_GCC_ARGS $3 $PLS_SIM_INCLUDES $file -o $objectFile ; then
+            if $PLS_AR rcs $PLS_SIM_OUTPUT $objectFile ; then
+               error='false'
+
+               # Update cache
+               if [ ! -z "$PLS_LIB_CACHE" ] ; then
+                 newhash=`date -r $file +%s``date -r $objectFile +%s`
+                 touch "$hashFile"
+                 echo "$newhash" > "$hashFile"
+               fi
+            fi
           fi
         fi
 
