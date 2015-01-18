@@ -96,7 +96,7 @@ Besides that you need to provide the SDK with a recent version of MinGW, MSYS an
 * sdkdata/windows/openShell.bat
 * sdkdata/windows/envvars.sh
 
-As alternative I have prepared two archives you can extract right in the main folder of this repository to have MinGW, MSYS and SDL2 pre-installed and pre-configured. These files will also be copied into a SDK-installation, so this should work right out-of-the-box when you use this method. Here are the links:
+As alternative I have prepared two archives you can extract right in sdkdata/windows/PLocalSim/ folder of this repository to have MinGW, MSYS and SDL2 pre-installed and pre-configured. These files will also be copied into a SDK-installation, so this should work right out-of-the-box when you use this method. Here are the links:
 
 * [MinGW and MSYS](https://www.dropbox.com/s/bff5uysqusz9d2g/MinGW%20for%20PLocalSim.zip?dl=0)
 * [SDL2](https://www.dropbox.com/s/zg9zqyrqrkvim9l/SDL2.zip?dl=0)
