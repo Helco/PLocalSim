@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="PLocalSim" />
+		<Option makefile_is_custom="1" />
+		<Option execution_dir="$(PROJECTDIR)/../../" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<MakeCommands>
+			<Build command="$(PROJECTDIR)../../build.all.sh" />
+			<CompileFile command="" />
+			<Clean command="$(PROJECTDIR)../../build.all.sh --rebuild" />
+			<DistClean command="$make -f $makefile distclean$target" />
+			<AskRebuildNeeded command="" />
+			<SilentBuild command="$(PROJECTDIR)../../build.all.sh &gt; $(CMD_NULL)" />
+		</MakeCommands>
+		<Build>
+			<Target title="All OS">
+				<Option output="../../build/local/testapp" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="../../build/local/" />
+				<Option object_output="../../build/tempLocal/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<MakeCommands>
+					<Build command="$(PROJECTDIR)/build.all.sh" />
+					<CompileFile command="" />
+					<Clean command="$(PROJECTDIR)/build.all.sh --rebuild" />
+					<DistClean command="$make -f $makefile distclean$target" />
+					<AskRebuildNeeded command="" />
+					<SilentBuild command="$(PROJECTDIR)/build.all.sh &gt; $(CMD_NULL)" />
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="../../../src/local/accel_tap.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/local/actionbar.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/local/animation.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/local/app_message.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/local/app_sync.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/local/battery.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/local/bitmap.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/local/bluetooth.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/local/buttons.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/local/dictionary.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/local/draw.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/local/dummy/src/resource_ids.auto.h" />
+		<Unit filename="../../../src/local/font.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/local/globals.h" />
+		<Unit filename="../../../src/local/hardwareOutput.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/local/impl_pebble.h" />
+		<Unit filename="../../../src/local/layer.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/local/main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/local/math.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/local/pebble_os.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/local/persistent_storage.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/local/render.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/local/scrolllayer.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/local/simdata.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/local/timer.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/local/window.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/sampleProject.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
