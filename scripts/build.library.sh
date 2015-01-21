@@ -18,10 +18,12 @@ if hash $PLS_GCC 2>/dev/null; then
 
     PLS_SIM_OUTPUT='./bin/libPLocalSim.a'
     PLS_SIM_TMP_OUT='./obj'
-    PLS_SIM_GCC_ARGS='-c -O2 -std=c99 '
+    PLS_SIM_GCC_ARGS='-c -std=c99 '
 
     if [ "$1" == "--debug" ]; then
       PLS_SIM_GCC_ARGS=$PLS_SIM_GCC_ARGS' -ggdb'
+    else
+      PLS_SIM_GCC_ARGS=$PLS_SIM_GCC_ARGS' -O2'
     fi
     
     # MinGW specific values
