@@ -1,11 +1,15 @@
 #include "globals.h"
 
+int32_t atan2_lookup (int16_t y, int16_t x) {
+    return (int32_t)(atan2((double)y, (double)x) / (2*PI) * TRIG_MAX_ANGLE);
+}
+
 int32_t sin_lookup(int32_t angle) {
-    return sin((double)angle/TRIG_MAX_RATIO* 2*PI)*TRIG_MAX_RATIO;
+    return (int32_t)(sin((double)angle/TRIG_MAX_RATIO* 2*PI)*TRIG_MAX_RATIO);
 }
 
 int32_t cos_lookup(int32_t angle) {
-    return cos((double)angle/TRIG_MAX_RATIO* 2*PI)*TRIG_MAX_RATIO;
+    return (int32_t)(cos((double)angle/TRIG_MAX_RATIO* 2*PI)*TRIG_MAX_RATIO);
 }
 
 GPath* gpath_create(const GPathInfo *init) {

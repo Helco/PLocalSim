@@ -33,7 +33,6 @@ Please consider that this list may not complete as new features are added. This 
 * __CompassService__
 * __Internationalization__ / __setlocale__
 * __Launch Reason__
-* __atan2_lookup__
 * __heap_bytes_free__ / __heap_bytes_used__
 * __Wakeup__
 * __lock_is_timezone_set__ / __clock_to_timestamp__
