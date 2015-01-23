@@ -36,7 +36,6 @@ Please consider that this list may not complete as new features are added. This 
 * __heap_bytes_free__ / __heap_bytes_used__
 * __Wakeup__
 * __lock_is_timezone_set__ / __clock_to_timestamp__
-* __WatchInfo__
 * __Graphics framebuffer capture__
 * __Rounded rectangle corners__
 * __gbitmap_create_blank__

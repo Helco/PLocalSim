@@ -52,6 +52,20 @@ void persistent_storage_free();
 
 bool setup_js_app();
 
+//WATCHINFO WATCHINFO WATCHINFO WATCHINFO WATCHINFO WATCHINFO WATCHINFO
+
+#define WINDOW_WIDTH 390
+#define WINDOW_HEIGHT 440
+#define BODY_WIDTH 275
+#define BODY_HEIGHT 440
+#define BODY_OFFSET_X (WINDOW_WIDTH/2 - BODY_WIDTH/2)
+#define BODY_OFFSET_Y 0
+#define PBL_SCREEN_OFFSET_X (BODY_OFFSET_X + 65)
+#define PBL_SCREEN_OFFSET_Y (BODY_OFFSET_Y + 121)
+
+void drawBody (SDL_Surface* screen, uint8_t buttonState);
+void nextBody ();
+
 //SERVICES SERVICES SERVICES SERVICES SERVICES SERVICES SERVICES SERVICES
 typedef void (*ServiceUpdateCallback) (void);
 enum SimServices {

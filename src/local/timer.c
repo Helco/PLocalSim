@@ -10,6 +10,9 @@ struct AppTimer
 
 static AppTimer *timers = NULL;
 
+static struct tm _then={0};
+static bool firstTick=true;
+
 void add_timer(AppTimer *timer) {
 	AppTimer *tp = timers;
 
@@ -121,4 +124,43 @@ bool app_timer_reschedule (AppTimer* timer_handle,uint32_t new_timeout_ms) {
 
 void app_timer_cancel(AppTimer* timer_handle) {
     remove_timer(timer_handle);
+}
+
+void tick_timer_service_subscribe (TimeUnits units,TickHandler handler) {
+    serviceData.ticks.units=units;
+    serviceData.ticks.handler=handler;
+}
+
+void tick_timer_service_unsubscribe (void) {
+    serviceData.ticks.handler=0;
+}
+
+void service_ticks() {
+    if (serviceData.ticks.handler!=0) {
+        time_t timeSec=time(0);
+        struct tm* tim=localtime(&timeSec);
+        TimeUnits units=serviceData.ticks.units;
+        TimeUnits changed=0;
+
+        if (!firstTick) {
+            if ((units&SECOND_UNIT) >0 && tim->tm_sec!=_then.tm_sec)
+                changed |= SECOND_UNIT;
+            if ((units&MINUTE_UNIT) >0 && tim->tm_min!=_then.tm_min)
+                changed |= MINUTE_UNIT;
+            if ((units&HOUR_UNIT) >0 && tim->tm_hour!=_then.tm_hour)
+                changed |= HOUR_UNIT;
+            if ((units&DAY_UNIT) >0 && tim->tm_yday!=_then.tm_yday)
+                changed |= DAY_UNIT;
+            if ((units&MONTH_UNIT) >0 && tim->tm_mon!=_then.tm_mon)
+                changed |= MONTH_UNIT;
+            if ((units&YEAR_UNIT) >0 && tim->tm_year!=_then.tm_year)
+                changed |= YEAR_UNIT;
+        }
+
+        if (firstTick||changed!=0) {
+            memcpy(&_then,tim,sizeof(struct tm));
+            serviceData.ticks.handler (tim,changed);
+            firstTick=false;
+        }
+    }
 }

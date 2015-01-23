@@ -1,21 +1,9 @@
 #include "globals.h"
 
-#define SCREEN_WIDTH 350
-#define SCREEN_HEIGHT 394
-#define BODY_WIDTH 219
-#define BODY_HEIGHT 394
-#define BODY_COUNT 5
-#define BODY_SRC_OFFSET_X 6
-#define BODY_OFFSET_X (SCREEN_WIDTH/2-BODY_WIDTH/2)
-#define BODY_OFFSET_Y 0
-#define PBL_SCREEN_OFFSET_X (38+BODY_OFFSET_X)
-#define PBL_SCREEN_OFFSET_Y (105+BODY_OFFSET_Y)
-
 #define KEY_BUTTON_BACK SDLK_BACKSPACE
 #define KEY_BUTTON_UP SDLK_UP
 #define KEY_BUTTON_SELECT SDLK_RETURN
 #define KEY_BUTTON_DOWN SDLK_DOWN
-#define BUTTON_PRESSED_OFFSET 3 //*-1 for UP, SELECT and DOWN
 
 #define LOG_FILE "log.txt"
 
@@ -26,27 +14,24 @@ const SDL_Rect buttonRects [NUM_BUTTONS]= {
     {225,236,6,77}
 };
 const SDL_Rect vibeBaseRect= {0,0,60,BODY_HEIGHT};
-const SDL_Rect lightRect= {0,0,SCREEN_WIDTH,SCREEN_HEIGHT};
+const SDL_Rect lightRect= {0,0,WINDOW_WIDTH,WINDOW_HEIGHT};
 
-static struct tm _then={0};
 static SDL_Window* window = 0;
 static SDL_Renderer* renderer = 0;
 static SDL_Texture* screenTexture = 0;
-static SDL_Surface* pebbleScreen=0,* screen=0,* bodyImg,* shadowImg,* vibeImg,* lightImg;
+static SDL_Surface* pebbleScreen=0,* screen=0,* shadowImg,* vibeImg,* lightImg;
 static float elapsed=0.0f;
-static int bodyID=1;
 static bool shadow=true;
-static bool buttonState [NUM_BUTTONS]= {0,0,0,0};
+static uint8_t buttonState = 0;
 static bool bodyRender=true;
 static bool lastVibeState=false;
 static bool lastLightState=false;
-static bool firstTick=true;
 static char titleBuffer[]="./screenshots/yyyy-mm-dd-hh-mm.bmp\0\0";
 
 ServiceData serviceData={{0,0},{service_buttons,service_hardware_output,service_animations,service_timers,service_ticks,service_bluetooth,service_battery,service_accel_tap,
 #ifndef WIN32
 	service_app_message}};
-#else 
+#else
 	0}};
 #endif
 
@@ -77,7 +62,7 @@ int main(int argc, char* argv[]) {
 
 	window = SDL_CreateWindow("PLocalSim - 24H Style",
 							  SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-							  SCREEN_WIDTH, SCREEN_HEIGHT, 0);
+							  WINDOW_WIDTH, WINDOW_HEIGHT, 0);
 	if (!window) {
 		printf("SDL_CreateWindow: %s\n", SDL_GetError());
 		return -2;
@@ -90,13 +75,13 @@ int main(int argc, char* argv[]) {
 	}
 
 	screenTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING,
-									  SCREEN_WIDTH, SCREEN_HEIGHT);
+									  WINDOW_WIDTH, WINDOW_HEIGHT);
 	if (!screenTexture) {
 		printf("SDL_CreateTexture: %s\n", SDL_GetError());
 		return -2;
 	}
 
-    screen = createSurface(SCREEN_WIDTH, SCREEN_HEIGHT);
+    screen = createSurface(WINDOW_WIDTH, WINDOW_HEIGHT);
     if(screen == NULL) {
         printf("SDL_CreateRGBSurface failed!\n");
         return -2;
@@ -115,7 +100,6 @@ int main(int argc, char* argv[]) {
 
     if (!loadSimulatorImages())
         return -5;
-    bodyImg=getSimulatorImage(SIM_IMG_BODY);
     shadowImg=getSimulatorImage(SIM_IMG_SCREEN_SHADOW);
     vibeImg=getSimulatorImage(SIM_IMG_VIBE);
     lightImg=getSimulatorImage(SIM_IMG_BACKLIGHT);
@@ -150,45 +134,6 @@ int main(int argc, char* argv[]) {
     return 0;
 }
 
-void tick_timer_service_subscribe (TimeUnits units,TickHandler handler) {
-    serviceData.ticks.units=units;
-    serviceData.ticks.handler=handler;
-}
-
-void tick_timer_service_unsubscribe (void) {
-    serviceData.ticks.handler=0;
-}
-
-void service_ticks() {
-    if (serviceData.ticks.handler!=0) {
-        time_t timeSec=time(0);
-        struct tm* tim=localtime(&timeSec);
-        TimeUnits units=serviceData.ticks.units;
-        TimeUnits changed=0;
-
-        if (!firstTick) {
-            if ((units&SECOND_UNIT) >0 && tim->tm_sec!=_then.tm_sec)
-                changed |= SECOND_UNIT;
-            if ((units&MINUTE_UNIT) >0 && tim->tm_min!=_then.tm_min)
-                changed |= MINUTE_UNIT;
-            if ((units&HOUR_UNIT) >0 && tim->tm_hour!=_then.tm_hour)
-                changed |= HOUR_UNIT;
-            if ((units&DAY_UNIT) >0 && tim->tm_yday!=_then.tm_yday)
-                changed |= DAY_UNIT;
-            if ((units&MONTH_UNIT) >0 && tim->tm_mon!=_then.tm_mon)
-                changed |= MONTH_UNIT;
-            if ((units&YEAR_UNIT) >0 && tim->tm_year!=_then.tm_year)
-                changed |= YEAR_UNIT;
-        }
-
-        if (firstTick||changed!=0) {
-            memcpy(&_then,tim,sizeof(struct tm));
-            serviceData.ticks.handler (tim,changed);
-            firstTick=false;
-        }
-    }
-}
-
 void app_event_loop() {
     bool isRunning=true;
     SDL_Event event;
@@ -213,7 +158,7 @@ void app_event_loop() {
                 }
                 break;
                 case(SDLK_F1): {
-                    bodyID=(bodyID+1)%BODY_COUNT;
+                    nextBody();
                     bodyRender=true;
                 }
                 break;
@@ -299,25 +244,25 @@ void app_event_loop() {
                 }
                 break;
                 case (KEY_BUTTON_BACK): {
-                    buttonState[BUTTON_ID_BACK]=true;
+                    buttonState |= 1 << BUTTON_ID_BACK;
                     bodyRender=true;
                     onButtonDown(BUTTON_ID_BACK);
                 }
                 break;
                 case (KEY_BUTTON_UP): {
-                    buttonState[BUTTON_ID_UP]=true;
+                    buttonState |= 1 << BUTTON_ID_UP;
                     bodyRender=true;
                     onButtonDown(BUTTON_ID_UP);
                 }
                 break;
                 case (KEY_BUTTON_SELECT): {
-                    buttonState[BUTTON_ID_SELECT]=true;
+                    buttonState |= 1 << BUTTON_ID_SELECT;
                     bodyRender=true;
                     onButtonDown(BUTTON_ID_SELECT);
                 }
                 break;
                 case (KEY_BUTTON_DOWN): {
-                    buttonState[BUTTON_ID_DOWN]=true;
+                    buttonState |= 1 << BUTTON_ID_DOWN;
                     bodyRender=true;
                     onButtonDown(BUTTON_ID_DOWN);
                 }
@@ -330,25 +275,25 @@ void app_event_loop() {
             case(SDL_KEYUP): {
                 switch (event.key.keysym.sym) {
                 case(KEY_BUTTON_BACK): {
-                    buttonState[BUTTON_ID_BACK]=false;
+                    buttonState ^= 1<<BUTTON_ID_BACK;
                     bodyRender=true;
                     onButtonUp(BUTTON_ID_BACK);
                 }
                 break;
                 case(KEY_BUTTON_UP): {
-                    buttonState[BUTTON_ID_UP]=false;
+                    buttonState ^= 1<<BUTTON_ID_UP;
                     bodyRender=true;
                     onButtonUp(BUTTON_ID_UP);
                 }
                 break;
                 case(KEY_BUTTON_SELECT): {
-                    buttonState[BUTTON_ID_SELECT]=false;
+                    buttonState ^= 1<<BUTTON_ID_SELECT;
                     bodyRender=true;
                     onButtonUp(BUTTON_ID_SELECT);
                 }
                 break;
                 case(KEY_BUTTON_DOWN): {
-                    buttonState[BUTTON_ID_DOWN]=false;
+                    buttonState ^= 1<<BUTTON_ID_DOWN;
                     bodyRender=true;
                     onButtonUp(BUTTON_ID_DOWN);
                 }
@@ -390,36 +335,20 @@ void app_event_loop() {
 
 void simulatorRender() {
     SDL_Rect src,dst;
-    int i;
     SDL_FillRect (screen,0,0);
-    //buttons
-    for (i=0; i<NUM_BUTTONS; i++) {
-        src=buttonRects[i];
-        dst=src;
-        src.y+=bodyID*BODY_HEIGHT;
-        dst.x+=BODY_OFFSET_X-dst.w;
-        dst.y+=BODY_OFFSET_Y;
-        if (buttonState[i]==true)
-            dst.x+=BUTTON_PRESSED_OFFSET*(i!=BUTTON_ID_BACK?-1:1);
-        SDL_BlitSurface(bodyImg,&src,screen,&dst);
-    }
+
+    drawBody(screen, buttonState);
+
     //vibes
     if (lastVibeState) {
         src=vibeBaseRect;
         dst=vibeBaseRect;
         SDL_BlitSurface(vibeImg,&src,screen,&dst);
         src.x+=src.w;
-        dst.x=SCREEN_WIDTH-dst.w;
+        dst.x=WINDOW_WIDTH-dst.w;
         SDL_BlitSurface(vibeImg,&src,screen,&dst);
     }
-    //Body
-    src=(SDL_Rect) {
-        BODY_SRC_OFFSET_X,bodyID*BODY_HEIGHT,BODY_WIDTH,BODY_HEIGHT
-    };
-    dst=(SDL_Rect) {
-        BODY_OFFSET_X,BODY_OFFSET_Y,BODY_WIDTH,BODY_HEIGHT
-    };
-    SDL_BlitSurface(bodyImg,&src,screen,&dst);
+
     //screen
     src=(SDL_Rect) {
         0,0,PBL_SCREEN_WIDTH,PBL_SCREEN_HEIGHT

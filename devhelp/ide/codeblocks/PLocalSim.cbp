@@ -101,6 +101,9 @@
 		<Unit filename="../../../src/local/timer.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="../../../src/local/watchinfo.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="../../../src/local/window.c">
 			<Option compilerVar="CC" />
 		</Unit>
