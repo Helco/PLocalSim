@@ -22,7 +22,6 @@ The most important feature for this simulator is compability. I tested this simu
 ## Non-implemented features<a name="NotImplemented"></a>
 Please consider that this list may not complete as new features are added. This list was created with the Pebble SDK 2.8.1
  
-* __SniffInterval__
 * __AppMessage__ (Windows have linker errors / Linux does not receive or send)
 * __AppSync__ (depends from AppMessage, support through Node.js will return soon)
 * __AppWorker__
