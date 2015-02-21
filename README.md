@@ -26,7 +26,6 @@ Please consider that this list may not complete as new features are added. This 
 * __AppSync__ (depends from AppMessage, support through Node.js will return soon)
 * __AppWorker__
 * __DataLogging__
-* __UUID__
 * __AccelerometerService__ (accel_tap_service is supported)
 * __AppFocusService__
 * __CompassService__
