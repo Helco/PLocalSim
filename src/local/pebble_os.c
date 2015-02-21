@@ -143,3 +143,18 @@ uint16_t time_ms (time_t* tloc,uint16_t* out_ms) {
         *out_ms=(uint16_t)ms;
     return ms;
 }
+
+bool uuid_equal (const Uuid* u1, const Uuid* u2) {
+    return memcmp(u1, u2, sizeof(Uuid)) == 0;
+}
+
+void uuid_to_string (const Uuid* u, char* buffer) {
+    static const char* UUID_SPRINTF_FORMAT =
+        "{%02hhX%02hhX%02hhX%02hhX-%02hhX%02hhX-%02hhX%02hhX-%02hhX%02hhX-%02hhX%02hhX%02hhX%02hhX%02hhX%02hhX}";
+    sprintf(buffer, UUID_SPRINTF_FORMAT,
+            u->byte0, u->byte1, u->byte2, u->byte3,
+            u->byte4, u->byte5,
+            u->byte6, u->byte7,
+            u->byte8, u->byte9,
+            u->byte10, u->byte11, u->byte12, u->byte13);
+}
