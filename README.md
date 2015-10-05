@@ -149,7 +149,7 @@ The simulator has several key commands you can use:
 ### Many many thanks to:
 
 *  [ae-code](https://github.com/ae-code) - for the Javascript, Dictionary, AppSync and AppMesage API
-*  [David Konsumer](https://github.com/konsumer) - for a new README (with beatiful Markdown)
+*  [David Konsumer](https://github.com/konsumer) - for a new README (with beautiful Markdown)
 *  [robhh](https://github.com/robhh) - for the AppTimer implementation
 *  [abl](https://github.com/abl) - for empebble (which was original the basecode of this simulator, now all code is rewritten)
 *  [AmandaCameron](https://github.com/AmandaCameron) - for the metadata support implementation (in PebbleSDK 1.2)
