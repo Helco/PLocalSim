@@ -1,8 +1,10 @@
 # PLocalSim
 
+> This project is on hold, its purpose was to provide developers with a decent way to test pebble apps without having to worry about damaging a physical device. The approach from Pebble Inc. itself is the way you should go now, because it can (and does) replicate the environment much better than this project (because of its "Implementing the SDK" approach) ever could.
+
 ## Overview
 
-This project seeks to give developers a authentic build environment, which can be used to write, test and debug Pebble watchfaces/apps across the big operating systems Linux, Microsoft Windows and Apple Mac OS X. Instead of the emulator approach (which is currently done by the official developers of Pebble) this is mainly an implementation of the Pebble SDK.
+This project seeks to give developers an authentic build environment, which can be used to write, test and debug Pebble watchfaces/apps across the big operating systems Linux, Microsoft Windows and Apple Mac OS X. Instead of the emulator approach (which is currently done by the official developers of Pebble) this is mainly an implementation of the Pebble SDK.
 > The last big update for this project changed a lot of the old structures to be easier to handle.  In the events of this update, I had to cut the support for Mac OS X for a moment. But stay tuned, it will return in one of the next updates.
 
 <sup>Due to the new naming guidelines from Pebble Technology Inc. the original name changed to PLocalSim</sup>
